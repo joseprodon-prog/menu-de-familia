@@ -13,13 +13,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
     // Només usuaris amb sessió iniciada a l'app
+    console.log("llegeix: inici", req.headers.get("content-length"));
     const auth = req.headers.get("Authorization") || "";
     const su = Deno.env.get("SUPABASE_URL"), sk = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
-    const who = await fetch(`${su}/auth/v1/user`, { headers: { Authorization: auth, apikey: sk } });
+    const who = await fetch(`${su}/auth/v1/user`, { headers: { Authorization: auth, apikey: sk }, signal: AbortSignal.timeout(15000) });
+    console.log("llegeix: sessió", who.status);
     if (!who.ok) return out({ error: "Cal iniciar la sessió" }, 401);
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     if (!key) return out({ error: "Falta el secret ANTHROPIC_API_KEY" }, 500);
     const { prompt, images = [], model } = await req.json();
+    console.log("llegeix: cos llegit");
     if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || images.length > 8) return out({ error: "Petició no vàlida" }, 400);
     const content = [
       ...images.map((data: string) => ({ type: "image", source: { type: "base64", media_type: "image/jpeg", data } })),
