@@ -16,8 +16,10 @@ login_css='''
 #mflogin h1{font:700 30px var(--display);margin:0 0 8px}
 #mflogin form{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 #mflogin input{font:16px var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
-#mflogin button{font:600 16px var(--body);padding:12px;border-radius:999px;border:0;background:var(--blue,#2a78c2);color:#fff;cursor:pointer}
+#mflogin button.primary{font:600 16px var(--body);padding:12px;border-radius:999px;border:0;background:var(--blue,#2a78c2);color:#fff;cursor:pointer}
 #mfout{margin:28px auto 8px;display:block}
+#mflogin .ghost{font:600 14px var(--body);padding:8px;border:0;background:none;color:var(--muted);cursor:pointer}
+#mflogin [hidden]{display:none}
 '''
 pwa='''<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">

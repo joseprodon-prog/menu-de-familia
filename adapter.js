@@ -20,18 +20,31 @@
   function showLogin() {
     const d = document.createElement("div");
     d.id = "mflogin";
-    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>Entra amb el teu correu. T'hi enviarem un enllaç per accedir-hi, sense contrasenya.</p>
-      <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic"><button class="primary" type="submit">Envia'm l'enllaç</button></form>
+    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>Entra amb el teu correu. T'hi enviarem un codi (i un enllaç) per accedir-hi, sense contrasenya.</p>
+      <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic"><button class="primary" type="submit">Envia'm el codi</button></form>
+      <form id="mflc" hidden><input inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Codi del correu" aria-label="Codi"><button class="primary" type="submit">Entra</button><button type="button" class="ghost" id="mflback">Canvia el correu</button></form>
       <p class="foot" id="mflm" role="status"></p></div>`;
     const go = () => { document.body.appendChild(d); d.querySelector("input").focus(); };
     if (document.body) go(); else addEventListener("DOMContentLoaded", go);
-    d.addEventListener("submit", async (e) => {
+    let email = "";
+    const msg = (t) => { d.querySelector("#mflm").textContent = t; };
+    const errTxt = (e) => /rate limit/i.test(e.message) ? "Massa enviaments seguits. Espera una estona (fins a 1 hora) o fes servir el codi del darrer correu que t'hagi arribat." : e.message;
+    d.querySelector("#mflf").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = d.querySelector("input").value.trim(); const m = d.querySelector("#mflm");
-      m.textContent = "Enviant…";
+      email = d.querySelector("#mflf input").value.trim().toLowerCase();
+      msg("Enviant…");
       const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
-      m.textContent = error ? "No s'ha pogut enviar: " + error.message : "Fet. Obre el correu i toca l'enllaç (mira també el correu brossa).";
+      d.querySelector("#mflf").hidden = true; d.querySelector("#mflc").hidden = false; d.querySelector("#mflc input").focus();
+      msg(error ? "No s'ha pogut enviar: " + errTxt(error) : "Fet. Escriu el codi que t'ha arribat al correu (o toca l'enllaç). Mira també el correu brossa.");
     });
+    d.querySelector("#mflc").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const token = d.querySelector("#mflc input").value.replace(/\s/g, "");
+      msg("Comprovant…");
+      const { error } = await sb.auth.verifyOtp({ email, token, type: "email" });
+      if (error) msg("Codi incorrecte o caducat. Torna-ho a provar.");
+    });
+    d.querySelector("#mflback").addEventListener("click", () => { d.querySelector("#mflc").hidden = true; d.querySelector("#mflf").hidden = false; msg(""); });
   }
   function hideLogin() { const d = document.getElementById("mflogin"); if (d) d.remove(); }
 
