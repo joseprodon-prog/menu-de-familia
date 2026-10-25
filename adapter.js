@@ -146,10 +146,20 @@
   };
 
   /* ---------- lectura de documents (API de Claude via Supabase) ---------- */
-  const b64 = (blob) => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1]); r.onerror = ko; r.readAsDataURL(blob); });
   async function callAI(prompt, opts) {
-    const imgs = await Promise.all(((opts && opts.images) || []).slice(0, 8).map(b64));
-    const { data, error } = await sb.functions.invoke("llegeix", { body: { prompt: String(prompt), images: imgs } });
+    // Les imatges es pugen a Storage i la funció només rep els enllaços (cos petit)
+    const blobs = ((opts && opts.images) || []).slice(0, 8);
+    const ids = [];
+    for (const bl of blobs) {
+      const id = "tmp-" + [...crypto.getRandomValues(new Uint8Array(12))].map((b) => b.toString(16).padStart(2, "0")).join("") + ".jpg";
+      const { error: ue } = await sb.storage.from("assets").upload(id, bl, { contentType: "image/jpeg", upsert: false });
+      if (ue) { const x = new Error("No s'ha pogut pujar la imatge: " + ue.message); x.code = "upstream_error"; throw x; }
+      ids.push(id);
+    }
+    const urls = ids.map((id) => window.BLOBBASE + id);
+    let data, error;
+    try { ({ data, error } = await sb.functions.invoke("llegeix", { body: { prompt: String(prompt), urls } })); }
+    finally { if (ids.length) sb.storage.from("assets").remove(ids).catch(() => {}); }
     let msg = data && data.error;
     if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }
     if (error || !data || data.error) { const x = new Error(msg || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }

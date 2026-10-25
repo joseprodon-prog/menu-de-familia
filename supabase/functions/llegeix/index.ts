@@ -1,5 +1,5 @@
 // Menú de Família · lectura de documents amb l'API de Claude
-// Rep: { prompt, images: [base64 JPEG], model? }  ·  Retorna: { text, usage }
+// Rep: { prompt, urls: [enllaços públics de Storage] | images: [base64 JPEG], model? }  ·  Retorna: { text, usage }
 // Requereix el secret ANTHROPIC_API_KEY (Supabase → Edge Functions → Secrets).
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -21,15 +21,18 @@ Deno.serve(async (req) => {
     if (!who.ok) return out({ error: "Cal iniciar la sessió" }, 401);
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     if (!key) return out({ error: "Falta el secret ANTHROPIC_API_KEY" }, 500);
-    const { prompt, images = [], model } = await req.json();
+    const { prompt, images = [], urls = [], model } = await req.json();
     console.log("llegeix: cos llegit");
-    if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || images.length > 8) return out({ error: "Petició no vàlida" }, 400);
+    const pub = `${su}/storage/v1/object/public/assets/`;
+    if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || !Array.isArray(urls) || images.length + urls.length > 8 ||
+        urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub))) return out({ error: "Petició no vàlida" }, 400);
     const content = [
+      ...urls.map((url: string) => ({ type: "image", source: { type: "url", url } })),
       ...images.map((data: string) => ({ type: "image", source: { type: "base64", media_type: "image/jpeg", data } })),
       { type: "text", text: prompt },
     ];
     const t0 = Date.now();
-    console.log("llegeix: imatges", images.length, "bytes", images.reduce((a: number, x: string) => a + x.length, 0));
+    console.log("llegeix: imatges", urls.length + images.length);
     const ac = new AbortController();
     const tm = setTimeout(() => ac.abort(), 120000);
     const r = await fetch("https://api.anthropic.com/v1/messages", {
