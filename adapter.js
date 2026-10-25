@@ -150,7 +150,9 @@
   async function callAI(prompt, opts) {
     const imgs = await Promise.all(((opts && opts.images) || []).slice(0, 8).map(b64));
     const { data, error } = await sb.functions.invoke("llegeix", { body: { prompt: String(prompt), images: imgs } });
-    if (error || !data || data.error) { const x = new Error((data && data.error) || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }
+    let msg = data && data.error;
+    if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }
+    if (error || !data || data.error) { const x = new Error(msg || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }
     return data.text || "";
   }
   const sample = Object.assign(async (input, opts) => ({ text: await callAI(input, opts), truncated: false }), {
