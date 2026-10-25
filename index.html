@@ -794,6 +794,7 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 .wan{min-width:110px;font-weight:500}
 .wago{text-decoration:none;display:inline-flex;align-items:center}
 #wamsg:empty{display:none}
+.fimp{margin-top:12px}.fimpb{display:inline-flex;cursor:pointer;font:600 14px var(--body);padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--blue-ink)}
 
 #mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 #mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
@@ -942,6 +943,7 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
           <label>Codi de família<input name="code" required maxlength="24" placeholder="XXXX-XXXX-XXXX-XXXX" autocapitalize="characters" spellcheck="false"></label>
           <button type="submit" class="primary">Uneix-m'hi</button></form>
       </div>
+      <div class="fimp"><label class="ghost fimpb">Importa una família des d'un fitxer<input type="file" id="fimp" accept=".json,application/json" hidden></label></div>
       <p class="foot" id="fmsg" role="status"></p>
     </div>
     <div id="fhome" hidden>
@@ -1347,6 +1349,14 @@ function famSave(){clearTimeout(ASAVE);if(!FAMCODE)return;const f=readFam();if(J
 addEventListener("pagehide",()=>{if(ASAVE)famSave();});
 const fmtCode=c=>c.match(/.{1,4}/g).join("-");
 const cleanCode=s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+$("#fimp").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f||!DB||!UID)return;const m=$("#fmsg");m.textContent="Important…";
+ try{const X=JSON.parse(await f.text());if(X.tipus!=="menu-de-familia-export"||!X.dades||!X.dades.config)throw 0;
+  const nom=X.nom||X.dades.config.nom||"Família";let code=/^[A-Z0-9]{16}$/.test(X.codi||"")?X.codi:newCode();
+  try{await DB.doc("families/"+code).set({nom,membres:{[UID]:true},creada:new Date().toISOString()});}catch(_){code=newCode();await DB.doc("families/"+code).set({nom,membres:{[UID]:true},creada:new Date().toISOString()});}
+  const D={menu:{A:{},B:{},C:{},D:{}},compra:{items:{}},preferides:{r:{}},despesa:{items:{}},...X.dades};delete D.docs;const cf={...D.config};delete cf.uids;delete cf.dispOK;D.config=cf;
+  for(const[k,v]of Object.entries(D))await DB.doc("families/"+code+"/dades/"+k).set(v);
+  await DB.doc("data/users/"+UID+"/meu").set({fam:code});await joinFam(code);m.textContent="Família importada.";}
+ catch(err){m.textContent="No s'ha pogut importar: el fitxer no és vàlid.";}});
 function newCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";const b=new Uint8Array(16);crypto.getRandomValues(b);return [...b].map(x=>A[x%32]).join("");}
 $("#fnew").addEventListener("submit",async e=>{e.preventDefault();if(!DB||!UID)return;const nom=e.target.elements.nom.value.trim();if(!nom)return;$("#fmsg").textContent="Creant…";
  const code=newCode();
