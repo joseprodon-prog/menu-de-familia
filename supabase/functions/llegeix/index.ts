@@ -25,16 +25,25 @@ Deno.serve(async (req) => {
       ...images.map((data: string) => ({ type: "image", source: { type: "base64", media_type: "image/jpeg", data } })),
       { type: "text", text: prompt },
     ];
+    const t0 = Date.now();
+    console.log("llegeix: imatges", images.length, "bytes", images.reduce((a: number, x: string) => a + x.length, 0));
+    const ac = new AbortController();
+    const tm = setTimeout(() => ac.abort(), 120000);
     const r = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: ac.signal,
       headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 4000, messages: [{ role: "user", content }] }),
     });
     const j = await r.json();
+    clearTimeout(tm);
+    console.log("llegeix: API", r.status, Date.now() - t0, "ms", JSON.stringify(j.usage || j.error || {}));
     if (!r.ok) return out({ error: (j && j.error && j.error.message) || "Error de l'API" }, 502);
     const text = (j.content || []).filter((c: { type: string }) => c.type === "text").map((c: { text: string }) => c.text).join("");
     return out({ text, usage: j.usage });
   } catch (e) {
+    console.error("llegeix: error", String((e as Error).message || e));
+    if ((e as Error).name === "AbortError") return out({ error: "Claude ha trigat massa (més de 2 minuts)" }, 504);
     return out({ error: String((e as Error).message || e) }, 500);
   }
 });
