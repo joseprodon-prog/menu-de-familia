@@ -863,8 +863,8 @@ details.fold>summary{flex-wrap:nowrap}details.fold>summary .label{flex:1;min-wid
       <label class="drop" id="drop" tabindex="0"><input type="file" id="dfile" multiple hidden>
         <div class="dprev" id="dprev"></div>
         <span class="dempty" id="dempty"><span class="dropi" aria-hidden="true"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
-        <span class="dropt">Arrossega-hi tiquets, receptes, menús… o <u>tria'ls</u></span>
-        <span class="foot">Fotos, PDF, text · un o diversos alhora</span></span></label>
+        <span class="dropt">Arrossega-hi tiquets, receptes, menús, fotos de la nevera… o <u>tria'ls</u></span>
+        <span class="foot">Fotos, vídeos, PDF, text · un o diversos alhora</span></span></label>
       <div class="dbar" id="dbar" hidden>
         <div class="dbl"><input id="ddesc" maxlength="200" placeholder="Breu descripció (opcional)" aria-label="Breu descripció"><span class="dorig" id="dorig"></span></div>
         <button type="button" class="primary dgo" id="dgo">Processa</button>
@@ -1862,8 +1862,8 @@ document.addEventListener("keydown",e=>{if(DVI<0)return;if(e.key==="Escape")clos
 document.addEventListener("click",e=>{const b=e.target.closest(".dfold");if(!b)return;DFOLD=DFOLD===b.dataset.f?null:b.dataset.f;drawDocs();});
 const DPROMPT=(desc,names)=>`Ets l'assistent de la web «Menú de Família» d'una família catalana. T'envio imatges d'un o diversos documents que acaba de pujar (fitxers: ${names}).${desc?` Descripció de qui els puja: «${desc}».`:""} Avui és ${isoD(new Date())}.
 Identifica cada document i extreu-ne les dades. Respon NOMÉS amb JSON vàlid, sense text al voltant, amb aquesta forma:
-{"items":[{"tipus":"tiquet|recepta|menu|altres","resum":"descripció molt breu en català (màx. 60 caràcters)","despesa":{"d":"AAAA-MM-DD","b":"establiment","i":0.00,"t":"Alimentació|Drogueria i llar|Higiene personal|Altres","nota":"què s'ha comprat, breu"},"recepta":{"n":"nom","cat":"un de: ${GRUPS.join(", ")}","porc":"racions","a":0,"tot":0,"ing":["quantitat · ingredient"],"steps":["pas"]}}]}
-Regles: posa "despesa" només als tiquets i factures, i "recepta" només a les receptes (si no, null). L'import és el TOTAL imprès del tiquet; ignora anotacions fetes a mà. Si diverses imatges són pàgines d'un mateix document, és un sol ítem. No t'inventis res: si una dada no es llegeix, deixa-la buida. Tot en català.`;
+{"items":[{"tipus":"tiquet|recepta|menu|estoc|equipament|altres","productes":[{"nom":"","lloc":"Rebost|Nevera|Congelador"}],"resum":"descripció molt breu en català (màx. 60 caràcters)","despesa":{"d":"AAAA-MM-DD","b":"establiment","i":0.00,"t":"Alimentació|Drogueria i llar|Higiene personal|Altres","nota":"què s'ha comprat, breu"},"recepta":{"n":"nom","cat":"un de: ${GRUPS.join(", ")}","porc":"racions","a":0,"tot":0,"ing":["quantitat · ingredient"],"steps":["pas"]}}]}
+Regles: posa "despesa" només als tiquets i factures, i "recepta" només a les receptes (si no, null). Si són fotos o un vídeo d'una nevera, un congelador o un rebost, el tipus és "estoc" i a "productes" hi poses cada aliment que es vegi amb el seu lloc. Si són fotos d'una cuina amb aparells, el tipus és "equipament" i a "productes" hi poses cada aparell (fes servir, si s'hi correspon, un d'aquests noms: ${EQUIPG.flatMap(g=>g[1]).join(", ")}). L'import és el TOTAL imprès del tiquet; ignora anotacions fetes a mà. Si diverses imatges són pàgines d'un mateix document, és un sol ítem. No t'inventis res: si una dada no es llegeix, deixa-la buida. Tot en català.`;
 async function processa(){if(!STAGE.length||!FAMCODE)return;const btn=$("#dgo"),msg=$("#dmsg2");btn.disabled=true;const desc=$("#ddesc").value.trim();const files=STAGE.map(x=>x.f);
  const ids=[];const now=new Date().toISOString();
  try{msg.textContent="Pujant…";
@@ -1871,7 +1871,7 @@ async function processa(){if(!STAGE.length||!FAMCODE)return;const btn=$("#dgo"),
    const id="d"+uid36();ids.push(id);await famWrite("docs",{items:{[id]:{a,n:f.name.slice(0,120),sz:f.size,desc,ts:now,uid:UID,estat:"processant"}}});}
   let res=null;
   if(SAMPLE){msg.textContent="Llegint els documents…";let lim=null;try{lim=await SAMPLE.limits();}catch(e){}
-   if(lim&&lim.images){const imgs=[];for(const f of files){try{if(isImg(f))imgs.push(await imgBlob(f,1600));else if(isPdf(f))imgs.push(...await pdfPages(f,4,1400));}catch(e){}}
+   if(lim&&lim.images){const imgs=[];for(const f of files){try{if(isImg(f))imgs.push(await imgBlob(f,1600));else if(isPdf(f))imgs.push(...await pdfPages(f,4,1400));else if(/^video\//.test(f.type))imgs.push(...await videoFrames(f,6,1280));}catch(e){}}
     const max=lim.images.maxCount||5;
     if(imgs.length){try{res=await SAMPLE.json(DPROMPT(desc,files.map(f=>f.name).join(", ")),{images:imgs.slice(0,max),modelTier:"default",cache:false});}catch(e){res=null;}}}}
   const items=(res&&Array.isArray(res.items))?res.items:[];const done=[];let tip="",resum="",info=null;
@@ -1880,6 +1880,9 @@ async function processa(){if(!STAGE.length||!FAMCODE)return;const btn=$("#dgo"),
     DESP[id]=row;drawDesp();await famWrite("despesa",{items:{[id]:row}},()=>({items:live(DESP)}));done.push(`Despesa: ${row.b} · ${String(row.i.toFixed(2)).replace(".",",")} €`);info=info||{d:row.d,b:row.b,i:row.i};}
    else if(it.tipus==="recepta"&&it.recepta&&it.recepta.n&&DB&&UID){const r=it.recepta;const x={n:String(r.n).slice(0,80),cat:GRUPS.includes(r.cat)?r.cat:"Rebost",a:+r.a||0,tot:+r.tot||0,porc:String(r.porc||"").slice(0,30),ing:(r.ing||[]).join("\n").slice(0,4000),steps:(r.steps||[]).join("\n").slice(0,8000),src:"",fam:(CFG&&CFG.nom)||"",at:now};
     const rid="r"+uid36();const its=myItems();its[rid]=x;await DB.doc("receptes/"+UID).set({items:its});USERRECS[UID]={items:its};rebuild();done.push(`Receptari: ${x.n}`);}
+   else if((it.tipus==="estoc"||it.tipus==="equipament")&&Array.isArray(it.productes)&&it.productes.length){const cl=$(it.tipus==="estoc"?"#estoc":"#equips");let k=0;const nn=[];
+    for(const p of it.productes){const nm=String(p.nom||"").trim().replace(/^./,c=>c.toUpperCase()).slice(0,40);if(nm&&cl&&clAddItem(cl,nm,it.tipus==="estoc"?p.lloc:"")){k++;nn.push(nm);}}
+    if(k)famSave();done.push(`${it.tipus==="estoc"?"Estoc":"Equipament"}: ${k?nn.join(", "):"res de nou"}`);tip="altres";}
    else if(it.resum)done.push(`${DTIP[it.tipus]||"Document"}: ${it.resum} (el revisaré)`);}
   const fet=done.length&&!done.every(d=>/el revisaré/.test(d));
   const patch={};ids.forEach(id=>patch[id]={estat:fet?"fet":"pendent",tip:tip||null,nota:resum||null,info});await famWrite("docs",{items:patch});
@@ -1988,7 +1991,7 @@ document.addEventListener("change",async e=>{const inp=e.target.closest(".phadd 
  try{const res=await SAMPLE.json(PHPROMPT[kind],{images:imgs.slice(0,lim.images.maxCount||5),modelTier:"default",cache:false});
   const items=(res&&Array.isArray(res.items))?res.items:[];let n=0;const names=[];
   for(const it of items){const nm=String(it.nom||"").trim().replace(/^./,c=>c.toUpperCase()).slice(0,40);if(!nm)continue;if(clAddItem(cl,nm,kind==="stk"?it.lloc:"")){n++;names.push(nm);}}
-  if(n){if(cl.closest("details"))cl.closest("details").open=true;checkDirty();}
+  if(n){if(cl.closest("details"))cl.closest("details").open=true;famSave();}
   msg.textContent=n?`Afegits ${n}: ${names.join(", ")}. Desmarca el que no sigui correcte.`:"No he trobat res de nou.";}
  catch(_){msg.textContent="No s'han pogut llegir les imatges. Torna-ho a provar.";}});
 
