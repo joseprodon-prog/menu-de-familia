@@ -802,6 +802,7 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 .fnoml{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
 .fnoml input{font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg-input,#f8fafc);color:var(--fg)}
 #fshare.codebox{padding:0}
+#fhome #fmemb{margin-bottom:0}#fmemb .barbody{gap:10px}#fmemb #addm{align-self:flex-start}
 
 #mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 #mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
@@ -963,7 +964,7 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
         <p class="foot">Passa'l només als membres de la teva família: qui el té, veu i modifica les dades de la família.</p>
         <p class="foot" id="fwho"></p></div></details>
       <form id="fform" class="form" autocomplete="off">
-        <div class="box mbox"><span class="label">Membres de la família</span><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div>
+        <details class="fold agfold fbarx mbox" id="fmemb"><summary><span class="label">Membres de la família</span><span class="sel"></span></summary><div class="barbody"><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div></details>
         <div class="box">
           <details class="fold"><summary><span class="label">Equipament de cuina</span><span class="sel"></span></summary><div class="cl gcols" id="equips" data-name="eq"></div></details>
           <details class="fold"><summary><span class="label">A evitar a tota la família</span><span class="sel"></span></summary><div class="cl gcols" id="evitars" data-name="ev"></div></details>
