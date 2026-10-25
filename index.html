@@ -803,6 +803,11 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 .fnoml input{font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg-input,#f8fafc);color:var(--fg)}
 #fshare.codebox{padding:0}
 #fhome #fmemb{margin-bottom:0}#fmemb .barbody{gap:10px}#fmemb #addm{align-self:flex-start}
+.foldx{display:block;margin:10px auto 2px;width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;background:var(--blue-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f4f80' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 15l6-6 6 6'/%3E%3C/svg%3E") center/18px no-repeat}
+.foldx:hover{background-color:var(--line)}
+.foldx:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.agfold>.foldx{margin-bottom:12px}
+.rmm+.foldx{margin-top:14px}
 
 #mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 #mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
@@ -962,9 +967,9 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
         <span class="flab">Codi per unir-se a la família</span>
         <div class="coderow"><code id="fcode"></code><button type="button" class="ghost" id="fcopy">Copia el codi</button><button type="button" class="ghost" id="finvite">Copia la invitació</button></div>
         <p class="foot">Passa'l només als membres de la teva família: qui el té, veu i modifica les dades de la família.</p>
-        <p class="foot" id="fwho"></p></div></details>
+        <p class="foot" id="fwho"></p><button type="button" class="foldx" aria-label="Recull"></button></div></details>
       <form id="fform" class="form" autocomplete="off">
-        <details class="fold agfold fbarx mbox" id="fmemb"><summary><span class="label">Membres de la família</span><span class="sel"></span></summary><div class="barbody"><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div></details>
+        <details class="fold agfold fbarx mbox" id="fmemb"><summary><span class="label">Membres de la família</span><span class="sel"></span></summary><div class="barbody"><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button><button type="button" class="foldx" aria-label="Recull"></button></div></details>
         <div class="box">
           <details class="fold"><summary><span class="label">Equipament de cuina</span><span class="sel"></span></summary><div class="cl gcols" id="equips" data-name="eq"></div></details>
           <details class="fold"><summary><span class="label">A evitar a tota la família</span><span class="sel"></span></summary><div class="cl gcols" id="evitars" data-name="ev"></div></details>
@@ -979,7 +984,7 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 <span class="lgr"><span class="ag ag-c">Nom</span><span>Menja a casa</span></span>
 <span class="lgr"><span class="ag ag-t"><svg class="tupi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7.5" width="19" height="4" rx="1.3"/><path d="M4 11.5l.9 7a1.6 1.6 0 0 0 1.6 1.4h11a1.6 1.6 0 0 0 1.6-1.4l.9-7"/><path d="M6 11.5v2.2M18 11.5v2.2"/></svg>Nom</span><span>Se l'emporta (tàper)</span></span>
 <span class="lgr"><span class="ag ag-f">Nom</span><span>No hi és</span></span>
-<span class="lgr"><span class="bpill gst lgp"><span class="fqb">−</span><b>2</b><span class="fqb">+</span></span><span>Convidats a aquell àpat</span></span></span></span></span><span class="sel"></span></summary><div id="agenda" class="agwrap"></div></details>
+<span class="lgr"><span class="bpill gst lgp"><span class="fqb">−</span><b>2</b><span class="fqb">+</span></span><span>Convidats a aquell àpat</span></span></span></span></span><span class="sel"></span></summary><div id="agenda" class="agwrap"></div><button type="button" class="foldx" aria-label="Recull"></button></details>
         <div class="factions fbar"><button type="button" class="ghost danger" id="fleave">Surt d'aquesta família</button></div>
       </form>
     </div>
@@ -1313,7 +1318,7 @@ function memberHtml(m,i,open){return `<details class="member fold mfold" data-i=
  <details class="fold"><summary><span class="label">Intoleràncies i aliments que no menja</span><span class="sel"></span></summary><div class="cl gcols" data-name="int">${clHtml("int",INTG,toArr(m.intol))}</div></details>
  <details class="fold"><summary><span class="label">Li agrada</span><span class="sel"></span></summary><div class="cl gcols" data-name="lik">${clHtml("lik",GUSTG,toArr(m.pref))}</div></details>
  <details class="fold"><summary><span class="label">No li agrada</span><span class="sel"></span></summary><div class="cl gcols" data-name="nol">${clHtml("nol",GUSTG,toArr(m.nol))}</div></details>
- <button type="button" class="ghost danger rmm">Treu aquest membre</button></div></details>`}
+ <button type="button" class="ghost danger rmm">Treu aquest membre</button><button type="button" class="foldx" aria-label="Recull"></button></div></details>`}
 let CLGRP={};
 function clHtml(nm,groups,chosen,altres){chosen=chosen||[];const pair=x=>Array.isArray(x)?x:[x,x];const base=groups.flatMap(g=>g[1].map(x=>pair(x)[0]));const extra=chosen.filter(x=>!base.includes(x));
  const ck=(x,g)=>{const [v,l]=pair(x);return `<label class="ck"${g?` data-g="${esc(g)}"`:""}><input type="checkbox" name="${nm}" value="${esc(v)}"${chosen.includes(v)?" checked":""}> ${esc(l)}</label>`};
@@ -1960,6 +1965,8 @@ let start="receptari";try{const s=localStorage.getItem("rf-tab");if(TABS.include
 document.addEventListener("change",e=>{if(e.target.name!=="tfreq")return;TFREQ=e.target.value;drawM2c();});
 
 addEventListener("resize",()=>{clearTimeout(window.__agr);window.__agr=setTimeout(()=>{if($("#agenda"))drawAgenda();},150);});
+
+document.addEventListener("click",e=>{const b=e.target.closest(".foldx");if(!b)return;e.preventDefault();const d=b.closest("details");if(!d)return;d.open=false;const r=d.getBoundingClientRect();if(r.top<0)d.scrollIntoView({block:"start",behavior:"smooth"});const s=d.querySelector(":scope>summary");if(s)s.focus({preventScroll:true});});
 
 </script>
 <script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
