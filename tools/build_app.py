@@ -19,6 +19,9 @@ login_css='''
 #mflogin input{font:16px var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
 #mflogin button.primary{font:600 16px var(--body);padding:12px;border-radius:999px;border:0;background:var(--blue,#2a78c2);color:#fff;cursor:pointer}
 #mfout{margin:28px auto 8px;display:block}
+#mflogin button.sec{font:600 16px var(--body);padding:11px;border-radius:999px;border:2px solid var(--blue,#2a78c2);background:#fff;color:var(--blue,#2a78c2);cursor:pointer}
+#mflogin .mfor{display:flex;align-items:center;gap:10px;margin:6px 0 0;font:600 13px var(--body);color:var(--muted)}
+#mflogin .mfor::before,#mflogin .mfor::after{content:"";flex:1;height:1px;background:var(--line)}
 #mflogin .ghost{font:600 14px var(--body);padding:8px;border:0;background:none;color:var(--muted);cursor:pointer}
 #mflogin [hidden]{display:none}
 '''

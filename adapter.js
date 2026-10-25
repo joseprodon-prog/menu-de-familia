@@ -20,10 +20,11 @@
   function showLogin() {
     const d = document.createElement("div");
     d.id = "mflogin";
-    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>Entra amb el teu correu i una contrasenya. La primera vegada, prem «Crea el compte».</p>
+    const inv = /[?&]codi=/.test(location.search);
+    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>${inv ? "T'han convidat a una família. Si és la primera vegada, escriu el teu correu, tria una contrasenya i prem <b>Crea el compte</b>." : "Escriu el teu correu i la contrasenya. Si és la primera vegada, prem <b>Crea el compte</b>."}</p>
       <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic">
       <input type="password" required minlength="6" placeholder="Contrasenya (mínim 6 caràcters)" autocomplete="current-password" aria-label="Contrasenya">
-      <button class="primary" type="submit">Entra</button><button type="button" class="ghost" id="mflnew">Crea el compte</button></form>
+      <button class="primary" type="submit">Entra</button><span class="mfor">Primera vegada?</span><button type="button" class="sec" id="mflnew">Crea el compte</button></form>
       <p class="foot" id="mflm" role="status"></p></div>`;
     const go = () => { document.body.appendChild(d); d.querySelector("input").focus(); };
     if (document.body) go(); else addEventListener("DOMContentLoaded", go);
