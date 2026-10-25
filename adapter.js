@@ -20,31 +20,27 @@
   function showLogin() {
     const d = document.createElement("div");
     d.id = "mflogin";
-    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>Entra amb el teu correu. T'hi enviarem un codi (i un enllaç) per accedir-hi, sense contrasenya.</p>
-      <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic"><button class="primary" type="submit">Envia'm el codi</button></form>
-      <form id="mflc" hidden><input inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Codi del correu" aria-label="Codi"><button class="primary" type="submit">Entra</button><button type="button" class="ghost" id="mflback">Canvia el correu</button></form>
+    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>Entra amb el teu correu i una contrasenya. La primera vegada, prem «Crea el compte».</p>
+      <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic">
+      <input type="password" required minlength="6" placeholder="Contrasenya (mínim 6 caràcters)" autocomplete="current-password" aria-label="Contrasenya">
+      <button class="primary" type="submit">Entra</button><button type="button" class="ghost" id="mflnew">Crea el compte</button></form>
       <p class="foot" id="mflm" role="status"></p></div>`;
     const go = () => { document.body.appendChild(d); d.querySelector("input").focus(); };
     if (document.body) go(); else addEventListener("DOMContentLoaded", go);
-    let email = "";
     const msg = (t) => { d.querySelector("#mflm").textContent = t; };
-    const errTxt = (e) => /rate limit/i.test(e.message) ? "Massa enviaments seguits. Espera una estona (fins a 1 hora) o fes servir el codi del darrer correu que t'hagi arribat." : e.message;
+    const vals = () => { const [e, p] = d.querySelectorAll("#mflf input"); return { email: e.value.trim().toLowerCase(), password: p.value }; };
+    const tr = (m) => /invalid login/i.test(m) ? "Correu o contrasenya incorrectes. Si és la primera vegada, prem «Crea el compte»." : /already registered/i.test(m) ? "Aquest correu ja té compte: prem «Entra»." : /confirm/i.test(m) ? "Cal confirmar el correu: a Supabase, desactiva «Confirm email»." : /rate limit/i.test(m) ? "Massa intents seguits. Espera una estona." : m;
     d.querySelector("#mflf").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      email = d.querySelector("#mflf input").value.trim().toLowerCase();
-      msg("Enviant…");
-      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
-      d.querySelector("#mflf").hidden = true; d.querySelector("#mflc").hidden = false; d.querySelector("#mflc input").focus();
-      msg(error ? "No s'ha pogut enviar: " + errTxt(error) : "Fet. Escriu el codi que t'ha arribat al correu (o toca l'enllaç). Mira també el correu brossa.");
+      e.preventDefault(); const v = vals(); msg("Entrant…");
+      const { error } = await sb.auth.signInWithPassword(v);
+      if (error) msg(tr(error.message));
     });
-    d.querySelector("#mflc").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const token = d.querySelector("#mflc input").value.replace(/\s/g, "");
-      msg("Comprovant…");
-      const { error } = await sb.auth.verifyOtp({ email, token, type: "email" });
-      if (error) msg("Codi incorrecte o caducat. Torna-ho a provar.");
+    d.querySelector("#mflnew").addEventListener("click", async () => {
+      const v = vals(); if (!v.email || v.password.length < 6) { msg("Escriu el correu i una contrasenya de 6 caràcters o més."); return; }
+      msg("Creant el compte…");
+      const { data, error } = await sb.auth.signUp(v);
+      if (error) msg(tr(error.message)); else if (!data.session) msg("Compte creat, però cal confirmar el correu. A Supabase, desactiva «Confirm email» i torna a prémer «Entra».");
     });
-    d.querySelector("#mflback").addEventListener("click", () => { d.querySelector("#mflc").hidden = true; d.querySelector("#mflf").hidden = false; msg(""); });
   }
   function hideLogin() { const d = document.getElementById("mflogin"); if (d) d.remove(); }
 
