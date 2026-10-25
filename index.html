@@ -796,6 +796,9 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 #wamsg:empty{display:none}
 .fimp{margin-top:12px}.fimpb{display:inline-flex;cursor:pointer;font:600 14px var(--body);padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--blue-ink)}
 #fhome .codebox{margin-bottom:14px}
+#fhome .fbarx{margin-bottom:14px}
+.fbarx .barbody{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
+.fbarx .coderow{flex-wrap:wrap}
 
 #mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 #mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
@@ -949,10 +952,12 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
     </div>
     <div id="fhome" hidden>
       <div class="sechead"><h2 id="fname">La meva família</h2><span class="foot" id="fsave" role="status"></span></div>
-      <div class="box codebox"><span class="label">Codi per unir-se a la família</span>
-        <div class="coderow"><code id="fcode"></code><button type="button" class="ghost" id="fcopy">Copia</button></div>
+      <details class="fold agfold fbarx" id="fshare"><summary><span class="label">Compartir</span><span class="sel"></span></summary>
+        <div class="barbody">
+        <span class="flab">Codi per unir-se a la família</span>
+        <div class="coderow"><code id="fcode"></code><button type="button" class="ghost" id="fcopy">Copia el codi</button><button type="button" class="ghost" id="finvite">Copia la invitació</button></div>
         <p class="foot">Passa'l només als membres de la teva família: qui el té, veu i modifica les dades de la família.</p>
-        <p class="foot" id="fwho"></p></div>
+        <p class="foot" id="fwho"></p></div></details>
       <form id="fform" class="form" autocomplete="off">
         <div class="box mbox"><span class="label">Membres de la família</span><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div>
         <div class="box">
@@ -1378,7 +1383,9 @@ $("#fleave").addEventListener("click",async()=>{if(!FAMCODE)return;if(!confirmLe
 let leaveArm=0;
 function confirmLeave(){const b=$("#fleave");if(Date.now()-leaveArm<4000){b.textContent="Surt d'aquesta família";return true;}
  leaveArm=Date.now();b.textContent="Toca un altre cop per confirmar";setTimeout(()=>{b.textContent="Surt d'aquesta família"},4000);return false;}
-$("#fcopy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("#fcode").textContent);$("#fcopy").textContent="Copiat";}catch(e){$("#fcopy").textContent="Selecciona'l i copia'l";}setTimeout(()=>$("#fcopy").textContent="Copia",2500);});
+$("#fcopy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("#fcode").textContent);$("#fcopy").textContent="Copiat";}catch(e){$("#fcopy").textContent="Selecciona'l i copia'l";}setTimeout(()=>$("#fcopy").textContent="Copia el codi",2500);});
+$("#finvite").addEventListener("click",async()=>{const b=$("#finvite");const t=`Uneix-te a la família ${(CFG&&CFG.nom)||""} a «Menú de Família»: obre ${typeof APPURL!=="undefined"?APPURL:location.href}, entra amb el teu correu i, a «La meva Família», escriu el codi ${$("#fcode").textContent}.`;
+ const ok=typeof copyTxt==="function"?await copyTxt(t):false;b.textContent=ok?"Copiada: enganxa-la al WhatsApp":"No s'ha pogut copiar";setTimeout(()=>b.textContent="Copia la invitació",3000);});
 
 function drawHead(){$("#famkick").textContent=FAMCODE&&CFG&&CFG.nom?"Família "+CFG.nom:"Cuina de casa";$("#fname").textContent=CFG&&CFG.nom?"Família "+CFG.nom:"La meva família";}
 async function drawWho(){const ids=Object.entries((FAMDOC&&FAMDOC.membres)||{}).filter(([,v])=>v).map(([k])=>k);if(!ids.length){$("#fwho").textContent="";return;}
