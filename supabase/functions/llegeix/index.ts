@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       method: "POST",
       signal: ac.signal,
       headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-      body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 4000, messages: [{ role: "user", content }] }),
+      body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 16000, messages: [{ role: "user", content }] }),
     });
     const j = await r.json();
     clearTimeout(tm);
