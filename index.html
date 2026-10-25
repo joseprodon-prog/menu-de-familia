@@ -953,6 +953,7 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
         <p class="foot">Passa'l només als membres de la teva família: qui el té, veu i modifica les dades de la família.</p>
         <p class="foot" id="fwho"></p></div>
       <form id="fform" class="form" autocomplete="off">
+        <div class="box mbox"><span class="label">Membres de la família</span><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div>
         <div class="box">
           <div class="frow"><label>Nom de la família<input name="fnom" maxlength="60"></label>
 </div>
@@ -965,7 +966,6 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
           <div class="fgrp"><span class="flab">Pressupost d'alimentació<span class="iwrap"><button type="button" class="ibtn" aria-expanded="false" aria-controls="presi" aria-label="Com es fa l'equivalència">i</button><span class="ibub" id="presi" role="tooltip" hidden>Es parteix del cost per dia.<br>Setmana = dia × 7.<br>Mes = dia × 30,4 (365 dies ÷ 12 mesos).<br>Exemple: 210 €/setmana = 30 €/dia = 912,50 €/mes.<br>S'arrodoneix a 1 € el dia i a 5 € la setmana i el mes.</span></span></span><div class="pres"><span class="bpill stp"><button type="button" class="fqb" data-pst="-5" aria-label="Menys pressupost">−</button><input name="pimp" type="number" min="0" step="5" inputmode="decimal" placeholder="—" aria-label="Import del pressupost"><b>€</b><button type="button" class="fqb" data-pst="5" aria-label="Més pressupost">+</button></span><div class="seg" role="radiogroup" aria-label="Període del pressupost">
             <label><input type="radio" name="pper" value="dia"><span>Dia</span></label><label><input type="radio" name="pper" value="setmana" checked><span>Setmana</span></label><label><input type="radio" name="pper" value="mes"><span>Mes</span></label></div></div><p class="foot" id="presinfo"></p></div></div>
         </div>
-        <div class="box mbox"><span class="label">Membres de la família</span><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div>
         <details class="fold agfold"><summary><span class="label">Calendari setmanal · qui menja a casa<span class="iwrap"><button type="button" class="ibtn" aria-expanded="false" aria-controls="agi1" aria-label="Com funciona">i</button><span class="ibub" id="agi1" role="tooltip" hidden><span class="lgt">Cada clic sobre un nom canvia l'estat:</span>
 <span class="lgr"><span class="ag ag-c">Nom</span><span>Menja a casa</span></span>
 <span class="lgr"><span class="ag ag-t"><svg class="tupi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7.5" width="19" height="4" rx="1.3"/><path d="M4 11.5l.9 7a1.6 1.6 0 0 0 1.6 1.4h11a1.6 1.6 0 0 0 1.6-1.4l.9-7"/><path d="M6 11.5v2.2M18 11.5v2.2"/></svg>Nom</span><span>Se l'emporta (tàper)</span></span>
