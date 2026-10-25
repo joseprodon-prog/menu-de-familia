@@ -1356,7 +1356,7 @@ $("#fimp").addEventListener("change",async e=>{const f=e.target.files[0];e.targe
   const D={menu:{A:{},B:{},C:{},D:{}},compra:{items:{}},preferides:{r:{}},despesa:{items:{}},...X.dades};delete D.docs;const cf={...D.config};delete cf.uids;delete cf.dispOK;D.config=cf;
   for(const[k,v]of Object.entries(D))await DB.doc("families/"+code+"/dades/"+k).set(v);
   await DB.doc("data/users/"+UID+"/meu").set({fam:code});await joinFam(code);m.textContent="Família importada.";}
- catch(err){m.textContent="No s'ha pogut importar: el fitxer no és vàlid.";}});
+ catch(err){m.textContent=err===0?"No s'ha pogut importar: el fitxer no és vàlid.":"No s'ha pogut importar: "+((err&&err.message)||err);}});
 function newCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";const b=new Uint8Array(16);crypto.getRandomValues(b);return [...b].map(x=>A[x%32]).join("");}
 $("#fnew").addEventListener("submit",async e=>{e.preventDefault();if(!DB||!UID)return;const nom=e.target.elements.nom.value.trim();if(!nom)return;$("#fmsg").textContent="Creant…";
  const code=newCode();
