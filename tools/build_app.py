@@ -8,7 +8,7 @@ hh=open(SP+'/menus-familia.html',encoding='utf-8').read();head=hh[:hh.index('</s
 head=re.sub(r'<title>.*?</title>\n?','',head).replace('<meta name="claude:viewport-fit-sides" content="cover">\n','')
 # fitxers: /_blob/ -> Supabase Storage
 a=a.replace('"/_blob/"+','(window.BLOBBASE||"/_blob/")+').replace('/_blob/${','${window.BLOBBASE||"/_blob/"}${')
-a=a.replace('const APPURL="https://claude.ai/artifact/9kT5ZGR5xToApPz85hikHh";','const APPURL=location.origin+"/";')
+a=a.replace('const APPURL="https://menu-de-familia.pages.dev/";','const APPURL=location.origin+"/";')
 assert '/_blob/"' not in a.replace('||"/_blob/"','')
 a=a.replace('%%RECS%%',r)
 login_css='''
