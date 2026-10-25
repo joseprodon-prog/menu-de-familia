@@ -821,6 +821,10 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 details.fold>summary{flex-wrap:nowrap}details.fold>summary .label{flex:1;min-width:0}
 #fhome .fbarx{margin-bottom:0}#fhome #fshare{margin-bottom:14px}
 #fcompra .barbody .frow{margin-top:4px}
+.phadd{display:flex;flex-direction:column;gap:6px;margin:2px 0 4px}
+.phbtn{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;cursor:pointer;font:600 14px var(--body);padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--blue-ink)}
+.phbtn:hover{background:var(--blue-soft)}
+.phmsg:empty{display:none}
 
 #mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 #mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
@@ -984,8 +988,8 @@ details.fold>summary{flex-wrap:nowrap}details.fold>summary .label{flex:1;min-wid
       <form id="fform" class="form" autocomplete="off">
         <details class="fold agfold fbarx mbox" id="fmemb"><summary><span class="label">Membres de la família</span><span class="sel"></span></summary><div class="barbody"><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button><button type="button" class="foldx" aria-label="Recull"></button></div></details>
         <details class="fold agfold fbarx" id="fevit"><summary><span class="label">A evitar a tota la família</span><span class="sel"></span></summary><div class="barbody"><div class="cl gcols" id="evitars" data-name="ev"></div><button type="button" class="foldx" aria-label="Recull"></button></div></details>
-        <details class="fold agfold fbarx" id="fequip"><summary><span class="label">Equipament de cuina</span><span class="sel"></span></summary><div class="barbody"><div class="cl gcols" id="equips" data-name="eq"></div><button type="button" class="foldx" aria-label="Recull"></button></div></details>
-        <details class="fold agfold fbarx" id="festoc"><summary><span class="label">Estoc existent<span class="iwrap"><button type="button" class="ibtn" aria-expanded="false" aria-controls="esti" aria-label="Què és l'estoc">i</button><span class="ibub" id="esti" role="tooltip" hidden>El que ja teniu a casa. Afegeix-hi els productes amb «+ Afegeix» a cada columna i desmarca'ls quan s'acabin. Quan generis la llista de la compra, el que hi ha a l'estoc no s'hi afegeix.</span></span></span><span class="sel"></span></summary><div class="barbody"><div class="cl gcols" id="estoc" data-name="stk"></div><button type="button" class="foldx" aria-label="Recull"></button></div></details>
+        <details class="fold agfold fbarx" id="fequip"><summary><span class="label">Equipament de cuina</span><span class="sel"></span></summary><div class="barbody"><div class="phadd"><label class="phbtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Afegeix des de fotos o vídeo de la cuina<input type="file" accept="image/*,video/*" multiple hidden data-kind="eq"></label><span class="foot phmsg" role="status"></span></div><div class="cl gcols" id="equips" data-name="eq"></div><button type="button" class="foldx" aria-label="Recull"></button></div></details>
+        <details class="fold agfold fbarx" id="festoc"><summary><span class="label">Estoc existent<span class="iwrap"><button type="button" class="ibtn" aria-expanded="false" aria-controls="esti" aria-label="Què és l'estoc">i</button><span class="ibub" id="esti" role="tooltip" hidden>El que ja teniu a casa. Afegeix-hi els productes amb «+ Afegeix» a cada columna i desmarca'ls quan s'acabin. Quan generis la llista de la compra, el que hi ha a l'estoc no s'hi afegeix.</span></span></span><span class="sel"></span></summary><div class="barbody"><div class="phadd"><label class="phbtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Afegeix des de fotos o vídeo de la nevera, el congelador o el rebost<input type="file" accept="image/*,video/*" multiple hidden data-kind="stk"></label><span class="foot phmsg" role="status"></span></div><div class="cl gcols" id="estoc" data-name="stk"></div><button type="button" class="foldx" aria-label="Recull"></button></div></details>
         <details class="fold agfold fbarx" id="fcompra"><summary><span class="label">Llista de la compra i pressupost</span><span class="sel"></span></summary><div class="barbody"><div class="frow"><div class="fgrp"><span class="flab">Llista de la compra per defecte<span class="iwrap"><button type="button" class="ibtn" aria-expanded="false" aria-controls="cfi" aria-label="Com funciona la llista de la compra">i</button><span class="ibub" id="cfi" role="tooltip" hidden>Cada quant feu normalment la compra. És la llista que surt per defecte a «A treballar», on la pots canviar cada vegada:<br><b>Diària</b>: els plats d'avui.<br><b>Setmanal</b>: els plats de la setmana del menú en curs.<br><b>Mensual</b>: les 4 setmanes de la rotació (A, B, C i D).<br>Inclou també el menjar per emportar.</span></span></span><div class="seg" role="radiogroup" aria-label="Freqüència de la llista de la compra">
             <label><input type="radio" name="cfreq" value="dia"><span>Diària</span></label><label><input type="radio" name="cfreq" value="setmana" checked><span>Setmanal</span></label><label><input type="radio" name="cfreq" value="mes"><span>Mensual</span></label></div></div>
           <div class="fgrp"><span class="flab">Pressupost d'alimentació<span class="iwrap"><button type="button" class="ibtn" aria-expanded="false" aria-controls="presi" aria-label="Com es fa l'equivalència">i</button><span class="ibub" id="presi" role="tooltip" hidden>Es parteix del cost per dia.<br>Setmana = dia × 7.<br>Mes = dia × 30,4 (365 dies ÷ 12 mesos).<br>Exemple: 210 €/setmana = 30 €/dia = 912,50 €/mes.<br>S'arrodoneix a 1 € el dia i a 5 € la setmana i el mes.</span></span></span><div class="pres"><span class="bpill stp"><button type="button" class="fqb" data-pst="-5" aria-label="Menys pressupost">−</button><input name="pimp" type="number" min="0" step="5" inputmode="decimal" placeholder="—" aria-label="Import del pressupost"><b>€</b><button type="button" class="fqb" data-pst="5" aria-label="Més pressupost">+</button></span><div class="seg" role="radiogroup" aria-label="Període del pressupost">
@@ -1951,6 +1955,42 @@ document.addEventListener("click",async e=>{if(e.target.closest("#mydisp")){DTMP
  if(e.target.closest(".dmsave")){await saveWeek();return;}
  if(e.target.closest(".dmok")){await saveWeek(myMid());return;}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#dview2")&&!$("#dview2").hidden)closeDisp();});
+
+/* ---------- afegir a l'estoc / equipament des de fotos o vídeo ---------- */
+async function videoFrames(file,n,w){return new Promise((ok)=>{const v=document.createElement("video");v.muted=true;v.playsInline=true;v.preload="auto";const url=URL.createObjectURL(file);v.src=url;const out=[];
+ v.onerror=()=>{URL.revokeObjectURL(url);ok(out);};
+ v.onloadedmetadata=async()=>{const d=isFinite(v.duration)&&v.duration>0?v.duration:1;const c=document.createElement("canvas");
+  for(let i=0;i<n;i++){const t=d*(i+0.5)/n;await new Promise(r=>{v.onseeked=r;v.currentTime=t;setTimeout(r,1500);});
+   const s=Math.min(1,w/Math.max(v.videoWidth||w,v.videoHeight||w));c.width=Math.round((v.videoWidth||w)*s);c.height=Math.round((v.videoHeight||w)*s);c.getContext("2d").drawImage(v,0,0,c.width,c.height);
+   out.push(await new Promise(r=>c.toBlob(r,"image/jpeg",0.82)));}
+  URL.revokeObjectURL(url);ok(out.filter(Boolean));};});}
+const PHPROMPT={stk:`Ets l'assistent de cuina d'una família catalana. Les imatges són fotos o fotogrames d'un vídeo de la nevera, el congelador o el rebost. Fes l'inventari dels aliments i productes que s'hi veuen.
+Respon NOMÉS amb JSON: {"items":[{"nom":"nom curt en català, en singular o com es diu a la botiga (p. ex. Ous, Llet, Tomàquets, Pit de pollastre)","lloc":"Rebost|Nevera|Congelador"}]}
+Regles: deduïx el lloc pel que es veu (fred i prestatges de nevera → Nevera; gel, bosses congelades → Congelador; armari → Rebost). No repeteixis productes. No t'inventis res que no es vegi.`,
+ eq:`Ets l'assistent de cuina d'una família catalana. Les imatges són fotos o fotogrames d'un vídeo d'una cuina. Fes la llista de l'equipament i els aparells de cuina que s'hi veuen.
+Respon NOMÉS amb JSON: {"items":[{"nom":"nom en català"}]}
+Fes servir, si s'hi correspon, exactament un d'aquests noms: ${EQUIPG.flatMap(g=>g[1]).join(", ")}. Si no, un nom curt en català (p. ex. Cafetera, Torradora). No t'inventis res que no es vegi.`};
+function clAddItem(cl,name,group){const nm=cl.dataset.name;const ex=[...cl.querySelectorAll("input[type=checkbox]")].find(x=>norm(x.value)===norm(name));if(ex){if(ex.checked)return false;ex.checked=true;return true;}
+ const cols=[...cl.querySelectorAll(".gcol")];const col=cols.find(c=>norm((c.querySelector(".gt")||{}).textContent||"")===norm(group||""))||cols[cols.length-1];if(!col)return false;
+ const g=(col.querySelector(".gt")||{}).textContent||"";CLGRP[name]=g;const add=col.querySelector(".addo");const html=`<label class="ck" data-g="${esc(g)}"><input type="checkbox" name="${nm}" value="${esc(name)}" checked> ${esc(name)}</label>`;
+ if(add)add.insertAdjacentHTML("beforebegin",html);else col.insertAdjacentHTML("beforeend",html);return true;}
+document.addEventListener("change",async e=>{const inp=e.target.closest(".phadd input[type=file]");if(!inp)return;const files=[...inp.files];inp.value="";if(!files.length)return;
+ const kind=inp.dataset.kind;const box=inp.closest(".phadd");const msg=box.querySelector(".phmsg");const cl=box.parentElement.querySelector(".cl");
+ msg.textContent="Preparant les imatges…";const imgs=[];
+ for(const f of files){try{if(/^video\//.test(f.type))imgs.push(...await videoFrames(f,6,1280));else imgs.push(await imgBlob(f,1600));}catch(_){}}
+ if(!imgs.length){msg.textContent="No s'han pogut llegir els fitxers.";return;}
+ let lim=null;try{lim=SAMPLE&&await SAMPLE.limits();}catch(_){}
+ if(!SAMPLE||!lim||!lim.images){
+  if(ASSETS&&FAMCODE){try{const ids=[];for(const f of files){const t=EXT[fext(f)]||f.type;const a=(await ASSETS.upload(f,t?{type:t}:undefined)).id;const id="d"+uid36();ids.push(id);await famWrite("docs",{items:{[id]:{a,n:f.name.slice(0,120),sz:f.size,desc:kind==="stk"?"Estoc (foto)":"Equipament de cuina (foto)",ts:new Date().toISOString(),uid:UID,estat:"pendent",tip:"altres"}}});}
+   msg.textContent="Les fotos s'han desat. Encara no es poden llegir aquí: les processaré jo i afegiré els productes.";}catch(_){msg.textContent="No s'han pogut desar les fotos.";}}
+  else msg.textContent="Aquí encara no es poden llegir fotos.";return;}
+ msg.textContent="Mirant què hi ha…";
+ try{const res=await SAMPLE.json(PHPROMPT[kind],{images:imgs.slice(0,lim.images.maxCount||5),modelTier:"default",cache:false});
+  const items=(res&&Array.isArray(res.items))?res.items:[];let n=0;const names=[];
+  for(const it of items){const nm=String(it.nom||"").trim().replace(/^./,c=>c.toUpperCase()).slice(0,40);if(!nm)continue;if(clAddItem(cl,nm,kind==="stk"?it.lloc:"")){n++;names.push(nm);}}
+  if(n){if(cl.closest("details"))cl.closest("details").open=true;checkDirty();}
+  msg.textContent=n?`Afegits ${n}: ${names.join(", ")}. Desmarca el que no sigui correcte.`:"No he trobat res de nou.";}
+ catch(_){msg.textContent="No s'han pogut llegir les imatges. Torna-ho a provar.";}});
 
 const TABS=["docs","receptari","menu","treball","despesa","familia"];
 const tabs=[...document.querySelectorAll("nav button")];
