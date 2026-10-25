@@ -799,6 +799,9 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
 #fhome .fbarx{margin-bottom:14px}
 .fbarx .barbody{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
 .fbarx .coderow{flex-wrap:wrap}
+.fnoml{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.fnoml input{font:16px var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg-input,#f8fafc);color:var(--fg)}
+#fshare.codebox{padding:0}
 
 #mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
 #mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
@@ -952,8 +955,9 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
     </div>
     <div id="fhome" hidden>
       <div class="sechead"><h2 id="fname">La meva família</h2><span class="foot" id="fsave" role="status"></span></div>
-      <details class="fold agfold fbarx" id="fshare"><summary><span class="label">Compartir</span><span class="sel"></span></summary>
+      <details class="fold agfold fbarx codebox" id="fshare"><summary><span class="label">Compartir</span><span class="sel"></span></summary>
         <div class="barbody">
+        <label class="fnoml"><span class="flab">Nom de la família</span><input name="fnom" form="fform" maxlength="60" autocomplete="off"></label>
         <span class="flab">Codi per unir-se a la família</span>
         <div class="coderow"><code id="fcode"></code><button type="button" class="ghost" id="fcopy">Copia el codi</button><button type="button" class="ghost" id="finvite">Copia la invitació</button></div>
         <p class="foot">Passa'l només als membres de la teva família: qui el té, veu i modifica les dades de la família.</p>
@@ -961,8 +965,6 @@ nav [data-v=familia] .dshort{display:none}@media (max-width:560px){nav [data-v=f
       <form id="fform" class="form" autocomplete="off">
         <div class="box mbox"><span class="label">Membres de la família</span><div id="members" class="members"></div><button type="button" class="ghost" id="addm">+ Afegeix un membre</button></div>
         <div class="box">
-          <div class="frow"><label>Nom de la família<input name="fnom" maxlength="60"></label>
-</div>
           <details class="fold"><summary><span class="label">Equipament de cuina</span><span class="sel"></span></summary><div class="cl gcols" id="equips" data-name="eq"></div></details>
           <details class="fold"><summary><span class="label">A evitar a tota la família</span><span class="sel"></span></summary><div class="cl gcols" id="evitars" data-name="ev"></div></details>
         </div>
@@ -1341,7 +1343,7 @@ function updFolds(){document.querySelectorAll("#fform details.fold").forEach(d=>
  const se=d.querySelector(":scope>summary>.sel");if(se)se.textContent=s.length?s.join(" · "):"Cap";d.classList.toggle("has",s.length>0);});}
 let ASAVE=null;
 function checkDirty(){updFolds();if(!FAMCODE)return;const d=JSON.stringify(readFam())!==FSAVED;if(!d)return;$("#fsave").textContent="Desant…";clearTimeout(ASAVE);ASAVE=setTimeout(famSave,700);}
-["input","change"].forEach(ev=>$("#fform").addEventListener(ev,checkDirty));
+["input","change"].forEach(ev=>{$("#fform").addEventListener(ev,checkDirty);$("#fshare").addEventListener(ev,checkDirty);});
 $("#fform").addEventListener("click",()=>setTimeout(checkDirty,0));
 $("#fform").addEventListener("keydown",e=>{if(e.key==="Enter")setTimeout(checkDirty,0);});
 $("#addm").addEventListener("click",()=>{const n=$("#members").children.length;$("#members").insertAdjacentHTML("beforeend",memberHtml({},n,true));drawAgenda();});
