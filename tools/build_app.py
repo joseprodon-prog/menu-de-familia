@@ -1,5 +1,6 @@
 """Construeix l'app (index.html) a partir del mateix codi que l'artefacte (rf/*)."""
-import re,sys,os,json
+import re,sys,os,json,time
+BUILDV=str(int(time.time()))
 SP='/tmp/claude-0/-home-claude/c73124b9-ddc5-518c-9f9e-c7cacfd48e9e/scratchpad'
 OUT=sys.argv[1] if len(sys.argv)>1 else '/home/claude/menu-de-familia'
 a=open(SP+'/rf/app.js',encoding='utf-8').read();c=open(SP+'/rf/extra.css',encoding='utf-8').read();b=open(SP+'/rf/body.html',encoding='utf-8').read();r=open(SP+'/recs.json',encoding='utf-8').read()
@@ -32,6 +33,6 @@ pwa='''<meta charset="utf-8">
 <meta name="apple-mobile-web-app-title" content="Menú">
 '''
 b2=b.replace('</section>\n</div>','</section>\n  <button type="button" class="ghost" id="mfout" onclick="window.MF_SB&&MF_SB.auth.signOut()">Tanca la sessió</button>\n</div>') if '</section>\n</div>' in b else b
-html='<!doctype html>\n<html lang="ca">\n<head>\n'+pwa+head+c+login_css+'</style>\n</head>\n<body>\n'+b2+'\n<script src="config.js"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>\n<script src="adapter.js"></script>\n<script>\n'+a+'\n</script>\n<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>\n</body>\n</html>\n'
+html='<!doctype html>\n<html lang="ca">\n<head>\n'+pwa+head+c+login_css+'</style>\n</head>\n<body>\n'+b2+'\n<script src="config.js?v='+BUILDV+'"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>\n<script src="adapter.js?v='+BUILDV+'"></script>\n<script>\n'+a+'\n</script>\n<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>\n</body>\n</html>\n'
 open(OUT+'/index.html','w',encoding='utf-8').write(html)
 print('ok',len(html))
