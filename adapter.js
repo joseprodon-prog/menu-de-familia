@@ -145,13 +145,27 @@
     async delete(id) { await sb.storage.from("assets").remove([id]); },
   };
 
+  /* ---------- lectura de documents (API de Claude via Supabase) ---------- */
+  const b64 = (blob) => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1]); r.onerror = ko; r.readAsDataURL(blob); });
+  async function callAI(prompt, opts) {
+    const imgs = await Promise.all(((opts && opts.images) || []).slice(0, 8).map(b64));
+    const { data, error } = await sb.functions.invoke("llegeix", { body: { prompt: String(prompt), images: imgs } });
+    if (error || !data || data.error) { const x = new Error((data && data.error) || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }
+    return data.text || "";
+  }
+  const sample = Object.assign(async (input, opts) => ({ text: await callAI(input, opts), truncated: false }), {
+    limits: async () => ({ images: { maxCount: 8 } }),
+    json: async (input, opts) => { const t = await callAI(input, opts); const m = t.match(/\{[\s\S]*\}/); return JSON.parse(m ? m[0] : t); },
+  });
+
   window.claude = {
     use: async (name) => {
       await ready;
       if (name === "db") return db;
       if (name === "user") return user;
       if (name === "assets") return assets;
-      return null; // "sample" (lectura automàtica de documents): pendent per a una versió posterior
+      if (name === "sample") return sample;
+      return null;
     },
   };
 })();
