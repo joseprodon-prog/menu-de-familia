@@ -44,7 +44,9 @@ UPD="""<script>window.MF_VER="%%BV%%";
  async function apply(){try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.update().catch(()=>{})));}const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}location.reload();}
  function banner(){if(bar)return;bar=document.createElement('div');bar.className='mfupd';bar.setAttribute('role','status');bar.innerHTML='<span>🥬 Hi ha una versió nova de l\\'app</span><button type="button">Actualitza</button>';bar.querySelector('button').onclick=()=>{bar.querySelector('span').textContent='Actualitzant…';setTimeout(apply,600);};document.body.appendChild(bar);}
  async function chk(open){try{const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.v||String(j.v)===window.MF_VER)return;nv=j.v;
-  if(open&&!busy()){setTimeout(()=>{if(!busy())apply();else banner();},1500);}else banner();}catch(e){}}
+  if(open&&!busy()){setTimeout(()=>{if(!busy())apply();else note();},1500);}else note();}catch(e){}}
+ function note(){if(window.MF_NEWV)return;window.MF_NEWV=true;window.dispatchEvent(new Event('mf-newversion'));}
+ window.mfApplyUpdate=apply;
  addEventListener('load',()=>setTimeout(()=>chk(true),2500));
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk(true);});
  setInterval(()=>{if(document.visibilityState==='visible')chk(false);},600000);})();
