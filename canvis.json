@@ -1,5 +1,15 @@
 [
  {
+  "id": "v2026-10-26n",
+  "at": "2026-10-26T20:50:00+01:00",
+  "nom": "26 oct · nit (2)",
+  "canvis": [
+   "Família amb icona de rodeta de configuració",
+   "Puja documents arrodonit a l'esquerra",
+   "L'admin té sessió pròpia: es pot obrir alhora que l'app"
+  ]
+ },
+ {
   "id": "v2026-10-26m",
   "at": "2026-10-26T20:30:00+01:00",
   "nom": "26 oct · nit",
