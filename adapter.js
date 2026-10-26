@@ -4,7 +4,7 @@
 (function () {
   const CFG = window.MF_CONFIG || {};
   const RECOVERY = /type=recovery/.test(location.hash + location.search);
-  const sb = window.supabase.createClient(CFG.url, CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  const sb = window.supabase.createClient(CFG.url, CFG.key, { auth: Object.assign({ persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }, window.MF_STORAGEKEY ? { storageKey: window.MF_STORAGEKEY } : {}) });
   window.MF_SB = sb;
   window.BLOBBASE = CFG.url.replace(/\/$/, "") + "/storage/v1/object/public/assets/";
 
