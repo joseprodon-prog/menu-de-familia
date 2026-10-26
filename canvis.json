@@ -6,7 +6,8 @@
   "canvis": [
    "Tota la gestió a la web de l'Hortolà: usuaris i invitacions, bústia, comandes, catàleg, versions i notes",
    "Estat dels usuaris automàtic quan creen el compte o entren a l'app",
-   "Invitació amb el codi de família inclòs"
+   "Invitació amb el codi de família inclòs",
+   "L'Hortolà es reconeix des del servidor (preparat per al compte hortola@grupfilomena.com)"
   ]
  },
  {

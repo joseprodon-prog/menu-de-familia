@@ -115,14 +115,14 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),1800)};
 const fdt=a=>{if(!a)return "";const d=new Date(a);return d.toLocaleDateString("ca",{day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"})};
-const HORTOLA="3db65f50-ce4a-4430-a790-4788dc699b3f";
+let HORTOLA="";
 const OEST={rebuda:"Rebuda",confirmada:"Confirmada",enviada:"Enviada",entregada:"Entregada",anullada:"Anul·lada"};
 const SCATS=[["batch","Bases de batch cooking"],["select","Selectes acabats"],["cong","Per congelar i escalfar"],["precu","Precuinats · 2 o 3 passos"],["temp","Temporada i ocasions"]];
 let DB,SB,FB=[],ORD=[],SHOP={},FAMS=[],USERS=[],MEU={},FBF="nou";
 const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""}><summary><span class="bico" aria-hidden="true">${ico}</span><span class="btx"><b>${t}</b><small>${sub}</small></span><span class="cnt" id="c_${id}"></span><span class="chev" aria-hidden="true"></span></summary><div class="body" id="b_${id}"></div></details>`;
 
-(async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();
- if(uid!==HORTOLA){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
+(async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();let okH=false;try{const r=await SB.rpc("is_hortola");okH=!!(r&&r.data===true);}catch(e){}if(okH)HORTOLA=uid;
+ if(!okH){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
  $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app",true)+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
  DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();},()=>{});
@@ -230,7 +230,7 @@ Gràcies per sembrar amb nosaltres! 🌱
 
 Josep
 L'Hortolà de Menú de Família 🧑‍🌾
-hortala@grupfilomena.com`;}
+hortola@grupfilomena.com`;}
 function invWA(c){const n=(c.nom||"").split(" ")[0];const f=famByName(c.familia);return `Hola${n?" "+n:""}! 🥬 Estic preparant una app per organitzar els menús de casa, la llista de la compra i la despesa, i m'agradaria que fossis dels primers a provar-la.
 
 1. Obre ${invLink(c)} al mòbil
@@ -263,7 +263,7 @@ function uForm(c,a){const wa=c.canal==="WhatsApp";const famOpts=[...new Set([...
  <label class="f">Notes<textarea data-k="notes">${esc(c.notes)}</textarea></label>
  <details class="inv"><summary>✉️ Invitació per ${wa?"WhatsApp":"correu"}</summary>${wa?"":`<p class="foot">Assumpte: <b>${esc(SUBJ)}</b> <button class="btn sec" data-ucp="s">Copia</button></p>`}<pre class="invt">${esc(wa?invWA(c):invMail(c))}</pre>
  <div class="row"><button class="btn" data-ucp="b">Copia el text</button>${wa?(c.telefon?`<a class="btn sec" target="_blank" rel="noopener" href="https://wa.me/34${c.telefon.replace(/\D/g,"").replace(/^34(?=\d{9}$)/,"")}?text=${encodeURIComponent(invWA(c))}">Obre WhatsApp</a>`:""):(c.correu?`<a class="btn sec" href="mailto:${esc(c.correu)}?subject=${encodeURIComponent(SUBJ)}&body=${encodeURIComponent(invMail(c))}">Obre el correu</a>`:"")}${c.ei===0?`<button class="btn sec" data-ue="1">Marca com a convidat</button>`:""}</div>
- <p class="foot">${wa?"Envia'l des del teu WhatsApp.":"Envia'l des de hortala@grupfilomena.com."}</p></details>
+ <p class="foot">${wa?"Envia'l des del teu WhatsApp.":"Envia'l des de hortola@grupfilomena.com."}</p></details>
  ${(c.log||[]).length?`<div class="ulog">${c.log.slice().reverse().map(l=>`<div><small>${esc(l.d)}</small> ${esc(l.t)}</div>`).join("")}</div>`:""}
  <button class="btn del" data-udel>Elimina de la llista</button></div>`;}
 function uSet(id,k,v){CONV[id]={...CONV[id],[k]:v};const m=$("#umsg");if(m)m.textContent="Desant…";convSave();}
