@@ -159,7 +159,7 @@
     }
     const urls = ids.map((id) => window.BLOBBASE + id);
     let data, error;
-    try { ({ data, error } = await sb.functions.invoke("llegeix", { body: { prompt: String(prompt), urls } })); }
+    try { ({ data, error } = await sb.functions.invoke("llegeix", { body: { prompt: String(prompt), urls, web: !!(opts && opts.web) } })); }
     finally { if (ids.length) sb.storage.from("assets").remove(ids).catch(() => {}); }
     let msg = data && data.error;
     if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }

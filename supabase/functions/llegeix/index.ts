@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
     if (!who.ok) return out({ error: "Cal iniciar la sessió" }, 401);
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     if (!key) return out({ error: "Falta el secret ANTHROPIC_API_KEY" }, 500);
-    const { prompt, images = [], urls = [], model } = await req.json();
+    const { prompt, images = [], urls = [], model, web = false } = await req.json();
     console.log("llegeix: cos llegit");
     const pub = `${su}/storage/v1/object/public/assets/`;
     if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || !Array.isArray(urls) || images.length + urls.length > 8 ||
@@ -34,18 +34,33 @@ Deno.serve(async (req) => {
     const t0 = Date.now();
     console.log("llegeix: imatges", urls.length + images.length);
     const ac = new AbortController();
-    const tm = setTimeout(() => ac.abort(), 120000);
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      signal: ac.signal,
-      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-      body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 16000, messages: [{ role: "user", content }] }),
-    });
-    const j = await r.json();
+    const tm = setTimeout(() => ac.abort(), 140000);
+    const msgs: unknown[] = [{ role: "user", content }];
+    let j: any = null, r: Response | null = null, all: { type: string; text?: string }[] = [];
+    for (let turn = 0; turn < 3; turn++) {
+      r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        signal: ac.signal,
+        headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+        body: JSON.stringify({
+          model: model || "claude-sonnet-5-5", max_tokens: 16000, messages: msgs,
+          ...(web ? { tools: [{ type: "web_fetch_20260318", name: "web_fetch", max_uses: 4 }] } : {}),
+        }),
+      });
+      j = await r.json();
+      if (!r.ok) break;
+      all = all.concat(j.content || []);
+      // amb eines de servidor, el torn es pot pausar: es continua amb el que ja s'ha generat
+      if (j.stop_reason !== "pause_turn") break;
+      msgs.push({ role: "assistant", content: j.content });
+    }
     clearTimeout(tm);
-    console.log("llegeix: API", r.status, Date.now() - t0, "ms", JSON.stringify(j.usage || j.error || {}));
-    if (!r.ok) return out({ error: (j && j.error && j.error.message) || "Error de l'API" }, 502);
-    const text = (j.content || []).filter((c: { type: string }) => c.type === "text").map((c: { text: string }) => c.text).join("");
+    console.log("llegeix: API", r && r.status, Date.now() - t0, "ms", web ? "web" : "", JSON.stringify(j.usage || j.error || {}));
+    if (!r || !r.ok) return out({ error: (j && j.error && j.error.message) || "Error de l'API" }, 502);
+    // amb web_fetch, la resposta final és el text que ve després de l'últim resultat de l'eina
+    const blocks = all;
+    let last = -1; blocks.forEach((b, i) => { if (b.type === "web_fetch_tool_result") last = i; });
+    const text = blocks.slice(last + 1).filter((c) => c.type === "text").map((c) => c.text || "").join("");
     return out({ text, usage: j.usage });
   } catch (e) {
     console.error("llegeix: error", String((e as Error).message || e));
