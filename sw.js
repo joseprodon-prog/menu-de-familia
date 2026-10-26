@@ -1,5 +1,5 @@
 /* Menú de Família · service worker: primer la xarxa, la memòria cau si no hi ha connexió */
-const C = "mf-v56";
+const C = "mf-v57";
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(C).then((c) => c.addAll(["/", "/index.html", "/adapter.js", "/config.js", "/manifest.webmanifest", "/icon-192.png"]).catch(() => {}))); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== C).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", (e) => {
