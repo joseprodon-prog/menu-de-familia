@@ -37,5 +37,24 @@ pwa='''<meta charset="utf-8">
 '''
 b2=b.replace('</section>\n</div>','</section>\n  <button type="button" class="ghost" id="mfout" onclick="window.MF_SB&&MF_SB.auth.signOut()">Tanca la sessió</button>\n</div>') if '</section>\n</div>' in b else b
 html='<!doctype html>\n<html lang="ca">\n<head>\n'+pwa+head+c+login_css+'</style>\n</head>\n<body>\n'+b2+'\n<script src="config.js?v='+BUILDV+'"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>\n<script src="adapter.js?v='+BUILDV+'"></script>\n<script>\n'+a+'\n</script>\n<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>\n</body>\n</html>\n'
+
+UPD="""<script>window.MF_VER="%%BV%%";
+/* actualitzacions automàtiques: compara amb /version.json en obrir l'app, en tornar-hi i cada 10 minuts */
+(()=>{let nv=null,bar=null;const busy=()=>{const a=document.activeElement;return !!(a&&a.matches&&a.matches('input,textarea,select,[contenteditable="true"]'))||!!document.querySelector('#onb:not([hidden])');};
+ async function apply(){try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.update().catch(()=>{})));}const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}location.reload();}
+ function banner(){if(bar)return;bar=document.createElement('div');bar.className='mfupd';bar.setAttribute('role','status');bar.innerHTML='<span>🥬 Hi ha una versió nova de l\\'app</span><button type="button">Actualitza</button>';bar.querySelector('button').onclick=()=>{bar.querySelector('span').textContent='Actualitzant…';setTimeout(apply,600);};document.body.appendChild(bar);}
+ async function chk(open){try{const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.v||String(j.v)===window.MF_VER)return;nv=j.v;
+  if(open&&!busy()){setTimeout(()=>{if(!busy())apply();else banner();},1500);}else banner();}catch(e){}}
+ addEventListener('load',()=>setTimeout(()=>chk(true),2500));
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chk(true);});
+ setInterval(()=>{if(document.visibilityState==='visible')chk(false);},600000);})();
+</script>
+<style>.mfupd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:600;display:flex;align-items:center;gap:10px;background:#3f5a2a;color:#fff;padding:8px 8px 8px 14px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.25);font:600 14px var(--body);max-width:calc(100vw - 24px)}
+.mfupd button{border:0;border-radius:999px;background:#fbf1dc;color:#3f5a2a;font:700 14px var(--body);padding:8px 14px;cursor:pointer}</style>
+""".replace("%%BV%%",BUILDV)
+html=html.replace('</body>',UPD+'</body>') if '</body>' in html else html+UPD
+open(OUT+'/version.json','w').write('{"v":"%s"}' % BUILDV)
+import re as _re
+_sw=open(OUT+'/sw.js',encoding='utf-8').read();_sw=_re.sub(r'const C = "mf-[^"]*";','const C = "mf-%s";' % BUILDV,_sw);open(OUT+'/sw.js','w',encoding='utf-8').write(_sw)
 open(OUT+'/index.html','w',encoding='utf-8').write(html)
 print('ok',len(html))
