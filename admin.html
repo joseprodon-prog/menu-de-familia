@@ -68,6 +68,22 @@ label.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:
 .pill{display:inline-flex;align-items:center;background:var(--accs);border-radius:99px;padding:2px;gap:2px}
 .pill button{width:32px;height:32px;border:0;border-radius:99px;background:var(--surface);color:var(--fg);font:700 18px var(--body);cursor:pointer}
 .pill b{min-width:66px;text-align:center;font-variant-numeric:tabular-nums}
+details.sub{background:var(--bg);border-radius:12px}
+details.sub>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;user-select:none;-webkit-user-select:none}
+details.sub>summary::-webkit-details-marker{display:none}
+details.sub .btx b{font:700 16px var(--body)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.chev.sm{width:30px;height:30px;background-size:15px}
+.ubody{padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
+.ubody .btn[disabled]{opacity:.4;cursor:default}
+details.inv{background:var(--surface);border-radius:10px;padding:8px 10px}
+details.inv>summary{cursor:pointer;font-weight:700}
+.invt{white-space:pre-wrap;font:14px/1.45 var(--body);background:var(--bg);border-radius:8px;padding:10px;max-height:300px;overflow:auto}
+.ulog{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.fchip{background:var(--accs);border-radius:99px;padding:4px 10px;font-size:13.5px}
+.fchip small{color:var(--muted)}
+.vl{margin:4px 0 0;padding-left:20px}
+a.btn{text-decoration:none;display:inline-block}
 .noacc{background:var(--horts);border-radius:14px;padding:16px;font-weight:600}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:99px;font:700 13px var(--body);opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
 .toast.on{opacity:1}
@@ -107,18 +123,20 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
 
 (async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();
  if(uid!==HORTOLA){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
- $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("bus","📬","Bústia","Missatges dels usuaris",true)+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("fam","👨‍👩‍👧","Famílies i usuaris","Qui fa servir l'app")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("ver","🚀","Versió de l'app","Què tenen instal·lat")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
+ $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app",true)+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
  DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();},()=>{});
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
- loadFam();loadVer();
+ DB.doc("admin/convidats").onSnapshot(d=>{if(!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("[data-uf-id]"))){CONV=(d.exists&&d.data().items)||CONV;}CONVV=true;convSync();drawUsu();kpis();},()=>{CONVV=false;drawUsu(true);});
+ DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
+ loadFam();loadVer();drawNot();
  document.addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
 })();
 
-function kpis(){const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
+function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
  const ords=ORD.flatMap(u=>Object.values(u.items||{}));const pend=ords.filter(o=>o&&["rebuda","confirmada"].includes(o.estat)).length;
- $("#kpis").innerHTML=[[nous,"Missatges nous",nous>0],[pend,"Comandes pendents",pend>0],[FAMS.length,"Famílies"],[USERS.length,"Usuaris"]].map(([v,l,a])=>`<div class="kpi${a?" alert":""}"><b>${v}</b><small>${l}</small></div>`).join("");
- $("#c_bus").textContent=nous||"";$("#c_ord").textContent=pend||"";}
+ $("#kpis").innerHTML=[[pc,"Per convidar",pc>0],[nous,"Missatges nous",nous>0],[pend,"Comandes pendents",pend>0],[USERS.length,"Usuaris amb compte"]].map(([v,l,a])=>`<div class="kpi${a?" alert":""}"><b>${v}</b><small>${l}</small></div>`).join("");
+ $("#c_bus").textContent=nous||"";$("#c_usu").textContent=pc||"";$("#c_ord").textContent=pend||"";}
 
 /* ---------- Bústia ---------- */
 function drawBus(){const el=$("#b_bus");if(!el)return;const L=FB.flatMap(f=>Object.entries(f.items||{}).map(([sid,i])=>({uid:f.uid,nom:f.nom,fam:f.fam||i.fam,sid,...i}))).filter(i=>i&&i.t).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
@@ -146,15 +164,7 @@ async function loadFam(){try{const {data:fs}=await SB.from("docs").select("path,
   FAMS=(fs||[]).filter(r=>/^families\/[^/]+$/.test(r.path)).map(r=>({code:r.path.split("/")[1],...r.data}));
   const {data:us,error}=await SB.rpc("admin_users");USERS=error?[]:(us||[]);
   const {data:ms}=await SB.from("docs").select("path,data").like("path","data/users/%");MEU={};(ms||[]).forEach(r=>{const [, , uid, k]=r.path.split("/");MEU[uid]=MEU[uid]||{};MEU[uid][k]=r.data;});
-  drawFam(error);kpis();}catch(e){$("#b_fam").innerHTML=`<p class="foot">No s'han pogut carregar (${esc(e.message||e)}).</p>`;}}
-function drawFam(err){const el=$("#b_fam");if(!el)return;const fname=c=>{const f=FAMS.find(x=>x.code===c);return f?f.nom:"";};
- const fam=FAMS.sort((a,b)=>String(b.creada).localeCompare(String(a.creada))).map(f=>{const m=Object.entries(f.membres||{}).filter(([,v])=>v).map(([id])=>{const u=USERS.find(x=>x.id===id);return u?u.email:id.slice(0,8)+"…";});return `<tr><td><b>${esc(f.nom||"Sense nom")}</b><small>${esc(f.code)}</small></td><td>${m.map(esc).join("<br>")||"—"}</td><td>${f.creada?new Date(f.creada).toLocaleDateString("ca"):""}</td></tr>`;}).join("");
- const us=USERS.map(u=>{const x=MEU[u.id]||{};const ap=(x.apartats&&x.apartats.on)||null;return `<tr><td><b>${esc(u.email)}</b>${u.id===HORTOLA?"<small>Hortolà</small>":""}</td><td>${esc(fname(x.meu&&x.meu.fam))||"<small>Sense família</small>"}</td><td>${ap?ap.length+" de 4":"tots"}<small>${x.onb&&x.onb.fet?"Primers passos fets":"—"}</small></td><td>${u.last_sign_in_at?fdt(u.last_sign_in_at):"<small>Mai</small>"}</td></tr>`;}).join("");
- el.innerHTML=(err?`<p class="foot">⚠️ Per veure els correus dels usuaris cal aplicar el pegat 5 a Supabase.</p>`:"")+
- `<b>Famílies (${FAMS.length})</b><div class="tw"><table><thead><tr><th>Família</th><th>Membres</th><th>Creada</th></tr></thead><tbody>${fam||`<tr><td colspan="3"><small>Cap família visible (cal el pegat 5).</small></td></tr>`}</tbody></table></div>
- <b>Usuaris (${USERS.length})</b><div class="tw"><table><thead><tr><th>Correu</th><th>Família</th><th>Apartats</th><th>Darrera entrada</th></tr></thead><tbody>${us||`<tr><td colspan="4"><small>—</small></td></tr>`}</tbody></table></div>
- <button class="btn sec" onclick="loadFam()">Actualitza</button>`;}
-
+  convSync();drawUsu(error);kpis();}catch(e){$("#b_usu").innerHTML=`<p class="foot">No s'han pogut carregar (${esc(e.message||e)}).</p>`;}}
 /* ---------- Catàleg ---------- */
 let PEDIT=null;
 function drawCat(){const el=$("#b_cat");if(!el)return;const L=Object.entries(SHOP).sort((a,b)=>String(a[1].n).localeCompare(String(b[1].n),"ca"));
@@ -176,9 +186,110 @@ document.addEventListener("click",async e=>{const t=e.target;
  const pd=t.closest("[data-pdel]");if(pd){if(!pd.dataset.sure){pd.dataset.sure=1;pd.textContent="Segur? Toca per eliminar";return;}delete SHOP[pd.dataset.pdel];drawCat();pSave();return;}
  const pp=t.closest("[data-pp]");if(pp){const f=pp.closest("[data-pf]");const id=f.dataset.pf;const v=Math.max(0,Math.round(((+SHOP[id].preu||0)+(+pp.dataset.pp))*100)/100);SHOP[id]={...SHOP[id],preu:v};pp.parentElement.querySelector("b").textContent=String(v.toFixed(2)).replace(".",",")+" €";pSave(id);}});
 
-/* ---------- Versió ---------- */
-async function loadVer(){const el=$("#b_ver");try{const r=await fetch("/version.json?t="+Date.now(),{cache:"no-store"});const j=await r.json();const d=new Date(+j.v*1000);
- el.innerHTML=`<p>Versió publicada: <b>${d.toLocaleDateString("ca",{day:"numeric",month:"long"})} · ${d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"})}</b></p><p class="foot">Les famílies l'agafen soles en obrir l'app o tornar-hi. Si la tenen oberta, el Capità Enciam els avisa amb un número vermell.</p>`;}catch(e){el.innerHTML=`<p class="foot">No s'ha pogut llegir la versió.</p>`;}}
+/* ---------- Usuaris i invitacions ---------- */
+const ESTATS=["Pendent de convidar","Convidat","Instal·lada","En ús"];
+const ECOL=["#c98a10","#2f74b5","#6e8c3c","#3f8a3a"];
+const RELS=["Família","Amic","Client El Sortidor","Equip","Desconegut"];
+const URLAPP="menu-de-familia.pages.dev";
+let CONV={},CONVV=false,UF="",UOPEN=null,ctm;
+const famByName=n=>FAMS.find(f=>(f.nom||"").toLowerCase()===String(n||"").toLowerCase());
+const userOf=c=>c.correu?USERS.find(u=>u.email.toLowerCase()===c.correu.trim().toLowerCase()):null;
+function autoOf(c){const u=userOf(c);if(!u)return {i:-1};const f=FAMS.find(f=>f.membres&&f.membres[u.id]);const rec=u.last_sign_in_at&&(Date.now()-new Date(u.last_sign_in_at))<14*864e5;return {i:f&&rec?3:2,u,fam:f&&f.nom};}
+function estOf(c){const m=Math.max(0,ESTATS.indexOf(c.estat));const a=autoOf(c);return Math.max(m,a.i);}
+function convSave(){clearTimeout(ctm);ctm=setTimeout(async()=>{try{await DB.doc("admin/convidats").set({items:CONV});const m=$("#umsg");if(m)m.textContent="Desat ✓";}catch(e){toast("No s'ha pogut desar (cal el pegat 6)");}},600);}
+function convSync(){if(!CONVV||!USERS.length)return;let ch=false;
+ USERS.forEach(u=>{if(!Object.values(CONV).some(c=>(c.correu||"").toLowerCase()===u.email.toLowerCase())){CONV["u"+u.id.slice(0,8)]={nom:u.email.split("@")[0],correu:u.email,telefon:"",canal:"Correu",relacio:"Desconegut",familia:"",estat:"Instal·lada",notes:"Afegit sol: té compte a l'app.",log:[{d:new Date().toISOString().slice(0,10),t:"Compte detectat a l'app"}]};ch=true;}});
+ Object.values(CONV).forEach(c=>{const a=autoOf(c);if(a.fam&&c.familia!==a.fam){c.familia=a.fam;ch=true;}const e=estOf(c);if(ESTATS[e]!==c.estat){(c.log=c.log||[]).push({d:new Date().toISOString().slice(0,10),t:"Estat: "+ESTATS[e]+" (automàtic)"});c.estat=ESTATS[e];ch=true;}});
+ if(ch)convSave();}
+function invLink(c){const f=famByName(c.familia);return "https://"+URLAPP+(f?"/?codi="+f.code:"");}
+function invMail(c){const n=(c.nom||"").split(" ")[0];const f=famByName(c.familia);return `Hola${n?" "+n:""},
+
+A la família d'El Sortidor fa temps que ens fem cada setmana la mateixa pregunta: «Què fem per dinar a casa?». Per respondre-la hem creat Menú de Família 🏡, una app per organitzar la cuina de casa sense maldecaps.
+
+Hi posem tota la nostra experiència, l'ofici i les receptes. 👨‍🍳
+
+I t'hem triat per formar part del primer grup de famílies que la posaran a prova. 🧑‍🌾
+
+🍲 Planifiques el menú de la setmana i saps qui menja a casa i qui s'emporta carmanyola
+🛒 La llista de la compra es fa sola
+🫙 El rebost et diu què tens a casa i què s'acaba
+📸 Fas una foto de la nevera i et suggerim plats per cuinar amb el que tens
+🧾 Fas una foto del tiquet i controles la despesa
+📖 Guardes les receptes de la família i descobreixes les de les altres
+🥬 El Capità Enciam, l'assistent de l'app, t'ajuda en tot
+🌾 I, amb el joc de les missions setmanals, omplir el paller és tota una aventura
+
+Com començar:
+1️⃣ Obre ${invLink(c)} des del mòbil
+2️⃣ Afegeix-la a la pantalla d'inici
+3️⃣ ${f?"Crea el teu compte: entraràs directament a la família "+f.nom:"Crea el teu compte i la teva família"}
+
+Això ho fem entre tots. Cada idea, suggeriment o recepta que comparteixis farà créixer l'app. Toca la bombeta 💡 del Capità Enciam i els teus comentaris arribaran directament a l'Hortolà perquè pugui millorar l'app.
+
+Gràcies per sembrar amb nosaltres! 🌱
+
+Josep
+L'Hortolà de Menú de Família 🧑‍🌾
+hortala@grupfilomena.com`;}
+function invWA(c){const n=(c.nom||"").split(" ")[0];const f=famByName(c.familia);return `Hola${n?" "+n:""}! 🥬 Estic preparant una app per organitzar els menús de casa, la llista de la compra i la despesa, i m'agradaria que fossis dels primers a provar-la.
+
+1. Obre ${invLink(c)} al mòbil
+2. Afegeix-la a la pantalla d'inici
+3. ${f?"Crea el teu compte: entraràs directament a la família "+f.nom:"Crea el teu compte i la teva família"}
+
+És una beta: si alguna cosa falla o no t'agrada, toca la bombeta 💡 del Capità Enciam i m'arriba directament. Gràcies!
+
+Josep`;}
+const SUBJ="🥬 Benvingut a la colla de Menú de Família";
+function drawUsu(err){const el=$("#b_usu");if(!el)return;
+ const L=Object.entries(CONV).map(([id,c])=>({id,...c,ei:estOf(c)})).sort((a,b)=>(a.relacio==="Equip"?0:1)-(b.relacio==="Equip"?0:1)||a.ei-b.ei||String(a.nom).localeCompare(String(b.nom),"ca"));
+ const F=UF===""?L:L.filter(c=>ESTATS[c.ei]===UF);
+ const fams=FAMS.map(f=>`<span class="fchip"><b>${esc(f.nom||"Sense nom")}</b> · ${Object.values(f.membres||{}).filter(Boolean).length} <small>${esc(f.code)}</small></span>`).join("");
+ el.innerHTML=(err?`<p class="foot">⚠️ Cal aplicar el pegat 5 a Supabase per veure els comptes.</p>`:"")+(!CONVV?"":"")+
+ `<div class="row">${fams||"<small class='foot'>Cap família</small>"}</div>
+ <div class="seg">${[["","Tots"],...ESTATS.map(e=>[e,e])].map(([k,l])=>`<button type="button" data-uf="${esc(k)}" aria-pressed="${UF===k}">${esc(l)} <small>${k?L.filter(c=>ESTATS[c.ei]===k).length:L.length}</small></button>`).join("")}</div>
+ <div class="row"><button class="btn" data-unew>＋ Nou convidat</button><span class="foot" id="umsg">Es desa sol</span></div>`+
+ F.map(c=>{const a=autoOf(c);const open=UOPEN===c.id;return `<details class="sub" data-uid="${c.id}"${open?" open":""}><summary><span class="dot" style="background:${ECOL[c.ei]}"></span><span class="btx"><b>${esc(c.nom||"Sense nom")}</b><small>${esc(ESTATS[c.ei])}${c.familia?" · "+esc(c.familia):""}${a.u?" · "+(a.u.last_sign_in_at?"entrada "+fdt(a.u.last_sign_in_at):"mai ha entrat"):""}</small></span><span class="chev sm"></span></summary>${open?uForm(c,a):""}</details>`;}).join("");}
+function uForm(c,a){const wa=c.canal==="WhatsApp";const famOpts=[...new Set([...FAMS.map(f=>f.nom),c.familia].filter(Boolean))];
+ return `<div class="ubody" data-uf-id="${c.id}">
+ <div class="row">${ESTATS.map((e,i)=>`<button class="btn ${c.ei===i?"on":"sec"}" data-ue="${i}"${a.i>=0&&i<a.i?" disabled title='Ho marca l\\'app'":""}>${e}</button>`).join("")}</div>
+ ${a.i>=0?`<p class="foot">✓ Té compte a l'app (${esc(a.u.email)}). L'estat s'actualitza sol.</p>`:""}
+ <div class="grid2"><label class="f">Nom<input data-k="nom" value="${esc(c.nom)}"></label>
+ <label class="f">Convida per<select data-k="canal">${["Correu","WhatsApp"].map(o=>`<option${c.canal===o?" selected":""}>${o}</option>`).join("")}</select></label>
+ <label class="f">Correu<input data-k="correu" type="email" value="${esc(c.correu)}"></label>
+ <label class="f">Telèfon<input data-k="telefon" inputmode="tel" value="${esc(c.telefon)}"></label>
+ <label class="f">Relació<select data-k="relacio">${RELS.map(o=>`<option${c.relacio===o?" selected":""}>${o}</option>`).join("")}</select></label>
+ <label class="f">Família<select data-k="familia"><option value="">Crearà la seva</option>${famOpts.map(o=>`<option${c.familia===o?" selected":""}>${esc(o)}</option>`).join("")}</select></label></div>
+ <label class="f">Notes<textarea data-k="notes">${esc(c.notes)}</textarea></label>
+ <details class="inv"><summary>✉️ Invitació per ${wa?"WhatsApp":"correu"}</summary>${wa?"":`<p class="foot">Assumpte: <b>${esc(SUBJ)}</b> <button class="btn sec" data-ucp="s">Copia</button></p>`}<pre class="invt">${esc(wa?invWA(c):invMail(c))}</pre>
+ <div class="row"><button class="btn" data-ucp="b">Copia el text</button>${wa?(c.telefon?`<a class="btn sec" target="_blank" rel="noopener" href="https://wa.me/34${c.telefon.replace(/\D/g,"").replace(/^34(?=\d{9}$)/,"")}?text=${encodeURIComponent(invWA(c))}">Obre WhatsApp</a>`:""):(c.correu?`<a class="btn sec" href="mailto:${esc(c.correu)}?subject=${encodeURIComponent(SUBJ)}&body=${encodeURIComponent(invMail(c))}">Obre el correu</a>`:"")}${c.ei===0?`<button class="btn sec" data-ue="1">Marca com a convidat</button>`:""}</div>
+ <p class="foot">${wa?"Envia'l des del teu WhatsApp.":"Envia'l des de hortala@grupfilomena.com."}</p></details>
+ ${(c.log||[]).length?`<div class="ulog">${c.log.slice().reverse().map(l=>`<div><small>${esc(l.d)}</small> ${esc(l.t)}</div>`).join("")}</div>`:""}
+ <button class="btn del" data-udel>Elimina de la llista</button></div>`;}
+function uSet(id,k,v){CONV[id]={...CONV[id],[k]:v};const m=$("#umsg");if(m)m.textContent="Desant…";convSave();}
+document.addEventListener("click",async e=>{const t=e.target;
+ const f=t.closest("[data-uf]");if(f){UF=f.dataset.uf;drawUsu();return;}
+ if(t.closest("[data-unew]")){const id="c"+Date.now().toString(36);CONV[id]={nom:"",correu:"",telefon:"",canal:"WhatsApp",relacio:"Amic",familia:"",estat:"Pendent de convidar",notes:"",log:[]};UOPEN=id;UF="";drawUsu();convSave();setTimeout(()=>{const i=document.querySelector(`[data-uf-id="${id}"] [data-k=nom]`);i&&i.focus();},50);return;}
+ const w=t.closest("[data-uf-id]");if(!w)return;const id=w.dataset.ufId;const c=CONV[id];
+ const ue=t.closest("[data-ue]");if(ue){const e2=ESTATS[+ue.dataset.ue];(c.log=c.log||[]).push({d:new Date().toISOString().slice(0,10),t:e2==="Convidat"?"Invitació enviada per "+(c.canal||"Correu"):"Estat: "+e2});if(e2==="Convidat")c.invitat=new Date().toISOString().slice(0,10);c.estat=e2;drawUsu();convSave();return;}
+ const cp=t.closest("[data-ucp]");if(cp){const wa=c.canal==="WhatsApp";const txt=cp.dataset.ucp==="s"?SUBJ:(wa?invWA(c):invMail(c));try{await navigator.clipboard.writeText(txt);toast("Copiat");}catch(_){toast("Selecciona i copia");}return;}
+ const d=t.closest("[data-udel]");if(d){if(!d.dataset.sure){d.dataset.sure=1;d.textContent="Segur? Toca per eliminar";return;}delete CONV[id];UOPEN=null;drawUsu();convSave();}});
+document.addEventListener("input",e=>{const w=e.target.closest("[data-uf-id]");if(!w||!e.target.dataset.k)return;uSet(w.dataset.ufId,e.target.dataset.k,e.target.value);});
+document.addEventListener("change",e=>{const w=e.target.closest("[data-uf-id]");if(!w||e.target.tagName!=="SELECT")return;uSet(w.dataset.ufId,e.target.dataset.k,e.target.value);drawUsu();});
+document.addEventListener("toggle",e=>{const d=e.target;if(!d.matches||!d.matches("details.sub[data-uid]"))return;if(d.open){if(UOPEN!==d.dataset.uid){UOPEN=d.dataset.uid;drawUsu();}}else if(UOPEN===d.dataset.uid){UOPEN=null;}},true);
+
+/* ---------- Versions ---------- */
+async function loadVer(){const el=$("#b_ver");let pub="";try{const r=await fetch("/version.json?t="+Date.now(),{cache:"no-store"});const j=await r.json();const d=new Date(+j.v*1000);pub=d.toLocaleDateString("ca",{day:"numeric",month:"long"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"});}catch(e){}
+ let L=[];try{L=await (await fetch("/canvis.json?t="+Date.now(),{cache:"no-store"})).json();}catch(e){}
+ el.innerHTML=`<p>Versió publicada: <b>${esc(pub||"—")}</b></p><p class="foot">Les famílies l'agafen soles en obrir l'app. Si la tenen oberta, el Capità Enciam els avisa amb un número vermell.</p>`+
+ L.map(v=>`<div class="card fet" style="border-left-color:var(--blue)"><div class="ch"><b>${esc(v.nom)}</b></div><ul class="vl">${(v.canvis||[]).map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>`).join("");}
+
+/* ---------- Notes i enllaços ---------- */
+const LINKS=[["App de les famílies","https://menu-de-familia.pages.dev","Entra amb el teu compte. Per tenir dos comptes oberts a l'ordinador, fes servir una finestra privada."],["Bústia dins l'app","https://menu-de-familia.pages.dev/?bustia=1","Obre l'app directament als missatges."],["Prototip","https://claude.ai/artifact/9kT5ZGR5xToApPz85hikHh","Còpia de l'app a Claude per provar canvis abans de publicar-los."],["Supabase","https://supabase.com/dashboard/project/whdcdxbfxwfriqoeloql","Base de dades i usuaris."],["Instal·lar a l'iPhone","","Safari → ☰ → Compartir → Afegeix a la pantalla d'inici."],["Instal·lar a Android","","Chrome → ⋮ → Instal·la l'aplicació."]];
+let NOTE="",ntm;
+function drawNot(){const el=$("#b_not");if(!el)return;el.innerHTML=LINKS.map(([t,u,n])=>`<div class="card fet" style="border-left-color:var(--blue)"><div class="ch">${u?`<a href="${u}" target="_blank" rel="noopener"><b>${t}</b></a>`:`<b>${t}</b>`}</div><small class="foot">${n}</small></div>`).join("")+`<label class="f">Les meves notes<textarea id="mynote" style="min-height:140px">${esc(NOTE)}</textarea></label><span class="foot" id="nmsg">Es desa sol</span>`;}
+document.addEventListener("input",e=>{if(e.target.id!=="mynote")return;NOTE=e.target.value;$("#nmsg").textContent="Desant…";clearTimeout(ntm);ntm=setTimeout(async()=>{try{await DB.doc("admin/notes").set({t:NOTE});$("#nmsg").textContent="Desat ✓";}catch(_){$("#nmsg").textContent="No s'ha pogut desar (cal el pegat 6)";}},700);});
+
 </script>
 </body>
 </html>

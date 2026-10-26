@@ -1,0 +1,129 @@
+[
+ {
+  "id": "v2026-10-26m",
+  "at": "2026-10-26T20:30:00+01:00",
+  "nom": "26 oct · nit",
+  "canvis": [
+   "Tota la gestió a la web de l'Hortolà: usuaris i invitacions, bústia, comandes, catàleg, versions i notes",
+   "Estat dels usuaris automàtic quan creen el compte o entren a l'app",
+   "Invitació amb el codi de família inclòs"
+  ]
+ },
+ {
+  "id": "v2026-10-26l",
+  "at": "2026-10-26T18:33:00+01:00",
+  "nom": "26 oct · vespre",
+  "canvis": [
+   "Web d'administració de l'Hortolà (/admin.html)",
+   "Barres: es despleguen tocant-les a qualsevol lloc",
+   "Família abans de Puja documents",
+   "Espai entre Apartats i Compartir"
+  ]
+ },
+ {
+  "id": "v2026-10-26k",
+  "at": "2026-10-26T18:25:00+01:00",
+  "nom": "26 oct · vespre (8)",
+  "canvis": [
+   "Enllaç directe a la Bústia de l'Hortolà (?bustia=1)"
+  ]
+ },
+ {
+  "id": "v2026-10-26i",
+  "at": "2026-10-26T18:20:00+01:00",
+  "nom": "26 oct · vespre (6)",
+  "canvis": [
+   "Totes les barres amb icona, títol, peu, info i desplegable",
+   "Nansa ⠇ per canviar l'ordre de les barres (es desa per a cada usuari)"
+  ]
+ },
+ {
+  "id": "v2026-10-26j",
+  "at": "2026-10-26T18:20:00+01:00",
+  "nom": "26 oct · vespre (7)",
+  "canvis": [
+   "Barres: ≡ per moure a dalt a la dreta; a sota, «i» i desplegable",
+   "Només responen els botons: tocar el text no obre la barra ni selecciona res"
+  ]
+ },
+ {
+  "id": "v2026-10-26h",
+  "at": "2026-10-26T18:10:00+01:00",
+  "nom": "26 oct · vespre (5)",
+  "canvis": [
+   "Despesa: «Què comprem» amb gràfiques per grups d'aliments i per botigues",
+   "Cada article dels tiquets es classifica en un grup en llegir-lo"
+  ]
+ },
+ {
+  "id": "v2026-10-26g",
+  "at": "2026-10-26T17:58:00+01:00",
+  "nom": "26 oct · vespre (4)",
+  "canvis": [
+   "Tiquet que no és de casa: «No el vull» també l'elimina dels documents"
+  ]
+ },
+ {
+  "id": "v2026-10-26f",
+  "at": "2026-10-26T17:55:00+01:00",
+  "nom": "26 oct · vespre (3)",
+  "canvis": [
+   "Tiquets que no semblen de casa (obra, ferreteria, roba…): avís i pregunta abans de comptar-los a la despesa"
+  ]
+ },
+ {
+  "id": "v2026-10-26e",
+  "at": "2026-10-26T17:50:00+01:00",
+  "nom": "26 oct · vespre (2)",
+  "canvis": [
+   "Puja documents: zona de pujar més compacta",
+   "Textos i exemples segons els apartats activats"
+  ]
+ },
+ {
+  "id": "v2026-10-26d",
+  "at": "2026-10-26T17:46:00+01:00",
+  "nom": "26 oct · vespre",
+  "canvis": [
+   "Avís de versió nova dins del Capità Enciam amb número vermell",
+   "Si un compte no té família, torna a la pantalla de família",
+   "Apartats de l'app a dalt de tot a Família",
+   "Capçalera només amb el nom de la família",
+   "Mòbil: paller sense número",
+   "Puja documents: només les carpetes dels apartats activats"
+  ]
+ },
+ {
+  "id": "v2026-10-26c",
+  "at": "2026-10-26T17:00:00+01:00",
+  "nom": "26 oct · tarda (2)",
+  "canvis": [
+   "Marcador a dalt: botiga, paller i nivell",
+   "Icones de botiga, paller, família i veïnat",
+   "Botons −/+ que corren si es mantenen premuts",
+   "Actualitzacions automàtiques de l'app"
+  ]
+ },
+ {
+  "id": "v2026-10-26b",
+  "at": "2026-10-26T16:00:00+01:00",
+  "nom": "26 oct · tarda (1)",
+  "canvis": [
+   "Barra estable en girar el mòbil",
+   "Menú setmanal en quadrícula al mòbil",
+   "Temps de cuina i compra a la proposta de menú",
+   "Casa o El Sortidor? (comparativa de cost)",
+   "Apartats a la carta i pas a pas del Capità Enciam"
+  ]
+ },
+ {
+  "id": "v2026-10-26a",
+  "at": "2026-10-26T10:30:00+01:00",
+  "nom": "26 oct · matí",
+  "canvis": [
+   "Primers passos per a usuaris nous",
+   "El rebost com a estoc de casa",
+   "El paller passa al joc (sitja)"
+  ]
+ }
+]
