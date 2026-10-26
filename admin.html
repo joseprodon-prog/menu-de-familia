@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hortolà · Administració</title>
+<meta name="theme-color" content="#6e8c3c">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: una columna, capçalera fixa pistatxo, barres desplegables (mateix llenguatge que l'app) */
+:root{--bg:#f3ead2;--surface:#fff;--fg:#26231c;--muted:#6b675d;--line:#e3dccb;--acc:#6e8c3c;--accs:#e6eed8;--hort:#e07a1f;--horts:#fdecd9;--ok:#3f8a3a;--warn:#c98a10;--bad:#c2402e;
+ --display:"Fraunces",Georgia,serif;--body:"Source Sans 3",system-ui,-apple-system,sans-serif;--shadow:0 1px 2px rgba(35,33,28,.05),0 4px 14px rgba(35,33,28,.06);--blue:#2f74b5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150f;--surface:#211e17;--fg:#ece8df;--muted:#a8a294;--line:#36312a;--accs:#2b3520;--horts:#3a2a19;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17150f;--surface:#211e17;--fg:#ece8df;--muted:#a8a294;--line:#36312a;--accs:#2b3520;--horts:#3a2a19;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:#6e8c3c}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:#6e8c3c;color:#fff;border-bottom:2px solid #56702c;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hin{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header h1{font:700 22px/1.1 var(--display);margin:0;flex:1}
+header small{display:block;font:600 12.5px var(--body);opacity:.85}
+header a{color:#fff;font-weight:700;font-size:14px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);border-radius:999px;padding:6px 12px;text-decoration:none;white-space:nowrap}
+main{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding-block:16px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)}
+.kpi b{display:block;font:700 26px var(--display);font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted);font-weight:600;font-size:12.5px}
+.kpi.alert b{color:var(--hort)}
+details.bar{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+details.bar>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:12px 14px;user-select:none;-webkit-user-select:none;cursor:pointer}
+details.bar>summary::-webkit-details-marker{display:none}
+.bico{width:40px;height:40px;border-radius:12px;background:var(--accs);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+.btx{flex:1;min-width:0;display:flex;flex-direction:column}
+.btx b{font:700 19px/1.15 var(--display)}
+.btx small{color:var(--muted);font-size:13px}
+.cnt{background:var(--hort);color:#fff;border-radius:99px;font:700 13px var(--body);padding:2px 9px}
+.cnt:empty{display:none}
+.chev{width:38px;height:38px;border-radius:50%;flex:none;background:#f2dfe1 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a2c3b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center/18px no-repeat;transition:transform .2s}
+details[open]>summary .chev{transform:rotate(180deg)}
+.body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:flex;gap:3px;background:var(--bg);border-radius:999px;padding:3px;width:max-content;max-width:100%;overflow-x:auto}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 12px;font:600 13.5px var(--body);color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--acc);color:#fff}
+.card{background:var(--bg);border-radius:12px;padding:10px 12px;border-left:4px solid var(--hort)}
+.card.vist{border-left-color:var(--warn)}.card.fet{border-left-color:var(--ok)}
+.ch{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline}
+.ch small{color:var(--muted);font-size:12.5px}
+.card p{margin:6px 0;white-space:pre-wrap}
+.resp{color:var(--acc);font-weight:600;font-size:14px}
+textarea,input,select{font:15px var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+textarea{min-height:60px;resize:vertical}
+.btn{font:700 14px var(--body);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;background:var(--acc);color:#fff}
+.btn.sec{background:var(--accs);color:var(--acc)}
+.btn.on{background:var(--blue);color:#fff}
+.btn.del{background:none;color:var(--bad);padding:6px 4px}
+.foot{color:var(--muted);font-size:13.5px;margin:0}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px;border-bottom:1px solid var(--line)}
+td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td small{display:block;color:var(--muted);font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;background:var(--accs);border-radius:99px;padding:2px;gap:2px}
+.pill button{width:32px;height:32px;border:0;border-radius:99px;background:var(--surface);color:var(--fg);font:700 18px var(--body);cursor:pointer}
+.pill b{min-width:66px;text-align:center;font-variant-numeric:tabular-nums}
+.noacc{background:var(--horts);border-radius:14px;padding:16px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:99px;font:700 13px var(--body);opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+.toast.on{opacity:1}
+/* entrada (mateixa que l'app) */
+#mflogin{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+#mflogin .mfl{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:28px 24px;width:min(420px,100%)}
+#mflogin h1{font:700 28px var(--display);margin:0 0 8px}
+#mflogin form{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+#mflogin input{font:16px var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+#mflogin button.primary{font:600 16px var(--body);padding:12px;border-radius:999px;border:0;background:var(--acc);color:#fff;cursor:pointer}
+#mflogin button.sec{font:600 16px var(--body);padding:11px;border-radius:999px;border:2px solid var(--acc);background:#fff;color:var(--acc);cursor:pointer}
+#mflogin .mfor{display:flex;align-items:center;gap:10px;margin:6px 0 0;font:600 13px var(--body);color:var(--muted)}
+#mflogin .mfor::before,#mflogin .mfor::after{content:"";flex:1;height:1px;background:var(--line)}
+#mflogin .ghost{font:600 14px var(--body);padding:8px;border:0;background:none;color:var(--muted);cursor:pointer}
+#mflogin [hidden]{display:none}
+</style>
+</head>
+<body>
+<header><div class="hin"><h1>🧑‍🌾 L'Hortolà<small>Administració de Menú de Família</small></h1><a href="/" target="_blank" rel="noopener">Obre l'app</a></div></header>
+<main id="main">
+  <p class="foot" id="state">Carregant…</p>
+</main>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script src="adapter.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),1800)};
+const fdt=a=>{if(!a)return "";const d=new Date(a);return d.toLocaleDateString("ca",{day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"})};
+const HORTOLA="3db65f50-ce4a-4430-a790-4788dc699b3f";
+const OEST={rebuda:"Rebuda",confirmada:"Confirmada",enviada:"Enviada",entregada:"Entregada",anullada:"Anul·lada"};
+const SCATS=[["batch","Bases de batch cooking"],["select","Selectes acabats"],["cong","Per congelar i escalfar"],["precu","Precuinats · 2 o 3 passos"],["temp","Temporada i ocasions"]];
+let DB,SB,FB=[],ORD=[],SHOP={},FAMS=[],USERS=[],MEU={},FBF="nou";
+const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""}><summary><span class="bico" aria-hidden="true">${ico}</span><span class="btx"><b>${t}</b><small>${sub}</small></span><span class="cnt" id="c_${id}"></span><span class="chev" aria-hidden="true"></span></summary><div class="body" id="b_${id}"></div></details>`;
+
+(async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();
+ if(uid!==HORTOLA){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
+ $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("bus","📬","Bústia","Missatges dels usuaris",true)+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("fam","👨‍👩‍👧","Famílies i usuaris","Qui fa servir l'app")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("ver","🚀","Versió de l'app","Què tenen instal·lat")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
+ DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
+ DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();},()=>{});
+ DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
+ loadFam();loadVer();
+ document.addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
+})();
+
+function kpis(){const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
+ const ords=ORD.flatMap(u=>Object.values(u.items||{}));const pend=ords.filter(o=>o&&["rebuda","confirmada"].includes(o.estat)).length;
+ $("#kpis").innerHTML=[[nous,"Missatges nous",nous>0],[pend,"Comandes pendents",pend>0],[FAMS.length,"Famílies"],[USERS.length,"Usuaris"]].map(([v,l,a])=>`<div class="kpi${a?" alert":""}"><b>${v}</b><small>${l}</small></div>`).join("");
+ $("#c_bus").textContent=nous||"";$("#c_ord").textContent=pend||"";}
+
+/* ---------- Bústia ---------- */
+function drawBus(){const el=$("#b_bus");if(!el)return;const L=FB.flatMap(f=>Object.entries(f.items||{}).map(([sid,i])=>({uid:f.uid,nom:f.nom,fam:f.fam||i.fam,sid,...i}))).filter(i=>i&&i.t).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+ const F=FBF?L.filter(i=>(i.estat||"nou")===FBF):L;
+ el.innerHTML=`<div class="seg">${[["nou","Nous"],["vist","Vistos"],["fet","Resolts"],["","Tots"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?L.filter(i=>(i.estat||"nou")===k).length:L.length}</small></button>`).join("")}</div>`+
+ (F.length?F.map(i=>`<div class="card ${i.estat||"nou"}"><div class="ch"><b>${esc(i.nom||"Usuari")}</b><small>${i.fam?"Família "+esc(i.fam)+" · ":""}${fdt(i.at)}</small></div><p>${esc(i.t)}</p>${i.resp?`<p class="resp">↳ ${esc(i.resp)}</p>`:""}
+  <textarea data-rta="${i.uid}|${i.sid}" placeholder="Escriu la resposta (li arriba al xat del Capità Enciam)">${esc(i.resp||"")}</textarea>
+  <div class="row"><button class="btn" data-fbr="${i.uid}|${i.sid}">Respon i resol</button>${(i.estat||"nou")==="nou"?`<button class="btn sec" data-fbe="${i.uid}|${i.sid}|vist">Marca com a vist</button>`:""}${i.estat==="fet"?`<button class="btn sec" data-fbe="${i.uid}|${i.sid}|vist">Torna a obrir</button>`:""}</div></div>`).join(""):`<p class="foot">No hi ha missatges ${FBF==="nou"?"nous":""}.</p>`);}
+async function fbPatch(uid,sid,patch){const x=FB.find(f=>f.uid===uid);if(!x)return;x.items={...x.items,[sid]:{...x.items[sid],...patch}};drawBus();kpis();
+ try{await DB.doc("feedback/"+uid).set({nom:x.nom||"",fam:x.fam||"",items:x.items});toast("Desat");}catch(e){toast("No s'ha pogut desar");}}
+document.addEventListener("click",e=>{const f=e.target.closest("[data-fbf]");if(f){FBF=f.dataset.fbf;drawBus();return;}
+ const r=e.target.closest("[data-fbr]");if(r){const [uid,sid]=r.dataset.fbr.split("|");const ta=document.querySelector(`[data-rta="${uid}|${sid}"]`);const t=(ta&&ta.value.trim())||"";if(!t){ta&&ta.focus();return;}fbPatch(uid,sid,{resp:t,respAt:new Date().toISOString(),estat:"fet"});return;}
+ const s=e.target.closest("[data-fbe]");if(s){const [uid,sid,st]=s.dataset.fbe.split("|");fbPatch(uid,sid,{estat:st});}});
+
+/* ---------- Comandes ---------- */
+function drawOrd(){const el=$("#b_ord");if(!el)return;const L=ORD.flatMap(u=>Object.entries(u.items||{}).map(([oid,o])=>({uid:u.uid,nom:u.nom,fam:u.fam,oid,...o}))).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+ el.innerHTML=L.length?L.map(o=>`<div class="card ${["entregada","anullada"].includes(o.estat)?"fet":o.estat==="rebuda"?"":"vist"}"><div class="ch"><b>${esc(o.nom||"Usuari")}</b><small>${o.fam?"Família "+esc(o.fam)+" · ":""}${fdt(o.at)}</small></div>
+  <p>${(o.linies||[]).map(l=>`${l.q} × ${esc(l.n)}`).join(" · ")}<br><b>${String((+o.total||0).toFixed(2)).replace(".",",")} €</b>${o.dia?" · per al "+esc(o.dia):""}${o.adreca?"<br>"+esc(o.adreca):""}${o.tel?" · "+esc(o.tel):""}${o.nota?"<br><small>"+esc(o.nota)+"</small>":""}</p>
+  <div class="row">${Object.entries(OEST).map(([k,l])=>`<button class="btn ${o.estat===k?"on":"sec"}" data-oe="${o.uid}|${o.oid}|${k}">${l}</button>`).join("")}</div></div>`).join(""):`<p class="foot">Encara no hi ha comandes.</p>`;}
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-oe]");if(!b)return;const [uid,oid,st]=b.dataset.oe.split("|");const u=ORD.find(x=>x.uid===uid);if(!u)return;
+ u.items={...u.items,[oid]:{...u.items[oid],estat:st}};drawOrd();kpis();try{await DB.doc("comandes/"+uid).set({nom:u.nom||"",fam:u.fam||"",items:u.items});toast("Comanda: "+OEST[st]);}catch(_){toast("No s'ha pogut desar");}});
+
+/* ---------- Famílies i usuaris ---------- */
+async function loadFam(){try{const {data:fs}=await SB.from("docs").select("path,data").like("path","families/%");
+  FAMS=(fs||[]).filter(r=>/^families\/[^/]+$/.test(r.path)).map(r=>({code:r.path.split("/")[1],...r.data}));
+  const {data:us,error}=await SB.rpc("admin_users");USERS=error?[]:(us||[]);
+  const {data:ms}=await SB.from("docs").select("path,data").like("path","data/users/%");MEU={};(ms||[]).forEach(r=>{const [, , uid, k]=r.path.split("/");MEU[uid]=MEU[uid]||{};MEU[uid][k]=r.data;});
+  drawFam(error);kpis();}catch(e){$("#b_fam").innerHTML=`<p class="foot">No s'han pogut carregar (${esc(e.message||e)}).</p>`;}}
+function drawFam(err){const el=$("#b_fam");if(!el)return;const fname=c=>{const f=FAMS.find(x=>x.code===c);return f?f.nom:"";};
+ const fam=FAMS.sort((a,b)=>String(b.creada).localeCompare(String(a.creada))).map(f=>{const m=Object.entries(f.membres||{}).filter(([,v])=>v).map(([id])=>{const u=USERS.find(x=>x.id===id);return u?u.email:id.slice(0,8)+"…";});return `<tr><td><b>${esc(f.nom||"Sense nom")}</b><small>${esc(f.code)}</small></td><td>${m.map(esc).join("<br>")||"—"}</td><td>${f.creada?new Date(f.creada).toLocaleDateString("ca"):""}</td></tr>`;}).join("");
+ const us=USERS.map(u=>{const x=MEU[u.id]||{};const ap=(x.apartats&&x.apartats.on)||null;return `<tr><td><b>${esc(u.email)}</b>${u.id===HORTOLA?"<small>Hortolà</small>":""}</td><td>${esc(fname(x.meu&&x.meu.fam))||"<small>Sense família</small>"}</td><td>${ap?ap.length+" de 4":"tots"}<small>${x.onb&&x.onb.fet?"Primers passos fets":"—"}</small></td><td>${u.last_sign_in_at?fdt(u.last_sign_in_at):"<small>Mai</small>"}</td></tr>`;}).join("");
+ el.innerHTML=(err?`<p class="foot">⚠️ Per veure els correus dels usuaris cal aplicar el pegat 5 a Supabase.</p>`:"")+
+ `<b>Famílies (${FAMS.length})</b><div class="tw"><table><thead><tr><th>Família</th><th>Membres</th><th>Creada</th></tr></thead><tbody>${fam||`<tr><td colspan="3"><small>Cap família visible (cal el pegat 5).</small></td></tr>`}</tbody></table></div>
+ <b>Usuaris (${USERS.length})</b><div class="tw"><table><thead><tr><th>Correu</th><th>Família</th><th>Apartats</th><th>Darrera entrada</th></tr></thead><tbody>${us||`<tr><td colspan="4"><small>—</small></td></tr>`}</tbody></table></div>
+ <button class="btn sec" onclick="loadFam()">Actualitza</button>`;}
+
+/* ---------- Catàleg ---------- */
+let PEDIT=null;
+function drawCat(){const el=$("#b_cat");if(!el)return;const L=Object.entries(SHOP).sort((a,b)=>String(a[1].n).localeCompare(String(b[1].n),"ca"));
+ el.innerHTML=`<button class="btn" data-pnew>＋ Nou producte</button>`+(L.length?L.map(([id,p])=>PEDIT===id?pForm(id,p):`<div class="card ${p.actiu===false?"fet":"vist"}" style="border-left-color:${p.actiu===false?"#bbb":"var(--acc)"}"><div class="ch"><b>${esc(p.n)}</b><small>${esc((SCATS.find(c=>c[0]===p.cat)||[,""])[1])} · ${String((+p.preu||0).toFixed(2)).replace(".",",")} € · ${esc(p.format||"")}${p.actiu===false?" · <b>no visible</b>":""}</small></div><div class="row"><button class="btn sec" data-pedit="${id}">Edita</button><button class="btn sec" data-pact="${id}">${p.actiu===false?"Fes-lo visible":"Amaga'l"}</button><button class="btn del" data-pdel="${id}">Elimina</button></div></div>`).join(""):`<p class="foot">Encara no hi ha productes.</p>`);}
+function pForm(id,p){return `<div class="card" data-pf="${id}" style="border-left-color:var(--blue)"><div class="grid2">
+ <label class="f">Nom<input data-k="n" value="${esc(p.n)}"></label><label class="f">Categoria<select data-k="cat">${SCATS.map(([c,l])=>`<option value="${c}"${p.cat===c?" selected":""}>${l}</option>`).join("")}</select></label>
+ <label class="f">Format<input data-k="format" value="${esc(p.format)}" placeholder="4 racions"></label><label class="f">Preu<span class="pill"><button type="button" data-pp="-0.5">−</button><b>${String((+p.preu||0).toFixed(2)).replace(".",",")} €</b><button type="button" data-pp="0.5">+</button></span></label>
+ <label class="f">Plats del menú que cobreix<input data-k="plat" value="${esc(p.plat)}" placeholder="Cigrons, Llenties"></label><label class="f">Visible<select data-k="actiu"><option value="1"${p.actiu!==false?" selected":""}>Sí</option><option value="0"${p.actiu===false?" selected":""}>No</option></select></label></div>
+ <label class="f">Descripció<textarea data-k="desc">${esc(p.desc)}</textarea></label><label class="f">Passos per acabar-lo (un per línia)<textarea data-k="passos">${esc(p.passos)}</textarea></label>
+ <div class="row"><button class="btn" data-pclose>Fet</button><span class="foot" id="pmsg">Es desa sol</span></div></div>`;}
+let ptm;function pSave(id){clearTimeout(ptm);ptm=setTimeout(async()=>{try{await DB.doc("botiga/cataleg").set({items:SHOP});const m=$("#pmsg");if(m)m.textContent="Desat ✓";}catch(e){toast("No s'ha pogut desar");}},700);}
+document.addEventListener("input",e=>{const f=e.target.closest("[data-pf]");if(!f||!e.target.dataset.k)return;const id=f.dataset.pf,k=e.target.dataset.k;let v=e.target.value;if(k==="actiu")v=v==="1";SHOP[id]={...SHOP[id],[k]:v};const m=$("#pmsg");if(m)m.textContent="Desant…";pSave(id);});
+document.addEventListener("change",e=>{const f=e.target.closest("[data-pf]");if(f&&e.target.tagName==="SELECT"){e.target.dispatchEvent(new Event("input",{bubbles:true}));}});
+document.addEventListener("click",async e=>{const t=e.target;
+ if(t.closest("[data-pnew]")){const id="p"+Date.now().toString(36);SHOP[id]={n:"Producte nou",cat:"select",preu:0,format:"",plat:"",desc:"",passos:"",actiu:false};PEDIT=id;drawCat();pSave(id);return;}
+ const ed=t.closest("[data-pedit]");if(ed){PEDIT=ed.dataset.pedit;drawCat();return;}
+ if(t.closest("[data-pclose]")){PEDIT=null;drawCat();return;}
+ const pa=t.closest("[data-pact]");if(pa){const id=pa.dataset.pact;SHOP[id]={...SHOP[id],actiu:SHOP[id].actiu===false};drawCat();pSave(id);return;}
+ const pd=t.closest("[data-pdel]");if(pd){if(!pd.dataset.sure){pd.dataset.sure=1;pd.textContent="Segur? Toca per eliminar";return;}delete SHOP[pd.dataset.pdel];drawCat();pSave();return;}
+ const pp=t.closest("[data-pp]");if(pp){const f=pp.closest("[data-pf]");const id=f.dataset.pf;const v=Math.max(0,Math.round(((+SHOP[id].preu||0)+(+pp.dataset.pp))*100)/100);SHOP[id]={...SHOP[id],preu:v};pp.parentElement.querySelector("b").textContent=String(v.toFixed(2)).replace(".",",")+" €";pSave(id);}});
+
+/* ---------- Versió ---------- */
+async function loadVer(){const el=$("#b_ver");try{const r=await fetch("/version.json?t="+Date.now(),{cache:"no-store"});const j=await r.json();const d=new Date(+j.v*1000);
+ el.innerHTML=`<p>Versió publicada: <b>${d.toLocaleDateString("ca",{day:"numeric",month:"long"})} · ${d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"})}</b></p><p class="foot">Les famílies l'agafen soles en obrir l'app o tornar-hi. Si la tenen oberta, el Capità Enciam els avisa amb un número vermell.</p>`;}catch(e){el.innerHTML=`<p class="foot">No s'ha pogut llegir la versió.</p>`;}}
+</script>
+</body>
+</html>
