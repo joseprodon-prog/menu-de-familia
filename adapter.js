@@ -3,6 +3,7 @@
    de manera que el codi de l'app és idèntic al de l'artefacte. */
 (function () {
   const CFG = window.MF_CONFIG || {};
+  const RECOVERY = /type=recovery/.test(location.hash + location.search);
   const sb = window.supabase.createClient(CFG.url, CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   window.MF_SB = sb;
   window.BLOBBASE = CFG.url.replace(/\/$/, "") + "/storage/v1/object/public/assets/";
@@ -15,7 +16,26 @@
     showLogin();
     sb.auth.onAuthStateChange((ev, s) => { if (s && !session) { session = s; hideLogin(); resolve(); } });
   });
-  sb.auth.onAuthStateChange((ev, s) => { if (ev === "SIGNED_OUT") location.reload(); });
+  sb.auth.onAuthStateChange((ev, s) => { if (ev === "SIGNED_OUT") location.reload(); if (ev === "PASSWORD_RECOVERY") showNewPass(); });
+  if (RECOVERY) ready.then(() => showNewPass());
+
+  /* ---------- nova contrasenya (des de l'enllaç del correu) ---------- */
+  function showNewPass() {
+    if (document.getElementById("mfnewp")) return;
+    const d = document.createElement("div");
+    d.id = "mflogin"; d.className = "mfnewp"; d.setAttribute("data-np", "1");
+    d.innerHTML = `<div class="mfl" id="mfnewp"><h1>Nova contrasenya</h1><p>Escriu la contrasenya nova per al teu compte.</p>
+      <form id="mfnpf"><input type="password" required minlength="6" placeholder="Contrasenya nova (mínim 6 caràcters)" autocomplete="new-password" aria-label="Contrasenya nova">
+      <button class="primary" type="submit">Desa la contrasenya</button></form><p class="foot" id="mfnpm" role="status"></p></div>`;
+    const go = () => { document.body.appendChild(d); d.querySelector("input").focus(); };
+    if (document.body) go(); else addEventListener("DOMContentLoaded", go);
+    d.querySelector("#mfnpf").addEventListener("submit", async (e) => {
+      e.preventDefault(); const pw = d.querySelector("input").value; const m = d.querySelector("#mfnpm"); m.textContent = "Desant…";
+      const { error } = await sb.auth.updateUser({ password: pw });
+      if (error) { m.textContent = error.message; return; }
+      m.textContent = "Contrasenya canviada ✓"; history.replaceState(null, "", location.pathname); setTimeout(() => d.remove(), 1200);
+    });
+  }
 
   function showLogin() {
     const d = document.createElement("div");
@@ -24,7 +44,7 @@
     d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>${inv ? "T'han convidat a una família. Si és la primera vegada, escriu el teu correu, tria una contrasenya i prem <b>Crea el compte</b>." : "Escriu el teu correu i la contrasenya. Si és la primera vegada, prem <b>Crea el compte</b>."}</p>
       <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic">
       <input type="password" required minlength="6" placeholder="Contrasenya (mínim 6 caràcters)" autocomplete="current-password" aria-label="Contrasenya">
-      <button class="primary" type="submit">Entra</button><span class="mfor">Primera vegada?</span><button type="button" class="sec" id="mflnew">Crea el compte</button></form>
+      <button class="primary" type="submit">Entra</button><span class="mfor">Primera vegada?</span><button type="button" class="sec" id="mflnew">Crea el compte</button><button type="button" class="ghost" id="mflforgot">He oblidat la contrasenya</button></form>
       <p class="foot" id="mflm" role="status"></p></div>`;
     const go = () => { document.body.appendChild(d); d.querySelector("input").focus(); };
     if (document.body) go(); else addEventListener("DOMContentLoaded", go);
@@ -35,6 +55,12 @@
       e.preventDefault(); const v = vals(); msg("Entrant…");
       const { error } = await sb.auth.signInWithPassword(v);
       if (error) msg(tr(error.message));
+    });
+    d.querySelector("#mflforgot").addEventListener("click", async () => {
+      const v = vals(); if (!v.email) { msg("Escriu primer el teu correu i torna a prémer «He oblidat la contrasenya»."); d.querySelector("input").focus(); return; }
+      msg("Enviant el correu…");
+      const { error } = await sb.auth.resetPasswordForEmail(v.email, { redirectTo: location.origin + "/" });
+      msg(error ? tr(error.message) : "T'hem enviat un correu amb un enllaç per canviar la contrasenya. Mira també la carpeta de correu brossa.");
     });
     d.querySelector("#mflnew").addEventListener("click", async () => {
       const v = vals(); if (!v.email || v.password.length < 6) { msg("Escriu el correu i una contrasenya de 6 caràcters o més."); return; }
