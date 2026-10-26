@@ -28,7 +28,7 @@ login_css='''
 pwa='''<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Menú de Família</title>
-<meta name="theme-color" content="#2a78c2">
+<meta name="theme-color" content="#4f6b33">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
