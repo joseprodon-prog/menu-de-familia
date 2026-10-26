@@ -166,7 +166,31 @@
     if (error || !data || data.error) { const x = new Error(msg || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }
     return data.text || "";
   }
-  const sample = Object.assign(async (input, opts) => ({ text: await callAI(input, opts), truncated: false }), {
+  // xat amb eines: l'app defineix les eines (execute) i aquí es fa el bucle tool_use → tool_result
+  async function chatAI(input, opts) {
+    const msgs = typeof input === "string" ? [{ role: "user", content: input }] : input.map((m) => ({ role: m.role, content: m.content }));
+    const tools = (opts.tools || []).map((t) => ({ name: t.name, description: t.description || "", input_schema: t.inputSchema || { type: "object", properties: {} } }));
+    for (let i = 0; i < 8; i++) {
+      let data, error;
+      ({ data, error } = await sb.functions.invoke("llegeix", { body: { messages: msgs, tools, ...(opts.system ? { system: opts.system } : {}) } }));
+      let msg = data && data.error;
+      if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }
+      if (error || !data || data.error) { const x = new Error(msg || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }
+      if (data.stop_reason !== "tool_use") return data.text || "";
+      msgs.push({ role: "assistant", content: data.content });
+      const res = [];
+      for (const b of data.content || []) {
+        if (b.type !== "tool_use") continue;
+        const t = (opts.tools || []).find((x) => x.name === b.name);
+        let out;
+        try { out = t ? await t.execute(b.input || {}) : { error: "eina desconeguda" }; } catch (e) { out = { error: String(e && e.message || e) }; }
+        res.push({ type: "tool_result", tool_use_id: b.id, content: typeof out === "string" ? out : JSON.stringify(out).slice(0, 60000) });
+      }
+      msgs.push({ role: "user", content: res });
+    }
+    return "No he pogut acabar la resposta. Torna-ho a provar.";
+  }
+  const sample = Object.assign(async (input, opts) => ({ text: opts && opts.tools ? await chatAI(input, opts) : await callAI(input, opts), truncated: false }), {
     limits: async () => ({ images: { maxCount: 8 } }),
     json: async (input, opts) => { const t = await callAI(input, opts); const m = t.match(/\{[\s\S]*\}/); return JSON.parse(m ? m[0] : t); },
   });

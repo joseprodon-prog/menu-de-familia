@@ -21,8 +21,26 @@ Deno.serve(async (req) => {
     if (!who.ok) return out({ error: "Cal iniciar la sessió" }, 401);
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     if (!key) return out({ error: "Falta el secret ANTHROPIC_API_KEY" }, 500);
-    const { prompt, images = [], urls = [], model, web = false } = await req.json();
+    const body = await req.json();
+    const { prompt, images = [], urls = [], model, web = false } = body;
     console.log("llegeix: cos llegit");
+    // mode xat: missatges + eines definides per l'app (l'app executa les eines i torna a cridar)
+    if (Array.isArray(body.messages)) {
+      const ms = body.messages, tl = Array.isArray(body.tools) ? body.tools : [];
+      if (!ms.length || ms.length > 60 || tl.length > 20 || JSON.stringify(body).length > 400000) return out({ error: "Petició no vàlida" }, 400);
+      const tools = tl.map((t: any) => ({ name: String(t.name).slice(0, 64), description: String(t.description || "").slice(0, 1000), input_schema: t.input_schema || { type: "object", properties: {} } }));
+      const t1 = Date.now();
+      const rr = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", signal: AbortSignal.timeout(120000),
+        headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+        body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 6000, ...(typeof body.system === "string" ? { system: body.system.slice(0, 20000) } : {}), messages: ms, ...(tools.length ? { tools } : {}) }),
+      });
+      const jj = await rr.json();
+      console.log("llegeix: xat", rr.status, Date.now() - t1, "ms", JSON.stringify(jj.usage || jj.error || {}));
+      if (!rr.ok) return out({ error: (jj && jj.error && jj.error.message) || "Error de l'API" }, 502);
+      const tx = (jj.content || []).filter((c: any) => c.type === "text").map((c: any) => c.text).join("");
+      return out({ text: tx, content: jj.content, stop_reason: jj.stop_reason, usage: jj.usage });
+    }
     const pub = `${su}/storage/v1/object/public/assets/`;
     if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || !Array.isArray(urls) || images.length + urls.length > 8 ||
         urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub))) return out({ error: "Petició no vàlida" }, 400);
