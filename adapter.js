@@ -243,12 +243,12 @@
   const MF_DIBUIXA = async function (o) {
     const ids = [];
     try {
-      for (const bl of (o.fotos || []).slice(0, 3)) {
+      for (const bl of (o.baseUrl ? [] : (o.fotos || [])).slice(0, 3)) {
         const id = "tmp-" + [...crypto.getRandomValues(new Uint8Array(12))].map((b) => b.toString(16).padStart(2, "0")).join("") + ".jpg";
         const { error: ue } = await sb.storage.from("assets").upload(id, bl, { contentType: "image/jpeg", upsert: false });
         if (!ue) ids.push(id);
       }
-      const { data, error } = await sb.functions.invoke("dibuixa", { body: { mode: ids.length ? "foto" : "inventa", urls: ids.map((id) => window.BLOBBASE + id), n: o.n || "", ing: o.ing || "", steps: o.steps || "" } });
+      const { data, error } = await sb.functions.invoke("dibuixa", { body: { mode: o.baseUrl ? "edita" : ids.length ? "foto" : "inventa", urls: o.baseUrl ? [o.baseUrl] : ids.map((id) => window.BLOBBASE + id), n: o.n || "", ing: o.ing || "", steps: o.steps || "", nota: o.nota || "" } });
       let msg = data && data.error;
       if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }
       if (error || !data || !data.image) throw new Error(msg || "No s'ha pogut dibuixar");

@@ -1,5 +1,6 @@
 // Menú de Família · el Capità Enciam dibuixa les imatges de les receptes amb l'estil de la casa
-// Rep: { mode: "foto" | "inventa", urls?: [enllaços públics de Storage, màx. 3], n, ing?, steps? }  → { image: base64, mime }
+// Rep: { mode: "foto" | "inventa" | "edita", urls?: [enllaços públics de Storage, màx. 3], n, ing?, steps?, nota? }  → { image: base64, mime }
+//      edita: urls[0] és la imatge actual i nota són els canvis que demana l'Hortolà o la família
 //      { mode: "escolta", audio: base64, mime }  → { text }  (nota de veu passada a text, en català)
 // Requereix el secret GEMINI_API_KEY (Supabase → Edge Functions → Secrets). Opcional: GEMINI_IMAGE_MODEL.
 // Referències d'estil (opcionals): Storage assets/estil-1.jpg, estil-2.jpg, estil-3.jpg
@@ -51,9 +52,9 @@ Deno.serve(async (req) => {
       const text = ((j.candidates || [])[0]?.content?.parts || []).map((x: any) => x.text || "").join("").trim();
       return out({ text });
     }
-    const { mode = "inventa", urls = [], n = "", ing = "", steps = "" } = body;
+    const { mode = "inventa", urls = [], n = "", ing = "", steps = "", nota = "" } = body;
     const pub = `${su}/storage/v1/object/public/assets/`;
-    if (!["foto", "inventa"].includes(mode) || !Array.isArray(urls) || urls.length > 3 || urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub)) || (mode === "foto" && !urls.length))
+    if (!["foto", "inventa", "edita"].includes(mode) || !Array.isArray(urls) || urls.length > 3 || urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub)) || (mode !== "inventa" && !urls.length) || (mode === "edita" && !String(nota).trim()))
       return out({ error: "Petició no vàlida" }, 400);
     const img = async (u: string) => { try { const r = await fetch(u, { signal: AbortSignal.timeout(20000) }); if (!r.ok) return null; return { inline_data: { mime_type: r.headers.get("content-type") || "image/jpeg", data: b64(await r.arrayBuffer()) } }; } catch (_) { return null; } };
     const refs = (await Promise.all([1, 2, 3].map((i) => img(`${pub}estil-${i}.jpg?v=${Date.now()}`)))).filter(Boolean);
@@ -63,11 +64,15 @@ Deno.serve(async (req) => {
     const plat = `Dish: «${String(n).slice(0, 120)}».` + (ing ? ` Main ingredients: ${String(ing).slice(0, 600)}.` : "") + (steps ? ` How it is made (for the look of the finished dish): ${String(steps).slice(0, 600)}.` : "");
     const parts: unknown[] = [];
     if (refs.length) { parts.push({ text: "STYLE REFERENCES — copy this exact visual style, palette, light and composition (do not copy their dishes):" }); parts.push(...refs); }
-    if (mode === "foto") {
+    const extra = String(nota).trim() ? `\n\nEXTRA INSTRUCTIONS (follow them carefully): ${String(nota).trim().slice(0, 800)}` : "";
+    if (mode === "edita") {
+      parts.push({ text: "CURRENT IMAGE of the dish:" }); parts.push(...fotos);
+      parts.push({ text: `${ESTIL}\n\nRedo this image applying ONLY the requested changes below; keep everything else (dish, composition, house style) as it is. ${plat}${extra}` });
+    } else if (mode === "foto") {
       parts.push({ text: "PHOTO OF THE REAL DISH made by the family:" }); parts.push(...fotos);
-      parts.push({ text: `${ESTIL}\n\nRecreate the real dish from the photo as a new image in the house style. Keep it faithful to the real dish: same food, ingredients, colours of the food, portion and type of plate or cookware. Change everything else to the house style (background, light, framing, table). If the photo is a book or notebook page, show the dish it describes. ${plat}` });
+      parts.push({ text: `${ESTIL}\n\nRecreate the real dish from the photo as a new image in the house style. Keep it faithful to the real dish: same food, ingredients, colours of the food, portion and type of plate or cookware. Change everything else to the house style (background, light, framing, table). If the photo is a book or notebook page, show the dish it describes. ${plat}${extra}` });
     } else {
-      parts.push({ text: `${ESTIL}\n\nShow this Catalan home recipe as it looks when served. Be faithful to the real dish (traditional presentation, realistic ingredients). ${plat}` });
+      parts.push({ text: `${ESTIL}\n\nShow this Catalan home recipe as it looks when served. Be faithful to the real dish (traditional presentation, realistic ingredients). ${plat}${extra}` });
     }
     const t0 = Date.now();
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
