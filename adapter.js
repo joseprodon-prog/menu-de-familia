@@ -254,7 +254,10 @@
       if (error || !data || !data.image) throw new Error(msg || "No s'ha pogut dibuixar");
       const bin = atob(data.image), u = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-      return new Blob([u], { type: data.mime || "image/png" });
+      const raw = new Blob([u], { type: data.mime || "image/png" });
+      // en JPEG: pesa 4-5 vegades menys i es veu igual (càrrega més ràpida al mòbil)
+      try { const bm = await createImageBitmap(raw); const c = document.createElement("canvas"); c.width = bm.width; c.height = bm.height; c.getContext("2d").drawImage(bm, 0, 0); const jb = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.9)); if (jb && jb.size) return jb; } catch (_) {}
+      return raw;
     } finally { if (ids.length) sb.storage.from("assets").remove(ids).catch(() => {}); }
   };
   // el Capità escolta: nota de veu → text (funciona també a l'iPhone)
