@@ -4,15 +4,16 @@
   "at": "2026-10-27T07:30:00+01:00",
   "nom": "27 oct · matí (2)",
   "canvis": [
-   "Dos xats: 🥬 Capità Enciam per a tothom i 🧑‍🌾 xat amb l'Hortolà (blau) per a famílies Prèmium",
-   "Sense Prèmium: explicació, botó «Vull ser Prèmium» i «Has vist alguna cosa a millorar?» per a tothom",
+   "Dos xats: 🥬 Capità Enciam per a tothom i 🧑‍🌾 xat amb l'Hortolà (blau) per a famílies Sembrador",
+   "Sense Sembrador: explicació, botó «Vull ser Sembrador» i «Has vist alguna cosa a millorar?» per a tothom",
    "Fora la bombeta del Capità Enciam",
-   "Admin: Bústia com a converses (Prèmium i millores primer) i botó Gratuïta / Prèmium a cada família",
+   "Admin: Bústia com a converses (Sembrador i millores primer) i botó Gratuïta / Sembrador a cada família",
    "Llenguatge sempre en positiu: «Per millorar» en lloc d'«error», també al Capità Enciam",
-   "Botó i xat de l'Hortolà en blau cel clar i sense estrella fins que la família és Prèmium",
-   "Sol·licitud Prèmium per a tothom; l'Hortolà l'aprova (envia la informació) i l'activa quan està pagada",
+   "Botó i xat de l'Hortolà en blau cel clar i sense estrella fins que la família és Sembrador",
+   "Sol·licitud Sembrador per a tothom; l'Hortolà l'aprova (envia la informació) i l'activa quan està pagada",
    "Premi de 500 🌾 quan l'Hortolà posa una idea d'una família al servei de tothom",
-   "Admin: barra Hortolans Prèmium (sol·licituds noves, pendents de pagament i seguiment dels actius)"
+   "Admin: barra Hortolans Sembrador (sol·licituds noves, pendents de pagament i seguiment dels actius)",
+   "Les famílies de pagament es diuen Sembradors"
   ]
  },
  {
