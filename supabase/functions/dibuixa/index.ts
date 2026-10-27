@@ -1,0 +1,86 @@
+// Menú de Família · el Capità Enciam dibuixa les imatges de les receptes amb l'estil de la casa
+// Rep: { mode: "foto" | "inventa", urls?: [enllaços públics de Storage, màx. 3], n, ing?, steps? }  → { image: base64, mime }
+//      { mode: "escolta", audio: base64, mime }  → { text }  (nota de veu passada a text, en català)
+// Requereix el secret GEMINI_API_KEY (Supabase → Edge Functions → Secrets). Opcional: GEMINI_IMAGE_MODEL.
+// Referències d'estil (opcionals): Storage assets/estil-1.jpg, estil-2.jpg, estil-3.jpg
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const out = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
+
+// L'estil de la casa: és el mateix per a totes les imatges, i és el que fa que totes les fitxes semblin d'una mateixa família
+const ESTIL = `House illustration style of the Catalan family cooking app «Menú de Família» (keep it identical in every image):
+- Hand-painted gouache and soft watercolour illustration, like a warm illustrated family cookbook; visible gentle brush texture, soft ink outlines.
+- Warm natural daylight from the upper left, soft shadows, cosy and appetising.
+- Palette: cream paper background (#f7f4ee), olive and leaf greens, terracotta, mustard, warm wood; colours rich but natural, never neon.
+- Composition: the finished dish is the hero, centred, three-quarter view from about 45 degrees, served on a simple ceramic plate or the traditional cookware for the dish, on a light wooden table or linen cloth; one or two key fresh ingredients may appear around it; plenty of calm space around it.
+- Horizontal 4:3 frame. No text, no letters, no logos, no watermarks, no hands, no people.`;
+
+const b64 = (buf: ArrayBuffer) => { const u = new Uint8Array(buf); let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+  try {
+    const auth = req.headers.get("Authorization") || "";
+    const su = Deno.env.get("SUPABASE_URL"), sk = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
+    const who = await fetch(`${su}/auth/v1/user`, { headers: { Authorization: auth, apikey: sk }, signal: AbortSignal.timeout(15000) });
+    if (!who.ok) return out({ error: "Cal iniciar la sessió" }, 401);
+    const model = Deno.env.get("GEMINI_IMAGE_MODEL") || "gemini-2.5-flash-image";
+    const body = await req.json();
+    const key = Deno.env.get("GEMINI_API_KEY");
+    if (body.mode === "ping") return out({ ok: !!key });
+    if (!key) return out({ error: "Falta el secret GEMINI_API_KEY" }, 500);
+    if (body.mode === "escolta") {
+      const audio = String(body.audio || ""), mime = String(body.mime || "audio/mp4").split(";")[0];
+      if (!audio || audio.length > 12_000_000 || !/^audio\//.test(mime)) return out({ error: "Petició no vàlida" }, 400);
+      const tm = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-2.5-flash";
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${tm}:generateContent`, {
+        method: "POST", signal: AbortSignal.timeout(90000),
+        headers: { "x-goog-api-key": key, "content-type": "application/json" },
+        body: JSON.stringify({ contents: [{ role: "user", parts: [
+          { inline_data: { mime_type: mime, data: audio } },
+          { text: "Transcriu literalment aquesta nota de veu (normalment en català; si parla en castellà, transcriu-la en castellà). Posa la puntuació correcta i escriu els números amb xifres. Respon només amb la transcripció, sense cap comentari." },
+        ] }] }),
+      });
+      const j = await r.json();
+      console.log("escolta:", r.status, JSON.stringify(j.usageMetadata || j.error || {}));
+      if (!r.ok) return out({ error: (j && j.error && j.error.message) || "El servei no ha respost" }, 502);
+      const text = ((j.candidates || [])[0]?.content?.parts || []).map((x: any) => x.text || "").join("").trim();
+      return out({ text });
+    }
+    const { mode = "inventa", urls = [], n = "", ing = "", steps = "" } = body;
+    const pub = `${su}/storage/v1/object/public/assets/`;
+    if (!["foto", "inventa"].includes(mode) || !Array.isArray(urls) || urls.length > 3 || urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub)) || (mode === "foto" && !urls.length))
+      return out({ error: "Petició no vàlida" }, 400);
+    const img = async (u: string) => { try { const r = await fetch(u, { signal: AbortSignal.timeout(20000) }); if (!r.ok) return null; return { inline_data: { mime_type: r.headers.get("content-type") || "image/jpeg", data: b64(await r.arrayBuffer()) } }; } catch (_) { return null; } };
+    const refs = (await Promise.all([1, 2, 3].map((i) => img(`${pub}estil-${i}.jpg`)))).filter(Boolean);
+    const fotos = (await Promise.all(urls.map(img))).filter(Boolean);
+    const plat = `Dish: «${String(n).slice(0, 120)}».` + (ing ? ` Main ingredients: ${String(ing).slice(0, 600)}.` : "") + (steps ? ` How it is made (for the look of the finished dish): ${String(steps).slice(0, 600)}.` : "");
+    const parts: unknown[] = [];
+    if (refs.length) { parts.push({ text: "STYLE REFERENCES — copy this exact illustration style, palette, light and composition (do not copy their dishes):" }); parts.push(...refs); }
+    if (mode === "foto") {
+      parts.push({ text: "PHOTO OF THE REAL DISH made by the family:" }); parts.push(...fotos);
+      parts.push({ text: `${ESTIL}\n\nRepaint the real dish from the photo as a new illustration in the house style. Keep it faithful to the real dish: same food, ingredients, colours of the food, portion and type of plate or cookware. Change everything else to the house style (background, light, framing, table). If the photo is a book or notebook page, illustrate the dish it describes. ${plat}` });
+    } else {
+      parts.push({ text: `${ESTIL}\n\nIllustrate this Catalan home recipe as it looks when served. Be faithful to the real dish (traditional presentation, realistic ingredients). ${plat}` });
+    }
+    const t0 = Date.now();
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST", signal: AbortSignal.timeout(120000),
+      headers: { "x-goog-api-key": key, "content-type": "application/json" },
+      body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "4:3" } } }),
+    });
+    const j = await r.json();
+    console.log("dibuixa:", mode, r.status, Date.now() - t0, "ms", refs.length, "refs", JSON.stringify(j.usageMetadata || j.error || {}));
+    if (!r.ok) return out({ error: (j && j.error && j.error.message) || "El servei d'imatges no ha respost" }, 502);
+    const p = ((j.candidates || [])[0]?.content?.parts || []).find((x: any) => x.inlineData || x.inline_data);
+    const d = p && (p.inlineData || p.inline_data);
+    if (!d) return out({ error: "No s'ha pogut fer la imatge" }, 502);
+    return out({ image: d.data, mime: d.mimeType || d.mime_type || "image/png" });
+  } catch (e) {
+    return out({ error: String((e as Error).message || e) }, 500);
+  }
+});

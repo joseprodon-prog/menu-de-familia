@@ -1,5 +1,19 @@
 [
  {
+  "id": "v2026-10-27d",
+  "at": "2026-10-27T09:00:00+01:00",
+  "nom": "27 oct · matí (3)",
+  "canvis": [
+   "Crea una recepta: es comença pel nom de la recepta",
+   "Crea una recepta a pantalla sencera, sense res al fons",
+   "El Capità redibuixa totes les imatges amb l'estil de la casa (foto teva, d'internet o pujada) o en fa una il·lustració nova",
+   "Les receptes sense imatge s'il·lustren soles: en desar-les i en obrir les de la família",
+   "Notes de veu: el Capità les escolta i les passa a text (també a l'iPhone)",
+   "Dictat del navegador més estable: no repeteix text i continua fins que toques ■",
+   "Web de l'Hortolà: barra «Il·lustracions del Graner» per dibuixar les receptes que no tenen imatge i triar les referències d'estil"
+  ]
+ },
+ {
   "id": "v2026-10-27c",
   "at": "2026-10-27T12:00:00+01:00",
   "nom": "27 oct · migdia",

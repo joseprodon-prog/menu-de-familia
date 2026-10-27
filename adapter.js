@@ -239,6 +239,40 @@
     if (error || !data || data.error) { const x = new Error(msg || (error && error.message) || "error"); x.code = "upstream_error"; throw x; }
     return data.text || "";
   }
+  // el Capità dibuixa: redibuixa una foto o il·lustra una recepta amb l'estil de la casa → Blob
+  const MF_DIBUIXA = async function (o) {
+    const ids = [];
+    try {
+      for (const bl of (o.fotos || []).slice(0, 3)) {
+        const id = "tmp-" + [...crypto.getRandomValues(new Uint8Array(12))].map((b) => b.toString(16).padStart(2, "0")).join("") + ".jpg";
+        const { error: ue } = await sb.storage.from("assets").upload(id, bl, { contentType: "image/jpeg", upsert: false });
+        if (!ue) ids.push(id);
+      }
+      const { data, error } = await sb.functions.invoke("dibuixa", { body: { mode: ids.length ? "foto" : "inventa", urls: ids.map((id) => window.BLOBBASE + id), n: o.n || "", ing: o.ing || "", steps: o.steps || "" } });
+      let msg = data && data.error;
+      if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }
+      if (error || !data || !data.image) throw new Error(msg || "No s'ha pogut dibuixar");
+      const bin = atob(data.image), u = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+      return new Blob([u], { type: data.mime || "image/png" });
+    } finally { if (ids.length) sb.storage.from("assets").remove(ids).catch(() => {}); }
+  };
+  // el Capità escolta: nota de veu → text (funciona també a l'iPhone)
+  const MF_ESCOLTA = async function (blob) {
+    const buf = new Uint8Array(await blob.arrayBuffer()); let bin = "";
+    for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+    const { data, error } = await sb.functions.invoke("dibuixa", { body: { mode: "escolta", audio: btoa(bin), mime: blob.type || "audio/mp4" } });
+    let msg = data && data.error;
+    if (error && !msg) { try { const j = await error.context.json(); msg = j && j.error; } catch (_) {} }
+    if (error || !data || typeof data.text !== "string") throw new Error(msg || "No s'ha pogut escoltar");
+    return data.text;
+  };
+  // només s'activen si el servei del Capità (funció «dibuixa» amb la clau de Gemini) està a punt
+  window.MF_CAPITA_IMG = (async () => {
+    await ready;
+    try { const { data } = await sb.functions.invoke("dibuixa", { body: { mode: "ping" } }); if (data && data.ok) { window.MF_DIBUIXA = MF_DIBUIXA; window.MF_ESCOLTA = MF_ESCOLTA; return true; } } catch (_) {}
+    return false;
+  })();
   // xat amb eines: l'app defineix les eines (execute) i aquí es fa el bucle tool_use → tool_result
   async function chatAI(input, opts) {
     const msgs = typeof input === "string" ? [{ role: "user", content: input }] : input.map((m) => ({ role: m.role, content: m.content }));

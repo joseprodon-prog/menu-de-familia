@@ -113,6 +113,12 @@ a.btn{text-decoration:none;display:inline-block}
 #mflogin .mfor::before,#mflogin .mfor::after{content:"";flex:1;height:1px;background:var(--line)}
 #mflogin .ghost{font:600 14px var(--body);padding:8px;border:0;background:none;color:var(--muted);cursor:pointer}
 #mflogin [hidden]{display:none}
+.ilg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.ilc{background:#fff;border:1px solid var(--line,#e3e3e3);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:4px}
+.ilc small{color:#777;font-size:11px}.ilim{aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:#f3efe6;display:flex;align-items:center;justify-content:center}
+.ilim img{width:100%;height:100%;object-fit:cover}.ilno{font-size:28px;opacity:.5}
+.ilsp{width:26px;height:26px;border-radius:50%;border:3px solid #cfe0f2;border-top-color:#2a78c2;animation:ilsp 1s linear infinite}@keyframes ilsp{to{transform:rotate(360deg)}}
+.ilb{display:flex;gap:6px;margin-top:auto}.ilb .btn{flex:1;padding:6px 8px;font-size:13px}.ilb [data-ilref]{flex:0 0 40px}
 </style>
 </head>
 <body>
@@ -124,7 +130,7 @@ a.btn{text-decoration:none;display:inline-block}
 <script>window.MF_STORAGEKEY="mf-admin-auth";</script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
-<script src="adapter.js?v=4"></script>
+<script src="adapter.js?v=5"></script>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -138,7 +144,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
 
 (async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();let okH=false;try{const r=await SB.rpc("is_hortola");okH=!!(r&&r.data===true);}catch(e){}if(okH)HORTOLA=uid;
  if(!okH){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
- $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app",true)+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
+ $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app",true)+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
  DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();},()=>{});
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
@@ -146,7 +152,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
  DB.doc("botiga/premium").onSnapshot(d=>{PREMH=(d.exists&&d.data().h)||{};drawUsu();drawBus();},()=>{});
  DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
  loadFam();loadVer();drawNot();
- document.addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
+ document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
 })();
 
 function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
@@ -372,6 +378,28 @@ async function loadVer(){const el=$("#b_ver");let pub="";try{const r=await fetch
  el.innerHTML=`<p>Versió publicada: <b>${esc(pub||"—")}</b></p><p class="foot">Les famílies l'agafen soles en obrir l'app. Si la tenen oberta, el Capità Enciam els avisa amb un número vermell.</p>`+
  L.map(v=>`<div class="card fet" style="border-left-color:var(--blue)"><div class="ch"><b>${esc(v.nom)}</b></div><ul class="vl">${(v.canvis||[]).map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>`).join("");}
 
+
+/* ---------- Il·lustracions del Graner: el Capità dibuixa les receptes que no tenen imatge ---------- */
+let ILG=null,ILU=[],ILMAP={},ILBUSY={},ILRUN=false,ILMSG="",ILAS=null;
+async function ilLoad(){try{if(!ILAS)ILAS=await window.claude.use("assets");if(!ILG)ILG=await (await fetch("graner.json?v="+Date.now())).json();}catch(e){ILG=ILG||[];}
+ if(!ilLoad.sub){ilLoad.sub=1;DB.doc("graner/il").onSnapshot(d=>{ILMAP=(d.exists&&d.data().items)||{};drawIl();},()=>{});
+  DB.collection("receptes").onSnapshot(s=>{ILU=[];s.docs.forEach(d=>{const uid=d.id.split("/").pop();const it=(d.data()||{}).items||{};for(const[id,x]of Object.entries(it))if(x&&x.n)ILU.push({k:"u_"+uid.slice(0,12)+"_"+id,n:x.n,cat:x.cat||"",ing:String(x.ing||"").replace(/\n/g,"; ").slice(0,600),steps:String(x.steps||"").replace(/\n/g," ").slice(0,600),foto:!!x.foto,fam:x.fam||""});});drawIl();},()=>{});}
+ drawIl();}
+function ilList(){return [...(ILG||[]),...ILU].filter(r=>!r.foto).sort((a,b)=>a.n.localeCompare(b.n,"ca"));}
+function drawIl(){const el=$("#b_il");if(!el)return;const L=ilList();const falten=L.filter(r=>!ILMAP[r.k]).length;$("#c_il").textContent=falten||"";
+ if(!window.MF_DIBUIXA){el.innerHTML=`<p class="foot">Cal tornar a carregar la pàgina.</p>`;return;}
+ el.innerHTML=`<p class="foot">${L.length} receptes del Graner sense foto · ${falten} encara sense il·lustració. Les il·lustracions marcades amb ⭐ són la referència d'estil per a totes les altres (fins a 3).</p>
+ <p><button class="btn" id="ilall"${ILRUN||!falten?" disabled":""}>🎨 Il·lustra les ${falten} que falten</button> <span class="foot" id="ilmsg">${esc(ILMSG)}</span></p>
+ <div class="ilg">${L.map(r=>{const id=ILMAP[r.k];const b=ILBUSY[r.k];return `<div class="ilc"><div class="ilim">${b?'<span class="ilsp"></span>':id?`<img src="${window.BLOBBASE+id}" alt="" loading="lazy">`:'<span class="ilno">🎨</span>'}</div><b>${esc(r.n)}</b><small>${esc(r.cat||"")}${r.fam?" · "+esc(r.fam):""}</small>
+ <div class="ilb"><button class="btn sec" data-ildo="${esc(r.k)}"${b?" disabled":""}>${id?"↻ Una altra":"🎨 Dibuixa"}</button>${id?`<button class="btn sec" data-ilref="${esc(r.k)}" title="Usa-la com a referència d'estil">⭐</button>`:""}</div></div>`;}).join("")}</div>`;}
+async function ilDo(k){const r=ilList().find(x=>x.k===k);if(!r||ILBUSY[k])return;ILBUSY[k]=1;drawIl();
+ try{const bl=await window.MF_DIBUIXA({fotos:[],n:r.n,ing:r.ing,steps:r.steps});const up=await ILAS.upload(bl,{type:bl.type||"image/png"});ILMAP={...ILMAP,[k]:up.id};await DB.doc("graner/il").set({items:ILMAP});ILMSG="";}
+ catch(e){ILMSG="«"+r.n+"»: "+((e&&e.message)||"no s'ha pogut dibuixar");}
+ delete ILBUSY[k];drawIl();}
+async function ilRef(k){const id=ILMAP[k];if(!id)return;try{const bl=await (await fetch(window.BLOBBASE+id)).blob();const n=((+localStorage.getItem("mf_ilref")||0)%3)+1;
+ const {error}=await SB.storage.from("assets").upload("estil-"+n+".jpg",bl,{upsert:true,contentType:bl.type||"image/png"});if(error)throw error;localStorage.setItem("mf_ilref",n);ILMSG="⭐ Desada com a referència d'estil "+n+" de 3";}catch(e){ILMSG="No s'ha pogut desar la referència: "+((e&&e.message)||"");}drawIl();}
+document.addEventListener("click",async e=>{const t=e.target;if(!t.closest)return;const d=t.closest("[data-ildo]");if(d){ilDo(d.dataset.ildo);return;}const f=t.closest("[data-ilref]");if(f){ilRef(f.dataset.ilref);return;}
+ if(t.closest("#ilall")){ILRUN=true;for(const r of ilList().filter(r=>!ILMAP[r.k])){ILMSG="Dibuixant «"+r.n+"»…";await ilDo(r.k);}ILRUN=false;ILMSG="Fet ✓";drawIl();}});
 /* ---------- Notes i enllaços ---------- */
 const LINKS=[["App de les famílies","https://menu-de-familia.pages.dev","Entra amb el teu compte. Per tenir dos comptes oberts a l'ordinador, fes servir una finestra privada."],["Bústia dins l'app","https://menu-de-familia.pages.dev/?bustia=1","Obre l'app directament als missatges."],["Prototip","https://claude.ai/artifact/9kT5ZGR5xToApPz85hikHh","Còpia de l'app a Claude per provar canvis abans de publicar-los."],["Supabase","https://supabase.com/dashboard/project/whdcdxbfxwfriqoeloql","Base de dades i usuaris."],["Instal·lar a l'iPhone","","Safari → ☰ → Compartir → Afegeix a la pantalla d'inici."],["Instal·lar a Android","","Chrome → ⋮ → Instal·la l'aplicació."]];
 let NOTE="",ntm;
