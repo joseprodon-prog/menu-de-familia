@@ -8,15 +8,22 @@
   window.MF_SB = sb;
   window.BLOBBASE = CFG.url.replace(/\/$/, "") + "/storage/v1/object/public/assets/";
 
-  /* ---------- sessió ---------- */
+  /* ---------- sessió i pantalla d'entrada ---------- */
   let session = null;
+  const ADMIN = !!window.MF_STORAGEKEY;
+  const LAST = (() => { try { return JSON.parse(localStorage.getItem("mf_lastfam") || "null") || {}; } catch (e) { return {}; } })();
+  const INV = /[?&]codi=/.test(location.search);
   const ready = new Promise(async (resolve) => {
     const { data } = await sb.auth.getSession();
-    if (data && data.session) { session = data.session; return resolve(); }
-    showLogin();
-    sb.auth.onAuthStateChange((ev, s) => { if (s && !session) { session = s; hideLogin(); resolve(); } });
+    session = data && data.session ? data.session : null;
+    const go = () => { hideLogin(); resolve(); };
+    sb.auth.onAuthStateChange((ev, s) => { if (s && !session) { session = s; try { localStorage.setItem("mf_lastmail", s.user.email || ""); } catch (e) {} go(); } });
+    if (RECOVERY && session) return go();
+    if (ADMIN) { if (session) return go(); return showWelcome(go, "login"); }
+    showWelcome(go);
   });
-  sb.auth.onAuthStateChange((ev, s) => { if (ev === "SIGNED_OUT") location.reload(); if (ev === "PASSWORD_RECOVERY") showNewPass(); });
+  let NOREL = false;
+  sb.auth.onAuthStateChange((ev, s) => { if (ev === "SIGNED_OUT" && !NOREL) location.reload(); if (ev === "PASSWORD_RECOVERY") showNewPass(); });
   if (RECOVERY) ready.then(() => showNewPass());
 
   /* ---------- nova contrasenya (des de l'enllaç del correu) ---------- */
@@ -37,39 +44,79 @@
     });
   }
 
-  function showLogin() {
-    const d = document.createElement("div");
-    d.id = "mflogin";
-    const inv = /[?&]codi=/.test(location.search);
-    d.innerHTML = `<div class="mfl"><h1>Menú de Família</h1><p>${inv ? "T'han convidat a una família. Si és la primera vegada, escriu el teu correu, tria una contrasenya i prem <b>Crea el compte</b>." : "Escriu el teu correu i la contrasenya. Si és la primera vegada, prem <b>Crea el compte</b>."}</p>
-      <form id="mflf"><input type="email" required placeholder="el-teu@correu.cat" autocomplete="email" aria-label="Correu electrònic">
-      <input type="password" required minlength="6" placeholder="Contrasenya (mínim 6 caràcters)" autocomplete="current-password" aria-label="Contrasenya">
-      <button class="primary" type="submit">Entra</button><span class="mfor">Primera vegada?</span><button type="button" class="sec" id="mflnew">Crea el compte</button><button type="button" class="ghost" id="mflforgot">He oblidat la contrasenya</button></form>
-      <p class="foot" id="mflm" role="status"></p></div>`;
-    const go = () => { document.body.appendChild(d); d.querySelector("input").focus(); };
-    if (document.body) go(); else addEventListener("DOMContentLoaded", go);
-    const msg = (t) => { d.querySelector("#mflm").textContent = t; };
-    const vals = () => { const [e, p] = d.querySelectorAll("#mflf input"); return { email: e.value.trim().toLowerCase(), password: p.value }; };
-    const tr = (m) => /invalid login/i.test(m) ? "Correu o contrasenya incorrectes. Si és la primera vegada, prem «Crea el compte»." : /already registered/i.test(m) ? "Aquest correu ja té compte: prem «Entra»." : /confirm/i.test(m) ? "Cal confirmar el correu: a Supabase, desactiva «Confirm email»." : /rate limit/i.test(m) ? "Massa intents seguits. Espera una estona." : m;
-    d.querySelector("#mflf").addEventListener("submit", async (e) => {
-      e.preventDefault(); const v = vals(); msg("Entrant…");
-      const { error } = await sb.auth.signInWithPassword(v);
-      if (error) msg(tr(error.message));
-    });
-    d.querySelector("#mflforgot").addEventListener("click", async () => {
-      const v = vals(); if (!v.email) { msg("Escriu primer el teu correu i torna a prémer «He oblidat la contrasenya»."); d.querySelector("input").focus(); return; }
-      msg("Enviant el correu…");
-      const { error } = await sb.auth.resetPasswordForEmail(v.email, { redirectTo: location.origin + "/" });
-      msg(error ? tr(error.message) : "T'hem enviat un correu amb un enllaç per canviar la contrasenya. Mira també la carpeta de correu brossa.");
-    });
-    d.querySelector("#mflnew").addEventListener("click", async () => {
-      const v = vals(); if (!v.email || v.password.length < 6) { msg("Escriu el correu i una contrasenya de 6 caràcters o més."); return; }
-      msg("Creant el compte…");
-      const { data, error } = await sb.auth.signUp(v);
-      if (error) msg(tr(error.message)); else if (!data.session) msg("Compte creat, però cal confirmar el correu. A Supabase, desactiva «Confirm email» i torna a prémer «Entra».");
+  const WCSS = `#mfwel{position:fixed;inset:0;z-index:200;background:#f3ead2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));font-family:"Source Sans 3",system-ui,-apple-system,sans-serif;color:#26231c;overflow:auto}
+#mfwel .wlogo{width:96px;height:96px;border-radius:24px;box-shadow:0 6px 18px rgba(60,80,30,.25)}
+#mfwel h1{font:700 32px "Fraunces",Georgia,serif;margin:0;text-align:center}
+#mfwel .wtag{margin:-12px 0 0;color:#6b675d;font-size:16px;text-align:center}
+#mfwel .wbtns{display:flex;flex-direction:column;gap:12px;width:min(380px,100%)}
+#mfwel .wb{display:flex;align-items:center;gap:14px;width:100%;border:0;border-radius:18px;padding:16px 18px;text-align:left;cursor:pointer;font:inherit;box-shadow:0 3px 10px rgba(35,33,28,.12)}
+#mfwel .wb .wi{font-size:28px;line-height:1;flex:none}
+#mfwel .wb .wt{flex:1;display:flex;flex-direction:column;gap:2px}
+#mfwel .wb b{font:700 19px "Fraunces",Georgia,serif}
+#mfwel .wb small{font-size:13.5px;opacity:.85}
+#mfwel .wfam{background:#6e8c3c;color:#fff}
+#mfwel .wnew{background:#fff;color:#26231c;border:2px solid #6e8c3c}
+#mfwel .wsh{position:fixed;inset:0;background:rgba(20,30,40,.45);display:flex;align-items:flex-end;justify-content:center;z-index:5}
+#mfwel .wsh[hidden]{display:none}
+#mfwel .wcard{background:#fff;border-radius:22px 22px 0 0;padding:22px 20px max(22px,env(safe-area-inset-bottom));width:min(480px,100%);display:flex;flex-direction:column;gap:10px;box-shadow:0 -6px 24px rgba(0,0,0,.2)}
+@media (min-width:600px){#mfwel .wsh{align-items:center}#mfwel .wcard{border-radius:22px}}
+#mfwel .wcard h2{font:700 22px "Fraunces",Georgia,serif;margin:0}
+#mfwel .wcard p{margin:0;color:#6b675d;font-size:14.5px}
+#mfwel .wcard form{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+#mfwel .wcard input{font-size:16px;font-family:inherit;padding:13px 14px;border:1px solid #d9d3c3;border-radius:12px;background:#fff;color:#26231c}
+#mfwel .wcard .wp{font-size:16px;font-weight:700;font-family:inherit;padding:13px;border-radius:999px;border:0;background:#2f74b5;color:#fff;cursor:pointer}
+#mfwel .wcard .wl{font-size:14.5px;font-weight:600;font-family:inherit;padding:8px;border:0;background:none;color:#2f74b5;cursor:pointer}
+#mfwel .wmsg{min-height:1.2em;font-size:14px;color:#c2402e}`;
+
+  function showWelcome(done, start) {
+    if (!document.getElementById("mfwelcss")) { const st = document.createElement("style"); st.id = "mfwelcss"; st.textContent = WCSS; (document.head || document.documentElement).appendChild(st); }
+    const d = document.createElement("div"); d.id = "mfwel"; d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true");
+    const famLbl = INV ? "T'han convidat a una família" : (LAST.nom ? (/^fam[ií]lia\b/i.test(LAST.nom) ? LAST.nom : "Família " + LAST.nom) : "Ja tinc compte");
+    const famSub = INV ? "Entra o crea el teu compte i hi entraràs" : (session ? "Entra a l'app" : "Entra amb el teu correu");
+    d.innerHTML = `<img class="wlogo" src="icon-192.png" alt=""><h1>Menú de Família</h1><p class="wtag">Què fem per dinar a casa?</p>
+      <div class="wbtns">
+        <button type="button" class="wb wfam" data-w="fam"><span class="wi">🏡</span><span class="wt"><b>${esc(famLbl)}</b><small>${esc(famSub)}</small></span></button>
+        ${INV ? "" : `<button type="button" class="wb wnew" data-w="new"><span class="wi">🌱</span><span class="wt"><b>Sóc nou · Registra't</b><small>Crea el teu compte i la teva família</small></span></button>`}
+      </div>
+      <div class="wsh" hidden><div class="wcard"></div></div>`;
+    const sh = d.querySelector(".wsh"), card = d.querySelector(".wcard");
+    const mount = () => { document.body.appendChild(d); if (start) open(start); };
+    if (document.body) mount(); else addEventListener("DOMContentLoaded", mount);
+    function open(kind) {
+      const reg = kind === "new";
+      const mail = (() => { try { return localStorage.getItem("mf_lastmail") || ""; } catch (e) { return ""; } })();
+      card.innerHTML = `<h2>${reg ? "Benvingut! Crea el teu compte" : "Entra al teu compte"}</h2>
+        <p>${reg ? "Escriu el teu correu i tria una contrasenya. Després et guiarem pas a pas per crear la teva família." : "Escriu el correu i la contrasenya."}</p>
+        <form autocomplete="on"><input type="email" name="email" required placeholder="el-teu@correu.cat" autocomplete="username" aria-label="Correu electrònic" value="${esc(reg ? "" : mail)}">
+        <input type="password" name="password" required minlength="6" placeholder="${reg ? "Tria una contrasenya (mínim 6 caràcters)" : "Contrasenya"}" autocomplete="${reg ? "new-password" : "current-password"}" aria-label="Contrasenya">
+        <button class="wp" type="submit">${reg ? "Crea el compte" : "Entra"}</button></form>
+        <p class="wmsg" role="status"></p>
+        ${reg ? `<button type="button" class="wl" data-w="login">Ja tinc compte: entra</button>` : `<button type="button" class="wl" data-w="forgot">He oblidat la contrasenya</button>${ADMIN ? "" : `<button type="button" class="wl" data-w="new">No tinc compte: registra't</button>`}`}`;
+      sh.hidden = false; const i = card.querySelector(reg || !mail ? "input[type=email]" : "input[type=password]"); setTimeout(() => i && i.focus(), 50);
+      const msg = (t) => { card.querySelector(".wmsg").textContent = t; };
+      const vals = () => { const f = card.querySelector("form"); return { email: f.email.value.trim().toLowerCase(), password: f.password.value }; };
+      card.querySelector("form").onsubmit = async (e) => {
+        e.preventDefault(); const v = vals();
+        if (reg) { msg("Creant el compte…"); const { data, error } = await sb.auth.signUp(v); if (error) return msg(tr(error.message)); if (!data.session) return msg("Compte creat, però cal confirmar el correu."); }
+        else { msg("Entrant…"); const { error } = await sb.auth.signInWithPassword(v); if (error) return msg(tr(error.message)); }
+        try { localStorage.setItem("mf_lastmail", v.email); } catch (_) {}
+      };
+      card.onclick = async (e) => {
+        const b = e.target.closest("[data-w]"); if (!b) return;
+        if (b.dataset.w === "forgot") { const v = vals(); if (!v.email) return msg("Escriu primer el teu correu."); msg("Enviant el correu…"); const { error } = await sb.auth.resetPasswordForEmail(v.email, { redirectTo: location.origin + location.pathname }); msg(error ? tr(error.message) : "T'hem enviat un correu per canviar la contrasenya. Mira també el correu brossa."); return; }
+        open(b.dataset.w === "new" ? "new" : "login");
+      };
+    }
+    d.addEventListener("click", (e) => {
+      if (e.target === sh) { sh.hidden = true; return; }
+      const b = e.target.closest(".wbtns [data-w]"); if (!b) return;
+      if (b.dataset.w === "fam") { if (session) { d.remove(); done(); return; } open("login"); }
+      else if (b.dataset.w === "new") { if (session) { NOREL = true; sb.auth.signOut({ scope: "local" }).catch(() => {}).finally(() => { setTimeout(() => { NOREL = false; }, 500); }); session = null; } open("new"); }
     });
   }
-  function hideLogin() { const d = document.getElementById("mflogin"); if (d) d.remove(); }
+  const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const tr = (m) => /invalid login/i.test(m) ? "Correu o contrasenya incorrectes." : /already registered/i.test(m) ? "Aquest correu ja té compte: entra amb «Ja tinc compte»." : /rate limit/i.test(m) ? "Massa intents seguits. Espera una estona." : m;
+  function hideLogin() { const d = document.getElementById("mfwel"); if (d) d.remove(); const o = document.getElementById("mflogin"); if (o && !o.dataset.np) o.remove(); }
 
   /* ---------- documents ---------- */
   const subs = new Map();      // path -> Set(fn)
