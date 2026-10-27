@@ -121,6 +121,7 @@ a.btn{text-decoration:none;display:inline-block}
 .ilerr{color:#a0632a;font-size:12px}.ilst{font-size:12px;color:#2a78c2}.ilst.ok{color:#4f7a2e}
 .ilnf{display:flex;flex-direction:column;gap:6px;margin-top:6px}.ilnf textarea{font:inherit;font-size:13px;padding:8px;border:1px solid #d9d4c7;border-radius:8px;resize:vertical}
 .ilb{display:flex;gap:6px;margin-top:auto}.ilb .btn{flex:1;padding:6px 8px;font-size:13px;white-space:nowrap;min-height:38px}.ilb [data-ilref]{flex:0 0 48px}
+.btn.phid{background:#eceae4;color:#6b675d}.btn.pvis{background:#2a78c2;color:#fff}
 </style>
 </head>
 <body>
@@ -240,7 +241,7 @@ async function loadFam(){try{const {data:fs}=await SB.from("docs").select("path,
 /* ---------- Catàleg ---------- */
 let PEDIT=null;
 function drawCat(){const el=$("#b_cat");if(!el)return;const L=Object.entries(SHOP).sort((a,b)=>String(a[1].n).localeCompare(String(b[1].n),"ca"));
- el.innerHTML=`<button class="btn" data-pnew>＋ Nou producte</button>`+(L.length?L.map(([id,p])=>PEDIT===id?pForm(id,p):`<div class="card ${p.actiu===false?"fet":"vist"}" style="border-left-color:${p.actiu===false?"#bbb":"var(--acc)"}"><div class="ch"><b>${esc(p.n)}</b><small>${esc((SCATS.find(c=>c[0]===p.cat)||[,""])[1])} · ${String((+p.preu||0).toFixed(2)).replace(".",",")} € · ${esc(p.format||"")}${p.actiu===false?" · <b>no visible</b>":""}</small></div><div class="row"><button class="btn sec" data-pedit="${id}">Edita</button><button class="btn sec" data-pact="${id}">${p.actiu===false?"Fes-lo visible":"Amaga'l"}</button><button class="btn del" data-pdel="${id}">Elimina</button></div></div>`).join(""):`<p class="foot">Encara no hi ha productes.</p>`);}
+ el.innerHTML=`<button class="btn" data-pnew>＋ Nou producte</button>`+(L.length?L.map(([id,p])=>PEDIT===id?pForm(id,p):`<div class="card ${p.actiu===false?"fet":"vist"}" style="border-left-color:${p.actiu===false?"#bbb":"var(--acc)"}"><div class="ch"><b>${esc(p.n)}</b><small>${esc((SCATS.find(c=>c[0]===p.cat)||[,""])[1])} · ${String((+p.preu||0).toFixed(2)).replace(".",",")} € · ${esc(p.format||"")}${p.actiu===false?" · <b>no visible</b>":""}</small></div><div class="row"><button class="btn sec" data-pedit="${id}">Edita</button><button class="btn ${p.actiu===false?"pvis":"phid"}" data-pact="${id}">${p.actiu===false?"👁️ Fes-lo visible":"🙈 Amaga'l"}</button><button class="btn del" data-pdel="${id}">Elimina</button></div></div>`).join(""):`<p class="foot">Encara no hi ha productes.</p>`);}
 function pForm(id,p){return `<div class="card" data-pf="${id}" style="border-left-color:var(--blue)"><div class="grid2">
  <label class="f">Nom<input data-k="n" value="${esc(p.n)}"></label><label class="f">Categoria<select data-k="cat">${SCATS.map(([c,l])=>`<option value="${c}"${p.cat===c?" selected":""}>${l}</option>`).join("")}</select></label>
  <label class="f">Format<input data-k="format" value="${esc(p.format)}" placeholder="4 racions"></label><label class="f">Preu<span class="pill"><button type="button" data-pp="-0.5">−</button><b>${String((+p.preu||0).toFixed(2)).replace(".",",")} €</b><button type="button" data-pp="0.5">+</button></span></label>
