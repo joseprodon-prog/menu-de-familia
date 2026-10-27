@@ -380,16 +380,30 @@ async function loadVer(){const el=$("#b_ver");let pub="";try{const r=await fetch
 
 
 /* ---------- Il·lustracions del Graner: el Capità dibuixa les receptes que no tenen imatge ---------- */
-let ILG=null,ILU=[],ILMAP={},ILBUSY={},ILRUN=false,ILMSG="",ILAS=null;
+let ILG=null,ILU=[],ILMAP={},ILBUSY={},ILRUN=false,ILMSG="",ILAS=null,ILEST="";
+const ILPRE={foto:`House photo style of the Catalan family cooking app «Menú de Família» (keep it identical in every image):
+- Photorealistic professional food photography, true-to-life textures and colours; never an illustration, drawing or painting.
+- Soft natural daylight from a window on the left, gentle shadows, shallow depth of field.
+- The finished dish is the hero, centred, three-quarter view from about 45 degrees, in a simple ceramic plate or the traditional cookware for the dish (e.g. clay cassola), on a light rustic wooden table with a linen napkin; one or two fresh key ingredients as props; calm, uncluttered background in warm neutral tones.
+- Warm, natural, appetising colours; homemade look, not luxury restaurant plating.
+- Horizontal 4:3 frame. No text, no letters, no logos, no watermarks, no hands, no people.`,aqua:`House illustration style of the Catalan family cooking app «Menú de Família» (keep it identical in every image):
+- Hand-painted gouache and soft watercolour illustration, like a warm illustrated family cookbook; visible gentle brush texture, soft ink outlines.
+- Warm natural daylight from the upper left, soft shadows, cosy and appetising.
+- Palette: cream paper background (#f7f4ee), olive and leaf greens, terracotta, mustard, warm wood; colours rich but natural, never neon.
+- Composition: the finished dish is the hero, centred, three-quarter view from about 45 degrees, on a simple ceramic plate or the traditional cookware, on a light wooden table or linen cloth; one or two key fresh ingredients may appear around it.
+- Horizontal 4:3 frame. No text, no letters, no logos, no watermarks, no hands, no people.`};
 async function ilLoad(){try{if(window.MF_CAPITA_IMG)window.MF_CAPITA_IMG.then(()=>drawIl());if(!ILAS)ILAS=await window.claude.use("assets");if(!ILG)ILG=await (await fetch("graner.json?v="+Date.now())).json();}catch(e){ILG=ILG||[];}
- if(!ilLoad.sub){ilLoad.sub=1;DB.doc("graner/il").onSnapshot(d=>{ILMAP=(d.exists&&d.data().items)||{};drawIl();},()=>{});
+ if(!ilLoad.sub){ilLoad.sub=1;DB.doc("graner/il").onSnapshot(d=>{ILMAP=(d.exists&&d.data().items)||{};drawIl();},()=>{});DB.doc("graner/estil").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="ilest")return;ILEST=(d.exists&&d.data().t)||ILPRE.foto;drawIl();},()=>{});
   DB.collection("receptes").onSnapshot(s=>{ILU=[];s.docs.forEach(d=>{const uid=d.id.split("/").pop();const it=(d.data()||{}).items||{};for(const[id,x]of Object.entries(it))if(x&&x.n)ILU.push({k:"u_"+uid.slice(0,12)+"_"+id,n:x.n,cat:x.cat||"",ing:String(x.ing||"").replace(/\n/g,"; ").slice(0,600),steps:String(x.steps||"").replace(/\n/g," ").slice(0,600),foto:!!x.foto,fam:x.fam||""});});drawIl();},()=>{});}
  drawIl();}
 function ilList(){return [...(ILG||[]),...ILU].filter(r=>!r.foto).sort((a,b)=>a.n.localeCompare(b.n,"ca"));}
 function drawIl(){const el=$("#b_il");if(!el)return;const L=ilList();const falten=L.filter(r=>!ILMAP[r.k]).length;$("#c_il").textContent=falten||"";
  if(!window.MF_DIBUIXA){el.innerHTML=window.MF_CAPITA_WHY?`<p class="foot">El Capità encara no pot dibuixar: <b>${esc(window.MF_CAPITA_WHY)}</b></p>`:`<p class="foot">Connectant amb el Capità…</p>`;return;}
  el.innerHTML=`<p class="foot">${L.length} receptes del Graner sense foto · ${falten} encara sense il·lustració. Les il·lustracions marcades amb ⭐ són la referència d'estil per a totes les altres (fins a 3).</p>
- <p><button class="btn" id="ilall"${ILRUN||!falten?" disabled":""}>🎨 Il·lustra les ${falten} que falten</button> <span class="foot" id="ilmsg">${esc(ILMSG)}</span></p>
+ <details class="sub"><summary><span class="btx"><b>Estil de la casa</b><small>${ILEST===ILPRE.foto?"Fotografia realista":ILEST===ILPRE.aqua?"Aquarel·la":"Personalitzat"} · s'aplica a totes les imatges noves</small></span><span class="chev sm"></span></summary><div class="ubody">
+ <p><button class="btn sec" data-ilpre="foto">📷 Fotografia realista</button> <button class="btn sec" data-ilpre="aqua">🎨 Aquarel·la</button> <button class="btn sec" id="ilrefdel">Treu les referències ⭐</button></p>
+ <label class="f">Instruccions d'estil (en anglès; es desa sol)<textarea id="ilest" style="min-height:160px">${esc(ILEST)}</textarea></label></div></details>
+ <p><button class="btn" id="ilall"${ILRUN||!falten?" disabled":""}>🎨 Il·lustra les ${falten} que falten</button> <button class="btn sec" id="ilredo"${ILRUN||!(L.length-falten)?" disabled":""}>↻ Refés-les totes</button> <span class="foot" id="ilmsg">${esc(ILMSG)}</span></p>
  <div class="ilg">${L.map(r=>{const id=ILMAP[r.k];const b=ILBUSY[r.k];return `<div class="ilc"><div class="ilim">${b?'<span class="ilsp"></span>':id?`<img src="${window.BLOBBASE+id}" alt="" loading="lazy">`:'<span class="ilno">🎨</span>'}</div><b>${esc(r.n)}</b><small>${esc(r.cat||"")}${r.fam?" · "+esc(r.fam):""}</small>
  <div class="ilb"><button class="btn sec" data-ildo="${esc(r.k)}"${b?" disabled":""}>${id?"↻ Una altra":"🎨 Dibuixa"}</button>${id?`<button class="btn sec" data-ilref="${esc(r.k)}" title="Usa-la com a referència d'estil">⭐</button>`:""}</div></div>`;}).join("")}</div>`;}
 async function ilDo(k){const r=ilList().find(x=>x.k===k);if(!r||ILBUSY[k])return;ILBUSY[k]=1;drawIl();
@@ -399,7 +413,11 @@ async function ilDo(k){const r=ilList().find(x=>x.k===k);if(!r||ILBUSY[k])return
 async function ilRef(k){const id=ILMAP[k];if(!id)return;try{const bl=await (await fetch(window.BLOBBASE+id)).blob();const n=((+localStorage.getItem("mf_ilref")||0)%3)+1;
  const {error}=await SB.storage.from("assets").upload("estil-"+n+".jpg",bl,{upsert:true,contentType:bl.type||"image/png"});if(error)throw error;localStorage.setItem("mf_ilref",n);ILMSG="⭐ Desada com a referència d'estil "+n+" de 3";}catch(e){ILMSG="No s'ha pogut desar la referència: "+((e&&e.message)||"");}drawIl();}
 document.addEventListener("click",async e=>{const t=e.target;if(!t.closest)return;const d=t.closest("[data-ildo]");if(d){ilDo(d.dataset.ildo);return;}const f=t.closest("[data-ilref]");if(f){ilRef(f.dataset.ilref);return;}
+ const pr=t.closest("[data-ilpre]");if(pr){ILEST=ILPRE[pr.dataset.ilpre];await DB.doc("graner/estil").set({t:ILEST});ILMSG="Estil canviat: les imatges noves sortiran així";drawIl();return;}
+ if(t.closest("#ilrefdel")){try{const {error}=await SB.storage.from("assets").remove(["estil-1.jpg","estil-2.jpg","estil-3.jpg"]);if(error)throw error;localStorage.removeItem("mf_ilref");ILMSG="Referències ⭐ trets";}catch(e){ILMSG="No s'han pogut treure les referències: "+((e&&e.message)||"");}drawIl();return;}
+ if(t.closest("#ilredo")){ILRUN=true;for(const r of ilList().filter(r=>ILMAP[r.k])){ILMSG="Refent «"+r.n+"»…";await ilDo(r.k);}ILRUN=false;ILMSG="Fet ✓";drawIl();return;}
  if(t.closest("#ilall")){ILRUN=true;for(const r of ilList().filter(r=>!ILMAP[r.k])){ILMSG="Dibuixant «"+r.n+"»…";await ilDo(r.k);}ILRUN=false;ILMSG="Fet ✓";drawIl();}});
+let ILT=null;document.addEventListener("input",e=>{if(e.target.id!=="ilest")return;ILEST=e.target.value;clearTimeout(ILT);ILT=setTimeout(()=>DB.doc("graner/estil").set({t:ILEST}).catch(()=>{}),800);});
 /* ---------- Notes i enllaços ---------- */
 const LINKS=[["App de les famílies","https://menu-de-familia.pages.dev","Entra amb el teu compte. Per tenir dos comptes oberts a l'ordinador, fes servir una finestra privada."],["Bústia dins l'app","https://menu-de-familia.pages.dev/?bustia=1","Obre l'app directament als missatges."],["Prototip","https://claude.ai/artifact/9kT5ZGR5xToApPz85hikHh","Còpia de l'app a Claude per provar canvis abans de publicar-los."],["Supabase","https://supabase.com/dashboard/project/whdcdxbfxwfriqoeloql","Base de dades i usuaris."],["Instal·lar a l'iPhone","","Safari → ☰ → Compartir → Afegeix a la pantalla d'inici."],["Instal·lar a Android","","Chrome → ⋮ → Instal·la l'aplicació."]];
 let NOTE="",ntm;

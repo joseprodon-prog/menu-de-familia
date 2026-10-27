@@ -11,12 +11,12 @@ const cors = {
 const out = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
-// L'estil de la casa: és el mateix per a totes les imatges, i és el que fa que totes les fitxes semblin d'una mateixa família
-const ESTIL = `House illustration style of the Catalan family cooking app «Menú de Família» (keep it identical in every image):
-- Hand-painted gouache and soft watercolour illustration, like a warm illustrated family cookbook; visible gentle brush texture, soft ink outlines.
-- Warm natural daylight from the upper left, soft shadows, cosy and appetising.
-- Palette: cream paper background (#f7f4ee), olive and leaf greens, terracotta, mustard, warm wood; colours rich but natural, never neon.
-- Composition: the finished dish is the hero, centred, three-quarter view from about 45 degrees, served on a simple ceramic plate or the traditional cookware for the dish, on a light wooden table or linen cloth; one or two key fresh ingredients may appear around it; plenty of calm space around it.
+// L'estil de la casa: el mateix per a totes les imatges. L'Hortolà el pot canviar des de la seva web (docs: graner/estil = {t})
+const ESTIL0 = `House photo style of the Catalan family cooking app «Menú de Família» (keep it identical in every image):
+- Photorealistic professional food photography, true-to-life textures and colours; never an illustration, drawing or painting.
+- Soft natural daylight from a window on the left, gentle shadows, shallow depth of field.
+- The finished dish is the hero, centred, three-quarter view from about 45 degrees, in a simple ceramic plate or the traditional cookware for the dish (e.g. clay cassola), on a light rustic wooden table with a linen napkin; one or two fresh key ingredients as props; calm, uncluttered background in warm neutral tones.
+- Warm, natural, appetising colours; homemade look, not luxury restaurant plating.
 - Horizontal 4:3 frame. No text, no letters, no logos, no watermarks, no hands, no people.`;
 
 const b64 = (buf: ArrayBuffer) => { const u = new Uint8Array(buf); let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
@@ -56,16 +56,18 @@ Deno.serve(async (req) => {
     if (!["foto", "inventa"].includes(mode) || !Array.isArray(urls) || urls.length > 3 || urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub)) || (mode === "foto" && !urls.length))
       return out({ error: "Petició no vàlida" }, 400);
     const img = async (u: string) => { try { const r = await fetch(u, { signal: AbortSignal.timeout(20000) }); if (!r.ok) return null; return { inline_data: { mime_type: r.headers.get("content-type") || "image/jpeg", data: b64(await r.arrayBuffer()) } }; } catch (_) { return null; } };
-    const refs = (await Promise.all([1, 2, 3].map((i) => img(`${pub}estil-${i}.jpg`)))).filter(Boolean);
+    const refs = (await Promise.all([1, 2, 3].map((i) => img(`${pub}estil-${i}.jpg?v=${Date.now()}`)))).filter(Boolean);
+    let ESTIL = ESTIL0;
+    try { const rr = await fetch(`${su}/rest/v1/docs?path=eq.graner%2Festil&select=data`, { headers: { Authorization: auth, apikey: sk }, signal: AbortSignal.timeout(10000) }); const jj = await rr.json(); const t = jj && jj[0] && jj[0].data && jj[0].data.t; if (typeof t === "string" && t.trim().length > 40) ESTIL = t.trim().slice(0, 3000); } catch (_) {}
     const fotos = (await Promise.all(urls.map(img))).filter(Boolean);
     const plat = `Dish: «${String(n).slice(0, 120)}».` + (ing ? ` Main ingredients: ${String(ing).slice(0, 600)}.` : "") + (steps ? ` How it is made (for the look of the finished dish): ${String(steps).slice(0, 600)}.` : "");
     const parts: unknown[] = [];
-    if (refs.length) { parts.push({ text: "STYLE REFERENCES — copy this exact illustration style, palette, light and composition (do not copy their dishes):" }); parts.push(...refs); }
+    if (refs.length) { parts.push({ text: "STYLE REFERENCES — copy this exact visual style, palette, light and composition (do not copy their dishes):" }); parts.push(...refs); }
     if (mode === "foto") {
       parts.push({ text: "PHOTO OF THE REAL DISH made by the family:" }); parts.push(...fotos);
-      parts.push({ text: `${ESTIL}\n\nRepaint the real dish from the photo as a new illustration in the house style. Keep it faithful to the real dish: same food, ingredients, colours of the food, portion and type of plate or cookware. Change everything else to the house style (background, light, framing, table). If the photo is a book or notebook page, illustrate the dish it describes. ${plat}` });
+      parts.push({ text: `${ESTIL}\n\nRecreate the real dish from the photo as a new image in the house style. Keep it faithful to the real dish: same food, ingredients, colours of the food, portion and type of plate or cookware. Change everything else to the house style (background, light, framing, table). If the photo is a book or notebook page, show the dish it describes. ${plat}` });
     } else {
-      parts.push({ text: `${ESTIL}\n\nIllustrate this Catalan home recipe as it looks when served. Be faithful to the real dish (traditional presentation, realistic ingredients). ${plat}` });
+      parts.push({ text: `${ESTIL}\n\nShow this Catalan home recipe as it looks when served. Be faithful to the real dish (traditional presentation, realistic ingredients). ${plat}` });
     }
     const t0 = Date.now();
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
