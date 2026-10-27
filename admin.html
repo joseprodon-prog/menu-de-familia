@@ -130,7 +130,7 @@ a.btn{text-decoration:none;display:inline-block}
 <script>window.MF_STORAGEKEY="mf-admin-auth";</script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
-<script src="adapter.js?v=5"></script>
+<script src="adapter.js?v=6"></script>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -381,13 +381,13 @@ async function loadVer(){const el=$("#b_ver");let pub="";try{const r=await fetch
 
 /* ---------- Il·lustracions del Graner: el Capità dibuixa les receptes que no tenen imatge ---------- */
 let ILG=null,ILU=[],ILMAP={},ILBUSY={},ILRUN=false,ILMSG="",ILAS=null;
-async function ilLoad(){try{if(!ILAS)ILAS=await window.claude.use("assets");if(!ILG)ILG=await (await fetch("graner.json?v="+Date.now())).json();}catch(e){ILG=ILG||[];}
+async function ilLoad(){try{if(window.MF_CAPITA_IMG)window.MF_CAPITA_IMG.then(()=>drawIl());if(!ILAS)ILAS=await window.claude.use("assets");if(!ILG)ILG=await (await fetch("graner.json?v="+Date.now())).json();}catch(e){ILG=ILG||[];}
  if(!ilLoad.sub){ilLoad.sub=1;DB.doc("graner/il").onSnapshot(d=>{ILMAP=(d.exists&&d.data().items)||{};drawIl();},()=>{});
   DB.collection("receptes").onSnapshot(s=>{ILU=[];s.docs.forEach(d=>{const uid=d.id.split("/").pop();const it=(d.data()||{}).items||{};for(const[id,x]of Object.entries(it))if(x&&x.n)ILU.push({k:"u_"+uid.slice(0,12)+"_"+id,n:x.n,cat:x.cat||"",ing:String(x.ing||"").replace(/\n/g,"; ").slice(0,600),steps:String(x.steps||"").replace(/\n/g," ").slice(0,600),foto:!!x.foto,fam:x.fam||""});});drawIl();},()=>{});}
  drawIl();}
 function ilList(){return [...(ILG||[]),...ILU].filter(r=>!r.foto).sort((a,b)=>a.n.localeCompare(b.n,"ca"));}
 function drawIl(){const el=$("#b_il");if(!el)return;const L=ilList();const falten=L.filter(r=>!ILMAP[r.k]).length;$("#c_il").textContent=falten||"";
- if(!window.MF_DIBUIXA){el.innerHTML=`<p class="foot">Cal tornar a carregar la pàgina.</p>`;return;}
+ if(!window.MF_DIBUIXA){el.innerHTML=window.MF_CAPITA_WHY?`<p class="foot">El Capità encara no pot dibuixar: <b>${esc(window.MF_CAPITA_WHY)}</b></p>`:`<p class="foot">Connectant amb el Capità…</p>`;return;}
  el.innerHTML=`<p class="foot">${L.length} receptes del Graner sense foto · ${falten} encara sense il·lustració. Les il·lustracions marcades amb ⭐ són la referència d'estil per a totes les altres (fins a 3).</p>
  <p><button class="btn" id="ilall"${ILRUN||!falten?" disabled":""}>🎨 Il·lustra les ${falten} que falten</button> <span class="foot" id="ilmsg">${esc(ILMSG)}</span></p>
  <div class="ilg">${L.map(r=>{const id=ILMAP[r.k];const b=ILBUSY[r.k];return `<div class="ilc"><div class="ilim">${b?'<span class="ilsp"></span>':id?`<img src="${window.BLOBBASE+id}" alt="" loading="lazy">`:'<span class="ilno">🎨</span>'}</div><b>${esc(r.n)}</b><small>${esc(r.cat||"")}${r.fam?" · "+esc(r.fam):""}</small>

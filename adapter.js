@@ -270,7 +270,13 @@
   // només s'activen si el servei del Capità (funció «dibuixa» amb la clau de Gemini) està a punt
   window.MF_CAPITA_IMG = (async () => {
     await ready;
-    try { const { data } = await sb.functions.invoke("dibuixa", { body: { mode: "ping" } }); if (data && data.ok) { window.MF_DIBUIXA = MF_DIBUIXA; window.MF_ESCOLTA = MF_ESCOLTA; return true; } } catch (_) {}
+    try {
+      const { data, error } = await sb.functions.invoke("dibuixa", { body: { mode: "ping" } });
+      if (data && data.ok) { window.MF_DIBUIXA = MF_DIBUIXA; window.MF_ESCOLTA = MF_ESCOLTA; return true; }
+      let why = data && data.ok === false ? "La funció «dibuixa» no troba el secret GEMINI_API_KEY" : "";
+      if (!why && error) { why = error.message || "La funció «dibuixa» no respon"; try { const j = await error.context.json(); if (j && (j.error || j.message || j.msg)) why += " · " + (j.error || j.message || j.msg); } catch (_) { try { why += " · HTTP " + error.context.status; } catch (__) {} } }
+      window.MF_CAPITA_WHY = why || "Resposta inesperada de la funció «dibuixa»";
+    } catch (e) { window.MF_CAPITA_WHY = String((e && e.message) || e); }
     return false;
   })();
   // xat amb eines: l'app defineix les eines (execute) i aquí es fa el bucle tool_use → tool_result
