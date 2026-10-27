@@ -6,7 +6,11 @@
   "canvis": [
    "Membres: cada persona diu si té l'app o no",
    "Botó «Convida'l» a cada membre: per WhatsApp si té mòbil; en entrar queda vinculat a aquest membre",
-   "Convida'l obre una finestra: tries WhatsApp o correu, escrius el mòbil o el correu (es desa al membre) i s'envia"
+   "Convida'l obre una finestra: tries WhatsApp o correu, escrius el mòbil o el correu (es desa al membre) i s'envia",
+   "Fora el bloc de nom i codi de la família",
+   "Botó gran «Recomana l'app a un amic» a dalt de Família, amb finestra per WhatsApp o correu",
+   "150 🌾 per cada família nova que s'apunta per recomanació (i 50 de benvinguda per a la nova)",
+   "Membres: icona 📱 davant del nom de qui té l'app"
   ]
  },
  {
