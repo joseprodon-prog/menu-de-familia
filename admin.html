@@ -256,7 +256,7 @@ document.addEventListener("click",async e=>{const t=e.target;
  const ed=t.closest("[data-pedit]");if(ed){PEDIT=ed.dataset.pedit;drawCat();return;}
  if(t.closest("[data-pclose]")){PEDIT=null;drawCat();return;}
  const pa=t.closest("[data-pact]");if(pa){const id=pa.dataset.pact;SHOP[id]={...SHOP[id],actiu:SHOP[id].actiu===false};drawCat();pSave(id);return;}
- const pd=t.closest("[data-pdel]");if(pd){if(!pd.dataset.sure){pd.dataset.sure=1;pd.textContent="Segur? Toca per eliminar";return;}delete SHOP[pd.dataset.pdel];drawCat();pSave();return;}
+ const pd=t.closest("[data-pdel]");if(pd){if(!pd.dataset.sure){sureAsk(pd);return;}delete SHOP[pd.dataset.pdel];drawCat();pSave();return;}
  const pp=t.closest("[data-pp]");if(pp){const f=pp.closest("[data-pf]");const id=f.dataset.pf;const v=Math.max(0,Math.round(((+SHOP[id].preu||0)+(+pp.dataset.pp))*100)/100);SHOP[id]={...SHOP[id],preu:v};pp.parentElement.querySelector("b").textContent=String(v.toFixed(2)).replace(".",",")+" €";pSave(id);}});
 
 /* ---------- Usuaris i invitacions ---------- */
@@ -346,7 +346,7 @@ document.addEventListener("click",async e=>{const t=e.target;
  const w=t.closest("[data-uf-id]");if(!w)return;const id=w.dataset.ufId;const c=CONV[id];
  const ue=t.closest("[data-ue]");if(ue){const e2=ESTATS[+ue.dataset.ue];(c.log=c.log||[]).push({d:new Date().toISOString().slice(0,10),t:e2==="Convidat"?"Invitació enviada per "+(c.canal||"Correu"):"Estat: "+e2});if(e2==="Convidat")c.invitat=new Date().toISOString().slice(0,10);c.estat=e2;drawUsu();convSave();return;}
  const cp=t.closest("[data-ucp]");if(cp){const wa=c.canal==="WhatsApp";const txt=cp.dataset.ucp==="s"?SUBJ:(wa?invWA(c):invMail(c));try{await navigator.clipboard.writeText(txt);toast("Copiat");}catch(_){toast("Selecciona i copia");}return;}
- const d=t.closest("[data-udel]");if(d){if(!d.dataset.sure){d.dataset.sure=1;d.textContent="Segur? Toca per eliminar";return;}delete CONV[id];UOPEN=null;drawUsu();convSave();}});
+ const d=t.closest("[data-udel]");if(d){if(!d.dataset.sure){sureAsk(d);return;}delete CONV[id];UOPEN=null;drawUsu();convSave();}});
 document.addEventListener("input",e=>{const w=e.target.closest("[data-uf-id]");if(!w||!e.target.dataset.k)return;uSet(w.dataset.ufId,e.target.dataset.k,e.target.value);});
 document.addEventListener("change",e=>{const w=e.target.closest("[data-uf-id]");if(!w||e.target.tagName!=="SELECT")return;uSet(w.dataset.ufId,e.target.dataset.k,e.target.value);drawUsu();});
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.matches||!d.matches("details.sub[data-uid]"))return;if(d.open){if(UOPEN!==d.dataset.uid){UOPEN=d.dataset.uid;drawUsu();}}else if(UOPEN===d.dataset.uid){UOPEN=null;}},true);
@@ -433,6 +433,10 @@ document.addEventListener("click",async e=>{const t=e.target;if(!t.closest)retur
  if(t.closest("#ilall")){ILRUN=true;for(const r of ilList().filter(r=>!ILMAP[r.k])){ILMSG="Dibuixant «"+r.n+"»…";await ilDo(r.k);}ILRUN=false;ILMSG="Fet ✓";drawIl();}});
 document.addEventListener("input",e=>{if(e.target.id==="ilntxt")ILNTXT=e.target.value;});
 let ILT=null;document.addEventListener("input",e=>{if(e.target.id!=="ilest")return;ILEST=e.target.value;clearTimeout(ILT);ILT=setTimeout(()=>DB.doc("graner/estil").set({t:ILEST}).catch(()=>{}),800);});
+
+/* eliminar amb confirmació: «Sí, elimina» + «Cancel·la» (i es desfà sol als 6 s) */
+function sureAsk(b){const t0=b.textContent;b.dataset.sure=1;b.dataset.t0=t0;b.textContent="Sí, elimina";const c=document.createElement("button");c.type="button";c.className="btn sec surecan";c.textContent="Cancel·la";b.after(c);
+ const undo=()=>{if(!b.isConnected)return;delete b.dataset.sure;b.textContent=b.dataset.t0||"Elimina";c.remove();};c.addEventListener("click",e=>{e.stopPropagation();undo();});setTimeout(undo,6000);}
 /* ---------- Notes i enllaços ---------- */
 const LINKS=[["App de les famílies","https://menu-de-familia.pages.dev","Entra amb el teu compte. Per tenir dos comptes oberts a l'ordinador, fes servir una finestra privada."],["Bústia dins l'app","https://menu-de-familia.pages.dev/?bustia=1","Obre l'app directament als missatges."],["Prototip","https://claude.ai/artifact/9kT5ZGR5xToApPz85hikHh","Còpia de l'app a Claude per provar canvis abans de publicar-los."],["Supabase","https://supabase.com/dashboard/project/whdcdxbfxwfriqoeloql","Base de dades i usuaris."],["Instal·lar a l'iPhone","","Safari → ☰ → Compartir → Afegeix a la pantalla d'inici."],["Instal·lar a Android","","Chrome → ⋮ → Instal·la l'aplicació."]];
 let NOTE="",ntm;
