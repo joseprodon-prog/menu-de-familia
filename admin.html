@@ -87,6 +87,16 @@ details.inv>summary{cursor:pointer;font-weight:700}
 .corig>div:not(.cbar){display:flex;justify-content:space-between;font-size:14.5px}
 .ctop{margin:0;padding:0;list-style:none}.ctop li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 0;border-bottom:1px solid var(--line)}.ctop li span{min-width:0;overflow-wrap:anywhere}.ctop li b{white-space:nowrap}
 a.btn{text-decoration:none;display:inline-block}
+.pltg{margin-left:6px;border:1px solid #c9dcf1;background:#fff;color:var(--muted);border-radius:99px;padding:2px 9px;font:700 12px var(--body);cursor:pointer}
+.pltg.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.fchip{display:inline-flex;align-items:center;gap:4px}
+.thr{display:flex;flex-direction:column;gap:8px;max-height:360px;overflow:auto;padding:4px}
+.bm{max-width:85%;display:flex;flex-direction:column;gap:2px;padding:8px 11px;border-radius:14px;font-size:14px}
+.bm small{font-size:11.5px;color:var(--muted)}
+.bm.u{align-self:flex-start;background:#fff;border:1px solid var(--line)}
+.bm.h{align-self:flex-end;background:#dbe9f7;border:1px solid #c3d8ef}
+.etag{font-size:12px;color:var(--bad)}.ptag{font-size:12px;color:var(--blue)}
+.ebadge{font:700 12px var(--body);color:var(--bad)}.pbadge{font:700 11.5px var(--body);color:#fff;background:var(--blue);border-radius:99px;padding:1px 7px}
 .noacc{background:var(--horts);border-radius:14px;padding:16px;font-weight:600}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:99px;font:700 13px var(--body);opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
 .toast.on{opacity:1}
@@ -132,6 +142,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();},()=>{});
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
  DB.doc("admin/convidats").onSnapshot(d=>{if(!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("[data-uf-id]"))){CONV=(d.exists&&d.data().items)||CONV;}CONVV=true;convSync();drawUsu();kpis();},()=>{CONVV=false;drawUsu(true);});
+ DB.doc("botiga/premium").onSnapshot(d=>{PREMH=(d.exists&&d.data().h)||{};drawUsu();drawBus();},()=>{});
  DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
  loadFam();loadVer();drawNot();
  document.addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
@@ -142,19 +153,31 @@ function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;cons
  $("#kpis").innerHTML=[[pc,"Per convidar",pc>0],[nous,"Missatges nous",nous>0],[pend,"Comandes pendents",pend>0],[USERS.length,"Usuaris amb compte"]].map(([v,l,a])=>`<div class="kpi${a?" alert":""}"><b>${v}</b><small>${l}</small></div>`).join("");
  $("#c_bus").textContent=nous||"";$("#c_usu").textContent=pc||"";$("#c_ord").textContent=pend||"";}
 
-/* ---------- Bústia ---------- */
-function drawBus(){const el=$("#b_bus");if(!el)return;const L=FB.flatMap(f=>Object.entries(f.items||{}).map(([sid,i])=>({uid:f.uid,nom:f.nom,fam:f.fam||i.fam,sid,...i}))).filter(i=>i&&i.t).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
- const F=FBF?L.filter(i=>(i.estat||"nou")===FBF):L;
- el.innerHTML=`<div class="seg">${[["nou","Nous"],["vist","Vistos"],["fet","Resolts"],["","Tots"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?L.filter(i=>(i.estat||"nou")===k).length:L.length}</small></button>`).join("")}</div>`+
- (F.length?F.map(i=>`<div class="card ${i.estat||"nou"}"><div class="ch"><b>${esc(i.nom||"Usuari")}</b><small>${i.fam?"Família "+esc(i.fam)+" · ":""}${fdt(i.at)}</small></div><p>${esc(i.t)}</p>${i.resp?`<p class="resp">↳ ${esc(i.resp)}</p>`:""}
-  <textarea data-rta="${i.uid}|${i.sid}" placeholder="Escriu la resposta (li arriba al xat del Capità Enciam)">${esc(i.resp||"")}</textarea>
-  <div class="row"><button class="btn" data-fbr="${i.uid}|${i.sid}">Respon i resol</button>${(i.estat||"nou")==="nou"?`<button class="btn sec" data-fbe="${i.uid}|${i.sid}|vist">Marca com a vist</button>`:""}${i.estat==="fet"?`<button class="btn sec" data-fbe="${i.uid}|${i.sid}|vist">Torna a obrir</button>`:""}</div></div>`).join(""):`<p class="foot">No hi ha missatges ${FBF==="nou"?"nous":""}.</p>`);}
-async function fbPatch(uid,sid,patch){const x=FB.find(f=>f.uid===uid);if(!x)return;x.items={...x.items,[sid]:{...x.items[sid],...patch}};drawBus();kpis();
- try{await DB.doc("feedback/"+uid).set({nom:x.nom||"",fam:x.fam||"",items:x.items});toast("Desat");}catch(e){toast("No s'ha pogut desar");}}
+/* ---------- Bústia: una conversa per usuari ---------- */
+let PREMH={},FAMHS={},BOPEN=null;
+async function famHashA(code){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("mf:"+code));return [...new Uint8Array(b)].slice(0,6).map(x=>x.toString(16).padStart(2,"0")).join("");}catch(e){return "h"+code.slice(-6).toLowerCase();}}
+async function famHashes(){for(const f of FAMS){if(!FAMHS[f.code])FAMHS[f.code]=await famHashA(f.code);}}
+const famPrem=f=>!!(f&&PREMH[FAMHS[f.code]]);
+const uidFam=u=>FAMS.find(f=>f.membres&&f.membres[u]);
+function convOf(f){const it=Object.entries(f.items||{}).map(([k,x])=>({k,...x}));const out=[];it.forEach(x=>{out.push(x);if(x.resp&&x.de!=="h")out.push({k:x.k+"_r",de:"h",t:x.resp,at:x.respAt||x.at});});return out.sort((a,b)=>String(a.at).localeCompare(String(b.at)));}
+function drawBus(){const el=$("#b_bus");if(!el)return;
+ const C=FB.map(f=>{const M=convOf(f);const fam=uidFam(f.uid);const nous=M.filter(m=>m.de!=="h"&&(m.estat||"nou")==="nou");return {f,M,fam,prem:famPrem(fam)||!!f.prem,nous:nous.length,err:nous.filter(m=>m.tipus==="err").length,want:M.some(m=>m.tipus==="prem"&&(m.estat||"nou")==="nou"),last:M.length?M[M.length-1].at:""};}).filter(c=>c.M.length);
+ C.sort((a,b)=>(b.nous>0)-(a.nous>0)||(b.prem-a.prem)||(b.err-a.err)||String(b.last).localeCompare(String(a.last)));
+ const L=FBF==="nou"?C.filter(c=>c.nous):C;
+ const fd=a=>{const d=new Date(a);return d.toLocaleDateString("ca",{day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"});};
+ el.innerHTML=`<div class="seg">${[["nou","Pendents"],["","Totes"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?C.filter(c=>c.nous).length:C.length}</small></button>`).join("")}</div>`+
+ (L.length?L.map(c=>{const open=BOPEN===c.f.uid;return `<details class="sub conv" data-cv="${c.f.uid}"${open?" open":""}><summary><span class="dot" style="background:${c.nous?"var(--hort)":"var(--ok)"}"></span><span class="btx"><b>${esc(c.f.nom||"Usuari")}${c.prem?" ⭐":""}${c.err?` <span class="ebadge">🐞 ${c.err}</span>`:""}${c.want?` <span class="pbadge">vol Prèmium</span>`:""}</b><small>${c.fam?"Família "+esc(c.fam.nom||""):esc(c.f.fam||"")} · ${fd(c.last)}</small></span>${c.nous?`<span class="cnt">${c.nous}</span>`:""}<span class="chev sm"></span></summary>${open?`<div class="ubody"><div class="thr">${c.M.map(m=>m.de==="h"?`<div class="bm h"><span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>Tu · ${fd(m.at)}${m.llegit?" · llegit":""}</small></div>`:`<div class="bm u">${m.tipus==="err"?'<b class="etag">🐞 Error</b>':m.tipus==="prem"?'<b class="ptag">⭐ Vol ser Prèmium</b>':""}<span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>${fd(m.at)}${m.pant?" · "+esc(m.pant):""}${m.ver?" · v"+esc(String(m.ver).slice(-4)):""}</small></div>`).join("")}</div>
+  <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}</div></div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
+ const t=el.querySelector(".thr");if(t)t.scrollTop=t.scrollHeight;}
+async function cvSave(uid,mut){const x=FB.find(f=>f.uid===uid);if(!x)return;const items={...(x.items||{})};mut(items);x.items=items;drawBus();kpis();try{await DB.doc("feedback/"+uid).set({nom:x.nom||"",fam:x.fam||"",prem:!!x.prem,items});toast("Desat");}catch(e){toast("No s'ha pogut desar");}}
 document.addEventListener("click",e=>{const f=e.target.closest("[data-fbf]");if(f){FBF=f.dataset.fbf;drawBus();return;}
- const r=e.target.closest("[data-fbr]");if(r){const [uid,sid]=r.dataset.fbr.split("|");const ta=document.querySelector(`[data-rta="${uid}|${sid}"]`);const t=(ta&&ta.value.trim())||"";if(!t){ta&&ta.focus();return;}fbPatch(uid,sid,{resp:t,respAt:new Date().toISOString(),estat:"fet"});return;}
- const s=e.target.closest("[data-fbe]");if(s){const [uid,sid,st]=s.dataset.fbe.split("|");fbPatch(uid,sid,{estat:st});}});
-
+ const s=e.target.closest("[data-cvs]");if(s){const uid=s.dataset.cvs;const ta=document.querySelector(`[data-cvr="${uid}"]`);const t=(ta&&ta.value.trim())||"";if(!t){ta&&ta.focus();return;}
+  cvSave(uid,it=>{for(const k in it)if(it[k].de!=="h"&&(it[k].estat||"nou")!=="fet")it[k]={...it[k],estat:"fet"};it["h"+Date.now().toString(36)]={de:"h",t,at:new Date().toISOString()};});return;}
+ const l=e.target.closest("[data-cvl]");if(l){cvSave(l.dataset.cvl,it=>{for(const k in it)if(it[k].de!=="h"&&(it[k].estat||"nou")==="nou")it[k]={...it[k],estat:"vist"};});}});
+document.addEventListener("toggle",e=>{const d=e.target;if(!d.matches||!d.matches("details.conv"))return;if(d.open){if(BOPEN!==d.dataset.cv){BOPEN=d.dataset.cv;drawBus();}}else if(BOPEN===d.dataset.cv)BOPEN=null;},true);
+/* Pla Prèmium per família: botiga/premium = {h:{hash:{nom,at}}} */
+async function premToggle(code){await famHashes();const f=FAMS.find(x=>x.code===code);const h=FAMHS[code];const n={...PREMH};if(n[h])delete n[h];else n[h]={nom:(f&&f.nom)||"",at:new Date().toISOString()};PREMH=n;drawUsu();drawBus();try{await DB.doc("botiga/premium").set({h:n});toast(n[h]?"⭐ Ara és Prèmium":"Ara és Gratuïta");}catch(e){toast("No s'ha pogut desar");}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-prem]");if(b){e.preventDefault();premToggle(b.dataset.prem);}});
 /* ---------- Comandes ---------- */
 function drawOrd(){const el=$("#b_ord");if(!el)return;const L=ORD.flatMap(u=>Object.entries(u.items||{}).map(([oid,o])=>({uid:u.uid,nom:u.nom,fam:u.fam,oid,...o}))).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
  el.innerHTML=L.length?L.map(o=>`<div class="card ${["entregada","anullada"].includes(o.estat)?"fet":o.estat==="rebuda"?"":"vist"}"><div class="ch"><b>${esc(o.nom||"Usuari")}</b><small>${o.fam?"Família "+esc(o.fam)+" · ":""}${fdt(o.at)}</small></div>
@@ -168,7 +191,7 @@ async function loadFam(){try{const {data:fs}=await SB.from("docs").select("path,
   ALLF=fs||[];FAMS=(fs||[]).filter(r=>/^families\/[^/]+$/.test(r.path)).map(r=>({code:r.path.split("/")[1],...r.data}));
   const {data:us,error}=await SB.rpc("admin_users");USERS=error?[]:(us||[]);
   const {data:ms}=await SB.from("docs").select("path,data").like("path","data/users/%");MEU={};(ms||[]).forEach(r=>{const [, , uid, k]=r.path.split("/");MEU[uid]=MEU[uid]||{};MEU[uid][k]=r.data;});
-  convSync();drawUsu(error);kpis();loadCre();}catch(e){$("#b_usu").innerHTML=`<p class="foot">No s'han pogut carregar (${esc(e.message||e)}).</p>`;}}
+  await famHashes();convSync();drawUsu(error);drawBus();kpis();loadCre();}catch(e){$("#b_usu").innerHTML=`<p class="foot">No s'han pogut carregar (${esc(e.message||e)}).</p>`;}}
 /* ---------- Catàleg ---------- */
 let PEDIT=null;
 function drawCat(){const el=$("#b_cat");if(!el)return;const L=Object.entries(SHOP).sort((a,b)=>String(a[1].n).localeCompare(String(b[1].n),"ca"));
@@ -248,7 +271,7 @@ const SUBJ="🥬 Benvingut a la colla de Menú de Família";
 function drawUsu(err){const el=$("#b_usu");if(!el)return;
  const L=Object.entries(CONV).map(([id,c])=>({id,...c,ei:estOf(c)})).sort((a,b)=>(a.relacio==="Equip"?0:1)-(b.relacio==="Equip"?0:1)||a.ei-b.ei||String(a.nom).localeCompare(String(b.nom),"ca"));
  const F=UF===""?L:L.filter(c=>ESTATS[c.ei]===UF);
- const fams=FAMS.map(f=>`<span class="fchip"><b>${esc(f.nom||"Sense nom")}</b> · ${Object.values(f.membres||{}).filter(Boolean).length} <small>${esc(f.code)}</small></span>`).join("");
+ const fams=FAMS.map(f=>`<span class="fchip"><b>${esc(f.nom||"Sense nom")}</b> · ${Object.values(f.membres||{}).filter(Boolean).length} <small>${esc(f.code.slice(0,4))}…</small><button type="button" class="pltg${famPrem(f)?" on":""}" data-prem="${esc(f.code)}">${famPrem(f)?"⭐ Prèmium":"Gratuïta"}</button></span>`).join("");
  el.innerHTML=(err?`<p class="foot">⚠️ Cal aplicar el pegat 5 a Supabase per veure els comptes.</p>`:"")+(!CONVV?"":"")+
  `<div class="row">${fams||"<small class='foot'>Cap família</small>"}</div>
  <div class="seg">${[["","Tots"],...ESTATS.map(e=>[e,e])].map(([k,l])=>`<button type="button" data-uf="${esc(k)}" aria-pressed="${UF===k}">${esc(l)} <small>${k?L.filter(c=>ESTATS[c.ei]===k).length:L.length}</small></button>`).join("")}</div>
