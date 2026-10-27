@@ -1,5 +1,17 @@
 [
  {
+  "id": "v2026-10-27c",
+  "at": "2026-10-27T12:00:00+01:00",
+  "nom": "27 oct · migdia",
+  "canvis": [
+   "Nou «Crea una recepta» en 3 passos: Aporta · Il·lustra · Revisa",
+   "Aporta: fotos, vídeo (fitxer o enllaç), text i veu, tot combinable, amb comptador i llista de material",
+   "Il·lustra: la teva foto millorada (llum, color i 4:3), foto d'internet d'ús lliure (Wikimedia) o puja'n una",
+   "Revisa: fitxa editable i desa-la a la família o al Graner",
+   "Si a «Puja documents» hi ha una recepta, s'obre «Crea una recepta» amb el material ja posat"
+  ]
+ },
+ {
   "id": "v2026-10-27b",
   "at": "2026-10-27T07:30:00+01:00",
   "nom": "27 oct · matí (2)",
