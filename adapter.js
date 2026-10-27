@@ -19,8 +19,8 @@
     const go = () => { hideLogin(); resolve(); };
     sb.auth.onAuthStateChange((ev, s) => { if (s && !session) { session = s; try { localStorage.setItem("mf_lastmail", s.user.email || ""); } catch (e) {} go(); } });
     if (RECOVERY && session) return go();
-    if (ADMIN) { if (session) return go(); return showWelcome(go, "login"); }
-    showWelcome(go);
+    if (session) return go();
+    showWelcome(go, ADMIN ? "login" : null);
   });
   let NOREL = false;
   sb.auth.onAuthStateChange((ev, s) => { if (ev === "SIGNED_OUT" && !NOREL) location.reload(); if (ev === "PASSWORD_RECOVERY") showNewPass(); });
