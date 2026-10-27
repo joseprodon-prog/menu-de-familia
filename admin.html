@@ -87,6 +87,7 @@ details.inv>summary{cursor:pointer;font-weight:700}
 .corig>div:not(.cbar){display:flex;justify-content:space-between;font-size:14.5px}
 .ctop{margin:0;padding:0;list-style:none}.ctop li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 0;border-bottom:1px solid var(--line)}.ctop li span{min-width:0;overflow-wrap:anywhere}.ctop li b{white-space:nowrap}
 a.btn{text-decoration:none;display:inline-block}
+.pflow{background:var(--blues,#e6f0fa);border-radius:12px;padding:8px 10px}.pmb{align-self:flex-start;margin-top:4px;border:1px solid #e0c98a;background:#fff8e6;color:#8a6a10;border-radius:99px;padding:3px 10px;font:700 12px var(--body);cursor:pointer}.pmi{color:#8a6a10;font-weight:700}
 .pltg{margin-left:6px;border:1px solid #c9dcf1;background:#fff;color:var(--muted);border-radius:99px;padding:2px 9px;font:700 12px var(--body);cursor:pointer}
 .pltg.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .fchip{display:inline-flex;align-items:center;gap:4px}
@@ -157,17 +158,17 @@ function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;cons
 let PREMH={},FAMHS={},BOPEN=null;
 async function famHashA(code){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("mf:"+code));return [...new Uint8Array(b)].slice(0,6).map(x=>x.toString(16).padStart(2,"0")).join("");}catch(e){return "h"+code.slice(-6).toLowerCase();}}
 async function famHashes(){for(const f of FAMS){if(!FAMHS[f.code])FAMHS[f.code]=await famHashA(f.code);}}
-const famPrem=f=>!!(f&&PREMH[FAMHS[f.code]]);
+const famSt=f=>{const e=f&&PREMH[FAMHS[f.code]];return e?(e.estat||"act"):null;};const famPrem=f=>famSt(f)==="act";
 const uidFam=u=>FAMS.find(f=>f.membres&&f.membres[u]);
 function convOf(f){const it=Object.entries(f.items||{}).map(([k,x])=>({k,...x}));const out=[];it.forEach(x=>{out.push(x);if(x.resp&&x.de!=="h")out.push({k:x.k+"_r",de:"h",t:x.resp,at:x.respAt||x.at});});return out.sort((a,b)=>String(a.at).localeCompare(String(b.at)));}
 function drawBus(){const el=$("#b_bus");if(!el)return;
- const C=FB.map(f=>{const M=convOf(f);const fam=uidFam(f.uid);const nous=M.filter(m=>m.de!=="h"&&(m.estat||"nou")==="nou");return {f,M,fam,prem:famPrem(fam)||!!f.prem,nous:nous.length,err:nous.filter(m=>m.tipus==="err").length,want:M.some(m=>m.tipus==="prem"&&(m.estat||"nou")==="nou"),last:M.length?M[M.length-1].at:""};}).filter(c=>c.M.length);
- C.sort((a,b)=>(b.nous>0)-(a.nous>0)||(b.prem-a.prem)||(b.err-a.err)||String(b.last).localeCompare(String(a.last)));
- const L=FBF==="nou"?C.filter(c=>c.nous):C;
+ const C=FB.map(f=>{const M=convOf(f);const fam=uidFam(f.uid);const nous=M.filter(m=>m.de!=="h"&&(m.estat||"nou")==="nou");return {f,M,fam,prem:famPrem(fam)||!!f.prem,nous:nous.length,err:nous.filter(m=>m.tipus==="err").length,want:M.some(m=>m.tipus==="prem")&&!famSt(fam),last:M.length?M[M.length-1].at:""};}).filter(c=>c.M.length);
+ C.sort((a,b)=>((b.nous>0)||b.want)-((a.nous>0)||a.want)||(b.prem-a.prem)||(b.err-a.err)||String(b.last).localeCompare(String(a.last)));
+ C.forEach(c=>{c.pend=c.nous>0||c.want||famSt(c.fam)==="apr";});const L=FBF==="nou"?C.filter(c=>c.pend):C;
  const fd=a=>{const d=new Date(a);return d.toLocaleDateString("ca",{day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"});};
- el.innerHTML=`<div class="seg">${[["nou","Pendents"],["","Totes"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?C.filter(c=>c.nous).length:C.length}</small></button>`).join("")}</div>`+
- (L.length?L.map(c=>{const open=BOPEN===c.f.uid;return `<details class="sub conv" data-cv="${c.f.uid}"${open?" open":""}><summary><span class="dot" style="background:${c.nous?"var(--hort)":"var(--ok)"}"></span><span class="btx"><b>${esc(c.f.nom||"Usuari")}${c.prem?" ⭐":""}${c.err?` <span class="ebadge">🔧 ${c.err}</span>`:""}${c.want?` <span class="pbadge">vol Prèmium</span>`:""}</b><small>${c.fam?"Família "+esc(c.fam.nom||""):esc(c.f.fam||"")} · ${fd(c.last)}</small></span>${c.nous?`<span class="cnt">${c.nous}</span>`:""}<span class="chev sm"></span></summary>${open?`<div class="ubody"><div class="thr">${c.M.map(m=>m.de==="h"?`<div class="bm h"><span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>Tu · ${fd(m.at)}${m.llegit?" · llegit":""}</small></div>`:`<div class="bm u">${m.tipus==="err"?'<b class="etag">🔧 Per millorar</b>':m.tipus==="prem"?'<b class="ptag">⭐ Vol ser Prèmium</b>':""}<span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>${fd(m.at)}${m.pant?" · "+esc(m.pant):""}${m.ver?" · v"+esc(String(m.ver).slice(-4)):""}</small></div>`).join("")}</div>
-  <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}</div></div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
+ el.innerHTML=`<div class="seg">${[["nou","Pendents"],["","Totes"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?C.filter(c=>c.pend).length:C.length}</small></button>`).join("")}</div>`+
+ (L.length?L.map(c=>{const open=BOPEN===c.f.uid;return `<details class="sub conv" data-cv="${c.f.uid}"${open?" open":""}><summary><span class="dot" style="background:${c.nous?"var(--hort)":"var(--ok)"}"></span><span class="btx"><b>${esc(c.f.nom||"Usuari")}${c.prem?" ⭐":""}${c.err?` <span class="ebadge">🔧 ${c.err}</span>`:""}${c.want?` <span class="pbadge">vol Prèmium</span>`:""}</b><small>${c.fam?"Família "+esc(c.fam.nom||""):esc(c.f.fam||"")} · ${fd(c.last)}</small></span>${c.nous?`<span class="cnt">${c.nous}</span>`:""}<span class="chev sm"></span></summary>${open?`<div class="ubody"><div class="thr">${c.M.map(m=>m.de==="h"?`<div class="bm h"><span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>Tu · ${fd(m.at)}${m.llegit?" · llegit":""}</small></div>`:`<div class="bm u">${m.tipus==="err"?'<b class="etag">🔧 Per millorar</b>':m.tipus==="prem"?'<b class="ptag">⭐ Vol ser Prèmium</b>':""}<span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>${fd(m.at)}${m.pant?" · "+esc(m.pant):""}${m.ver?" · v"+esc(String(m.ver).slice(-4)):""}</small>${m.tipus!=="prem"?(m.premi?`<small class="pmi">🌾 Premiada amb ${m.premi} espigues${m.premiOk?" ✓":""}</small>`:`<button class="pmb" data-premi="${c.f.uid}|${m.k}">🌾 Idea per a tothom: +500 espigues</button>`):""}</div>`).join("")}</div>
+  <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}</div>${c.fam?`<div class="row pflow"><span class="foot">Pla de ${esc(c.fam.nom||"la família")}: <b>${({sol:"Sol·licitat",apr:"Aprovat · pendent de pagament",act:"⭐ Prèmium"})[famSt(c.fam)||(c.want?"sol":"")]||"Gratuït"}</b></span>${!famSt(c.fam)?`<button class="btn sec" data-pmapr="${c.fam.code}|${c.f.uid}">✅ Aprova i envia la informació</button>`:""}${famSt(c.fam)==="apr"?`<button class="btn" data-pmact="${c.fam.code}">⭐ Activa Prèmium (pagat)</button>`:""}${famSt(c.fam)==="act"?`<button class="btn sec" data-pmoff="${c.fam.code}">Treu Prèmium</button>`:""}</div>`:""}</div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
  const t=el.querySelector(".thr");if(t)t.scrollTop=t.scrollHeight;}
 async function cvSave(uid,mut){const x=FB.find(f=>f.uid===uid);if(!x)return;const items={...(x.items||{})};mut(items);x.items=items;drawBus();kpis();try{await DB.doc("feedback/"+uid).set({nom:x.nom||"",fam:x.fam||"",prem:!!x.prem,items});toast("Desat");}catch(e){toast("No s'ha pogut desar");}}
 document.addEventListener("click",e=>{const f=e.target.closest("[data-fbf]");if(f){FBF=f.dataset.fbf;drawBus();return;}
@@ -176,8 +177,27 @@ document.addEventListener("click",e=>{const f=e.target.closest("[data-fbf]");if(
  const l=e.target.closest("[data-cvl]");if(l){cvSave(l.dataset.cvl,it=>{for(const k in it)if(it[k].de!=="h"&&(it[k].estat||"nou")==="nou")it[k]={...it[k],estat:"vist"};});}});
 document.addEventListener("toggle",e=>{const d=e.target;if(!d.matches||!d.matches("details.conv"))return;if(d.open){if(BOPEN!==d.dataset.cv){BOPEN=d.dataset.cv;drawBus();}}else if(BOPEN===d.dataset.cv)BOPEN=null;},true);
 /* Pla Prèmium per família: botiga/premium = {h:{hash:{nom,at}}} */
-async function premToggle(code){await famHashes();const f=FAMS.find(x=>x.code===code);const h=FAMHS[code];const n={...PREMH};if(n[h])delete n[h];else n[h]={nom:(f&&f.nom)||"",at:new Date().toISOString()};PREMH=n;drawUsu();drawBus();try{await DB.doc("botiga/premium").set({h:n});toast(n[h]?"⭐ Ara és Prèmium":"Ara és Gratuïta");}catch(e){toast("No s'ha pogut desar");}}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-prem]");if(b){e.preventDefault();premToggle(b.dataset.prem);}});
+async function premSet(code,estat){await famHashes();const f=FAMS.find(x=>x.code===code);const h=FAMHS[code];const n={...PREMH};if(!estat)delete n[h];else n[h]={nom:(f&&f.nom)||"",estat,at:new Date().toISOString()};PREMH=n;drawUsu();drawBus();try{await DB.doc("botiga/premium").set({h:n});toast(estat==="act"?"⭐ Ara és Prèmium":estat==="apr"?"Sol·licitud aprovada":"Ara és Gratuïta");}catch(e){toast("No s'ha pogut desar");}}
+const PINFO=`Hola! He aprovat la vostra sol·licitud per ser família Prèmium ⭐
+
+Què hi guanyeu:
+🎨 Personalització de l'app
+💡 Participació en les millores: si una idea vostra la posem al servei de tothom, us premiem amb espigues 🌾
+🧑‍🌾 Xat directe amb mi, l'Hortolà
+🎁 Incentius i regals especials durant tota la subscripció
+🤝 El pas per ser col·laboradors actius del projecte
+
+Per activar-ho: [preu i forma de pagament]
+
+Quan ho tingueu, us activo el Prèmium i ho veureu de seguida a l'app.
+
+L'Hortolà 🧑‍🌾`;
+async function premToggle(code){await famHashes();const f=FAMS.find(x=>x.code===code);const h=FAMHS[code];const n={...PREMH};if(n[h]&&(n[h].estat||"act")==="act")delete n[h];else n[h]={nom:(f&&f.nom)||"",estat:"act",at:new Date().toISOString()};PREMH=n;drawUsu();drawBus();try{await DB.doc("botiga/premium").set({h:n});toast(n[h]?"⭐ Ara és Prèmium":"Ara és Gratuïta");}catch(e){toast("No s'ha pogut desar");}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-prem]");if(b){e.preventDefault();premToggle(b.dataset.prem);return;}
+ const a=e.target.closest("[data-pmapr]");if(a){const [code,uid]=a.dataset.pmapr.split("|");premSet(code,"apr").then(()=>{setTimeout(()=>{const ta=document.querySelector(`[data-cvr="${uid}"]`);if(ta){ta.value=PINFO;ta.focus();ta.setSelectionRange(PINFO.indexOf("["),PINFO.indexOf("]")+1);}},120);});return;}
+ const c=e.target.closest("[data-pmact]");if(c){premSet(c.dataset.pmact,"act");return;}
+ const o=e.target.closest("[data-pmoff]");if(o){premSet(o.dataset.pmoff,null);return;}
+ const p=e.target.closest("[data-premi]");if(p){const [uid,k]=p.dataset.premi.split("|");if(!p.dataset.sure){p.dataset.sure=1;p.textContent="Segur? Toca per premiar";return;}cvSave(uid,it=>{if(it[k])it[k]={...it[k],premi:500};});}});
 /* ---------- Comandes ---------- */
 function drawOrd(){const el=$("#b_ord");if(!el)return;const L=ORD.flatMap(u=>Object.entries(u.items||{}).map(([oid,o])=>({uid:u.uid,nom:u.nom,fam:u.fam,oid,...o}))).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
  el.innerHTML=L.length?L.map(o=>`<div class="card ${["entregada","anullada"].includes(o.estat)?"fet":o.estat==="rebuda"?"":"vist"}"><div class="ch"><b>${esc(o.nom||"Usuari")}</b><small>${o.fam?"Família "+esc(o.fam)+" · ":""}${fdt(o.at)}</small></div>
