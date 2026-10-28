@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Comparador de la fase beta</title>
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{--fg:#26231c;--muted:#6b675d;--grid:#cfd6dd;--head:#2f74b5;--sub:#e3f0fb;--y:#e3f2d3;--yt:#2f7a2a;--n:#f3f2ee;--nt:#a29e92;--t:#fdf0dc;--tt:#8a5a12}
+*{box-sizing:border-box}
+html,body{margin:0;background:#eef2f6;color:var(--fg);font:12px/1.25 "Source Sans 3",system-ui,sans-serif}
+.top{position:sticky;top:0;z-index:5;background:var(--head);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:6px max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left));padding-top:calc(6px + env(safe-area-inset-top,0px))}
+.top b{font-size:15px}
+.top .sp{flex:1}
+.top button,.top a{font:700 12.5px inherit;font-family:inherit;color:#fff;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.45);border-radius:99px;padding:4px 10px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.thr{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.16);border-radius:99px;padding:2px}
+.thr button{padding:2px 9px}.thr span{font-weight:800;min-width:74px;text-align:center}
+#msg{font-size:12px;opacity:.85}
+.rot{display:none;background:#fdecd9;color:#8a4a10;text-align:center;padding:6px;font-weight:700;font-size:12.5px}
+@media (orientation:portrait) and (max-width:700px){.rot{display:block}}
+.wrap{display:flex;gap:10px;padding:8px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.blk{background:#fff;border:1px solid var(--grid);border-radius:6px;overflow:auto;max-width:100%}
+.blk h2{margin:0;font-size:12.5px;padding:5px 8px;background:#f7f9fb;border-bottom:1px solid var(--grid);display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;left:0}
+.blk h2 button{border:1px dashed #9cbf6e;background:#fff;border-radius:5px;padding:1px 7px;font:700 11.5px inherit;font-family:inherit;color:#3d5a2a;cursor:pointer}
+table{border-collapse:collapse;table-layout:fixed}
+th,td{border:1px solid var(--grid);padding:0;vertical-align:middle}
+thead th{background:var(--sub);font-weight:800;position:relative}
+tbody th{background:#fafbfc;text-align:left;font-weight:700}
+.c0{width:146px}.cv{width:82px}
+textarea{display:block;width:100%;border:0;background:transparent;font:inherit;color:inherit;padding:2px 4px;resize:none;overflow:hidden;word-break:normal;overflow-wrap:normal;hyphens:auto;-webkit-hyphens:auto;line-height:1.25;min-height:19px}
+textarea:focus{outline:2px solid #2f74b5;outline-offset:-2px;background:#fff}
+td textarea{text-align:center}
+thead textarea{text-align:center;font-weight:800;font-size:11px}td textarea{font-size:11.5px}
+td.y{background:var(--y)}td.y textarea{color:var(--yt);font-weight:800}
+td.n{background:var(--n)}td.n textarea{color:var(--nt)}
+td.t{background:var(--t)}td.t textarea{color:var(--tt);font-weight:600}
+.del{position:absolute;top:1px;right:2px;border:0;background:none;color:#b5502e;cursor:pointer;font-size:12px;padding:0 2px;display:none}
+th:hover .del,th:focus-within .del{display:block}
+tbody th{position:relative}
+.qk{position:fixed;z-index:9;display:none;gap:3px;background:#fff;border:1px solid var(--grid);border-radius:8px;padding:3px;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.qk button{border:1px solid var(--grid);background:#fff;border-radius:5px;padding:2px 9px;font:800 13px inherit;font-family:inherit;cursor:pointer}
+.leg{padding:0 12px 14px;color:var(--muted);font-size:12px;display:flex;gap:12px;flex-wrap:wrap}
+.leg i{display:inline-block;width:12px;height:12px;border:1px solid var(--grid);vertical-align:-2px;margin-right:4px}
+@media print{@page{size:A4 landscape;margin:8mm}.top,.rot,.qk,.blk h2 button,.del{display:none!important}html,body{background:#fff}.wrap{padding:0;gap:6mm;flex-wrap:nowrap}.blk{border-radius:0;overflow:visible}}
+</style>
+</head>
+<body>
+<div class="top"><b>🧪 Comparador de la fase beta</b><span class="thr" title="Espigues per passar d'Espiga a Sembradora">Espiga → Sembradora<button type="button" data-x="-100">−</button><span id="xv">— 🌾</span><button type="button" data-x="100">+</button></span><span id="msg"></span><span class="sp"></span><button type="button" onclick="print()">🖨️ Imprimeix</button><a href="/admin">↩ Admin</a></div>
+<div class="rot">📱↻ Gira el mòbil per veure els dos quadres alhora</div>
+<div class="wrap" id="wrap"><p style="padding:10px">Carregant…</p></div>
+<div class="leg"><span><i style="background:var(--y)"></i>Sí (✓)</span><span><i style="background:var(--n)"></i>No (—)</span><span><i style="background:var(--t)"></i>Amb condicions</span><span>Toca una casella per escriure o per triar ✓ / —. Es desa sol.</span></div>
+<div class="qk" id="qk"><button type="button" data-q="✓">✓</button><button type="button" data-q="—">—</button></div>
+<script>window.MF_STORAGEKEY="mf-admin-auth";</script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script src="adapter.js?v=8"></script>
+<script>
+(()=>{const $=s=>document.querySelector(s);const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const BETA0={"x": 1000, "t1": {"cols": ["Espiga", "Sembradora"], "rows": [["Menú setmanal i proposta del Capità", "✓", "✓"], ["Receptari i Crea una recepta", "✓", "✓"], ["Capità Enciam (xat, súper, 2 plats alhora)", "100 crides / 5 h", "100 crides / 5 h"], ["Lectura de tiquets, factures i fotos", "10 / 5 h", "10 / 5 h"], ["Il·lustracions i notes de veu", "10 / 5 h", "10 / 5 h"], ["Llista de la compra generada", "1 per setmana", "Il·limitada"], ["Escàner de documents", "✓", "✓"], ["Despesa i preus dels articles", "✓", "✓"], ["On era més barat (en processar tiquets)", "Avís", "Detall i estalvi"], ["Veïnat: preus compartits i On surt més a compte", "✓", "✓"], ["Zones addicionals del veïnat", "—", "✓"], ["Crear un veïnat propi", "—", "✓"], ["Targetes de client", "✓", "✓"], ["El teu hort, missions i espigues", "✓", "✓"], ["Botiga d'El Sortidor", "✓", "✓"], ["Xat directe amb l'Hortolà", "—", "✓"], ["Premi per idees (+500 espigues)", "—", "✓"], ["Personalització de l'app", "—", "✓"]]}, "t2": {"cols": ["Beta 1", "Beta 2", "Beta 3", "Llançament"], "rows": [["Funcions de l'app (menú, receptes, compra, despesa)", "✓", "✓", "✓", "✓"], ["Capità Enciam", "✓", "✓", "✓", "✓"], ["Espigues", "Es guanyen (joc)", "Es guanyen i es gasten", "Descomptes reals", "Descomptes reals"], ["Pas d'Espiga a Sembradora", "Per espigues", "Per espigues", "Per espigues", "De pagament"], ["Botiga d'El Sortidor", "Catàleg com a joc", "Encàrrecs de prova", "Comandes reals", "Servei complet"], ["Entrega a domicili", "—", "Experiències gratuïtes", "Zones de prova", "✓"], ["Pagament", "—", "—", "Proves", "✓"], ["Experiències a canvi d'informació", "—", "✓", "✓", "—"], ["Veïnat i preus compartits", "✓", "✓", "✓", "✓"], ["Tracte preferent al llançament", "Acumula", "Acumula", "Acumula", "S'aplica"]]}};const conv=t=>({cols:t.cols.slice(),rows:t.rows.map(r=>Array.isArray(r)?{f:r[0],v:r.slice(1)}:r)});
+let DB=null,B=null,tm,cur=null;
+const cls=v=>{const t=String(v||"").trim();return t==="✓"?"y":(!t||t==="—"||t==="-")?"n":"t";};
+const fit=t=>{t.style.height="auto";t.style.height=t.scrollHeight+"px";};
+function save(){clearTimeout(tm);$("#msg").textContent="Desant…";tm=setTimeout(async()=>{try{await DB.doc("admin/beta").set(B);$("#msg").textContent="Desat ✓";}catch(e){$("#msg").textContent="No s'ha pogut desar";}},600);}
+function tbl(k,title){const T=B[k];return `<div class="blk"><h2><span>${title}</span><span>${k==="t2"?`<button type="button" data-ac="${k}">＋ Subfase</button> `:""}<button type="button" data-ar="${k}">＋ Funció</button></span></h2>
+<table><colgroup><col class="c0">${T.cols.map(()=>'<col class="cv">').join("")}</colgroup>
+<thead><tr><th><textarea rows="1" readonly tabindex="-1">Funció</textarea></th>${T.cols.map((c,j)=>`<th><textarea rows="1" data-c="${k}|${j}">${esc(c)}</textarea>${k==="t2"?`<button type="button" class="del" data-dc="${k}|${j}" title="Treu la columna">×</button>`:""}</th>`).join("")}</tr></thead>
+<tbody>${T.rows.map((r,i)=>`<tr><th><textarea rows="1" data-f="${k}|${i}">${esc(r.f)}</textarea><button type="button" class="del" data-dr="${k}|${i}" title="Treu la fila">×</button></th>${T.cols.map((c,j)=>`<td class="${cls(r.v[j])}"><textarea rows="1" data-v="${k}|${i}|${j}" placeholder="—">${esc(r.v[j]||"")}</textarea></td>`).join("")}</tr>`).join("")}</tbody></table></div>`;}
+function draw(){$("#xv").textContent=(B.x||0)+" 🌾";$("#wrap").innerHTML=tbl("t1","Espiga i Sembradora")+tbl("t2","Subfases de la beta");document.querySelectorAll("textarea").forEach(fit);}
+document.addEventListener("input",e=>{const t=e.target;if(t.tagName!=="TEXTAREA")return;fit(t);let a;
+ if((a=t.dataset.v)){const [k,i,j]=a.split("|");B[k].rows[+i].v[+j]=t.value;t.parentElement.className=cls(t.value);}
+ else if((a=t.dataset.f)){const [k,i]=a.split("|");B[k].rows[+i].f=t.value;}
+ else if((a=t.dataset.c)){const [k,j]=a.split("|");B[k].cols[+j]=t.value;}else return;save();});
+const qk=$("#qk");
+document.addEventListener("focusin",e=>{const t=e.target;if(t.dataset&&t.dataset.v){cur=t;const r=t.getBoundingClientRect();qk.style.display="flex";qk.style.left=Math.max(4,Math.min(innerWidth-90,r.left))+"px";qk.style.top=(r.bottom+4)+"px";}else if(!e.target.closest("#qk"))qk.style.display="none";});
+document.addEventListener("scroll",()=>{qk.style.display="none";},true);
+qk.addEventListener("mousedown",e=>e.preventDefault());
+document.addEventListener("click",e=>{let b;
+ if((b=e.target.closest("[data-q]"))&&cur){cur.value=b.dataset.q;cur.dispatchEvent(new Event("input",{bubbles:true}));qk.style.display="none";cur.blur();return;}
+ if((b=e.target.closest("[data-x]"))&&B){B.x=Math.max(100,(+B.x||0)+(+b.dataset.x));$("#xv").textContent=B.x+" 🌾";save();return;}
+ if((b=e.target.closest("[data-ar]"))){const T=B[b.dataset.ar];T.rows.push({f:"Funció nova",v:T.cols.map(()=>"")});draw();save();return;}
+ if((b=e.target.closest("[data-ac]"))){const T=B[b.dataset.ac];T.cols.splice(Math.max(0,T.cols.length-1),0,"Beta "+(T.cols.filter(c=>/^Beta/.test(c)).length+1));const at=T.cols.length-2;T.rows.forEach(r=>r.v.splice(at,0,""));draw();save();return;}
+ if((b=e.target.closest("[data-dr]"))){if(!confirmTap(b))return;const [k,i]=b.dataset.dr.split("|");B[k].rows.splice(+i,1);draw();save();return;}
+ if((b=e.target.closest("[data-dc]"))){if(!confirmTap(b))return;const [k,j]=b.dataset.dc.split("|");B[k].cols.splice(+j,1);B[k].rows.forEach(r=>r.v.splice(+j,1));draw();save();return;}});
+function confirmTap(b){if(b.dataset.sure)return true;b.dataset.sure="1";b.textContent="Segur?";b.style.display="block";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.display="";}},3000);return false;}
+(async()=>{try{DB=await window.claude.use("db");}catch(e){}if(!DB){$("#wrap").innerHTML='<p style="padding:10px">Cal entrar a la web de l\'Hortolà.</p>';return;}
+ DB.doc("admin/beta").onSnapshot(d=>{if(document.activeElement&&document.activeElement.tagName==="TEXTAREA")return;const x=d.exists?d.data():null;B=x&&x.t1?x:{x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2)};draw();},()=>{B={x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2)};draw();});})();
+})();
+</script>
+</body>
+</html>
