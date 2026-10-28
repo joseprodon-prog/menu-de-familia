@@ -182,7 +182,7 @@ div.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:60
 @media(min-width:1100px){
  main,.hin{max-width:1560px}
  main{display:grid;grid-template-columns:1fr 1fr;align-items:start;column-gap:16px;grid-auto-flow:row dense}
- main>*:not(details.bar){grid-column:1/-1}
+ main>*:not(details.bar):not(.bar-ph){grid-column:1/-1}
  main>details.bar[open]{grid-column:1/-1}
  .kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
  #b_ord,#b_vei,#b_usu,#b_pre{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:10px 14px;align-items:start}
@@ -200,6 +200,11 @@ details.bar[open]>summary .btx small{opacity:.88}
 details.bar[open]>summary .bico{background:rgba(255,255,255,.92)}
 details.bar[open]>summary .chev{background-color:#fff}
 @media (prefers-color-scheme:dark){details.bar[open]{background:#1d2633;border-color:#5b9be0}details.bar[open]>summary{background:#24507d}}
+.bgrip{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:38px;color:#b4ab99;cursor:grab;touch-action:none;border-radius:8px}
+.bgrip:hover{color:#6b6252;background:rgba(0,0,0,.05)}
+details.bar[open]>summary .bgrip{color:rgba(255,255,255,.8)}
+details.bar.bdrag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14px 34px rgba(0,0,0,.25);opacity:.95;cursor:grabbing}
+.bar-ph{border:2px dashed #2f74b5;border-radius:16px;background:rgba(47,116,181,.06)}
 </style>
 </head>
 <body>
@@ -221,11 +226,11 @@ let HORTOLA="";
 const OEST={rebuda:"Rebuda",confirmada:"Confirmada",enviada:"Enviada",entregada:"Entregada",anullada:"Anul·lada"};
 const SCATS=[["batch","Bases de batch cooking"],["select","Selectes acabats"],["cong","Per congelar i escalfar"],["precu","Precuinats · 2 o 3 passos"],["temp","Temporada i ocasions"]];
 let ALLF=[],REFS=[],CREP="tot",DB,SB,FB=[],ORD=[],SHOP={},FAMS=[],USERS=[],MEU={},FBF="nou";
-const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""}><summary><span class="bico" aria-hidden="true">${ico}</span><span class="btx"><b>${t}</b><small>${sub}</small></span><span class="cnt" id="c_${id}"></span><span class="chev" aria-hidden="true"></span></summary><div class="body" id="b_${id}"></div></details>`;
+const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""}><summary><span class="bico" aria-hidden="true">${ico}</span><span class="btx"><b>${t}</b><small>${sub}</small></span><span class="cnt" id="c_${id}"></span><span class="bgrip" role="button" tabindex="0" aria-label="Mou aquesta barra" title="Arrossega per canviar l'ordre"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 8h14M5 12h14M5 16h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="chev" aria-hidden="true"></span></summary><div class="body" id="b_${id}"></div></details>`;
 
 (async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();let okH=false;try{const r=await SB.rpc("is_hortola");okH=!!(r&&r.data===true);}catch(e){}if(okH)HORTOLA=uid;
  if(!okH){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
- $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app")+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("vei","🏘️","Veïnat","Famílies més actives i regals d'espigues")+bar("beta","🧪","Fase beta","Comparador de funcions i subfases")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
+ $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app")+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("vei","🏘️","Veïnat","Famílies més actives i regals d'espigues")+bar("beta","🧪","Fase beta","Comparador de funcions i subfases")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;setTimeout(()=>{try{admOrdApply();admOrdLoad();}catch(_){}},0);
  DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();try{if(!PEDIT)drawCat();}catch(_){}},()=>{});
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
@@ -656,6 +661,28 @@ document.addEventListener("click",e=>{if(!BETA||!e.target.closest("#b_beta"))ret
  if((b=e.target.closest("[data-brd]"))){if(!b.dataset.sure){sureAsk(b);return;}const [k,i]=b.dataset.brd.split("|");BETA[k].rows.splice(+i,1);drawBeta();betaSave();return;}
  if((b=e.target.closest("[data-bca]"))){const T=BETA[b.dataset.bca];T.cols.push("Beta "+(T.cols.filter(c=>/^Beta/.test(c)).length+1));T.rows.forEach(r=>r.v.push(""));drawBeta();betaSave();return;}
  if((b=e.target.closest("[data-bcd]"))){if(!b.dataset.sure){sureAsk(b);return;}const [k,j]=b.dataset.bcd.split("|");BETA[k].cols.splice(+j,1);BETA[k].rows.forEach(r=>r.v.splice(+j,1));drawBeta();betaSave();}});
+
+/* ===== ordre de les barres: arrossegant la icona ≡ (es desa a l'admin i al navegador) ===== */
+let AORD=null;try{AORD=JSON.parse(localStorage.getItem("mf_admord")||"null");}catch(_){}
+function admOrdApply(){const m=$("#main");if(!m||!Array.isArray(AORD))return;const bars=[...m.querySelectorAll(":scope>details.bar")];if(bars.length<2)return;
+ const by=Object.fromEntries(bars.map(b=>[b.id,b]));const order=[...AORD.map(i=>by[i]).filter(Boolean),...bars.filter(b=>!AORD.includes(b.id))];
+ const anchor=bars[bars.length-1].nextSibling;order.forEach(b=>m.insertBefore(b,anchor));}
+async function admOrdLoad(){try{const d=await DB.doc("admin/ordre").get();if(d.exists&&Array.isArray(d.data().ids)){AORD=d.data().ids;try{localStorage.setItem("mf_admord",JSON.stringify(AORD));}catch(_){}admOrdApply();}}catch(_){}}
+function admOrdSave(){const m=$("#main");AORD=[...m.querySelectorAll(":scope>details.bar")].map(b=>b.id);try{localStorage.setItem("mf_admord",JSON.stringify(AORD));}catch(_){}try{DB.doc("admin/ordre").set({ids:AORD}).catch(()=>{});}catch(_){}}
+(()=>{let drag=null,ph=null,dx=0,dy=0;
+ document.addEventListener("click",e=>{if(e.target.closest(".bgrip"))e.preventDefault();},true);
+ document.addEventListener("pointerdown",e=>{const g=e.target.closest(".bgrip");if(!g)return;const d=g.closest("details.bar");if(!d)return;e.preventDefault();
+  if(d.open)d.open=false;const r=d.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;ph=document.createElement("div");ph.className="bar-ph";ph.style.height=r.height+"px";d.before(ph);
+  drag=d;d.classList.add("bdrag");d.style.width=r.width+"px";d.style.left=r.left+"px";d.style.top=r.top+"px";try{g.setPointerCapture(e.pointerId);}catch(_){}});
+ document.addEventListener("pointermove",e=>{if(!drag)return;e.preventDefault();drag.style.left=(e.clientX-dx)+"px";drag.style.top=(e.clientY-dy)+"px";
+  const bars=[...$("#main").querySelectorAll(":scope>details.bar")].filter(b=>b!==drag);
+  for(const b of bars){const r=b.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){const before=(e.clientY<r.top+r.height/2);if(before){if(b.previousElementSibling!==ph)b.before(ph);}else if(b.nextElementSibling!==ph)b.after(ph);break;}}
+  if(e.clientY<70)scrollBy(0,-14);else if(e.clientY>innerHeight-60)scrollBy(0,14);},{passive:false});
+ const end=()=>{if(!drag)return;const d=drag;drag=null;d.classList.remove("bdrag");d.style.width=d.style.left=d.style.top="";ph.replaceWith(d);ph=null;admOrdSave();};
+ document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
+ document.addEventListener("keydown",e=>{const g=e.target.closest&&e.target.closest(".bgrip");if(!g)return;const d=g.closest("details.bar");let t=null;
+  if(e.key==="ArrowUp"||e.key==="ArrowLeft"){t=d.previousElementSibling;if(t&&t.matches("details.bar"))t.before(d);else return;}else if(e.key==="ArrowDown"||e.key==="ArrowRight"){t=d.nextElementSibling;if(t&&t.matches("details.bar"))t.after(d);else return;}else return;
+  e.preventDefault();admOrdSave();g.focus();});})();
 </script>
 </body>
 </html>
