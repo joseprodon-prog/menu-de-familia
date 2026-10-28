@@ -23,6 +23,10 @@ async function quota(su: string, sk: string, auth: string, fn: string, lim: numb
     const j = await r.json(); return { ok: !!j.ok, h: !!j.h, fins: String(j.fins || "") };
   } catch (_) { return { ok: true, h: false, fins: "" }; }
 }
+// Mode Hortolà (admin): ajuda a preparar les respostes de la bústia; només per a l'Hortolà
+const HORT = `Ajudes l'Hortolà (el creador i administrador de l'app «Menú de Família») a preparar les respostes als missatges que les famílies li envien des de la bústia de l'app. Parles amb l'Hortolà, no amb la família: treballeu junts fins a trobar la resposta adequada.
+Com treballes: breu i esquemàtic, en català. Identifica què demana l'usuari, digues si ja existeix a l'app segons el manual que tens (i com es fa) o si és una funció nova, i proposa la resposta. Si et falta una dada per respondre bé, pregunta-la a l'Hortolà. No prometis dates ni funcions que l'Hortolà no hagi confirmat.
+Cada cop que proposis el text que rebrà la família, posa'l sencer (llest per enviar) entre <resposta> i </resposta>. To: molt proper, educat i agraït, en català, frases curtes, sense frases buides; tutejant; sense signatura.`;
 const PROU = (f: string) => `Has fet servir totes les consultes al Capità Enciam. Es renoven ${f ? "a les " + f : "d'aquí a unes hores"} 🥬`;
 // Àmbit per a la lectura de documents i les tasques de l'app (no s'aplica a l'Hortolà)
 const AMBIT_DOC = `Treballes per a l'app «Menú de Família»: llegeixes i n'extreus dades de documents de la llar (tiquets i factures de compra, receptes, menús, fotos de la nevera, del rebost o de la cuina, enllaços de receptes) i fas tasques de cuina, alimentació, menús, compra i despesa domèstica. Segueix el format que demani la petició. Si la petició no té relació amb això (preguntes generals, redactar textos aliens, programació, altres temes), no la facis i respon només: FORA_AMBIT`;
@@ -52,7 +56,7 @@ Deno.serve(async (req) => {
       const rr = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST", signal: AbortSignal.timeout(120000),
         headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-        body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 6000, system: AMBIT + (typeof body.system === "string" ? "\n\n" + body.system.slice(0, 20000) : ""), messages: ms, ...(tools.length ? { tools } : {}) }),
+        body: JSON.stringify({ model: model || "claude-sonnet-5-5", max_tokens: 6000, system: (q.h && body.hort === true ? HORT : AMBIT) + (typeof body.system === "string" ? "\n\n" + body.system.slice(0, 20000) : ""), messages: ms, ...(tools.length ? { tools } : {}) }),
       });
       const jj = await rr.json();
       console.log("llegeix: xat", rr.status, Date.now() - t1, "ms", JSON.stringify(jj.usage || jj.error || {}));

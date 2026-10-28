@@ -204,6 +204,14 @@ details.bar.bdrag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14p
 .bar-ph{border:2px dashed #2f74b5;border-radius:16px;background:rgba(47,116,181,.06)}
 .cols{display:flex;flex-direction:column;gap:12px}.col{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:40px}
 @media(min-width:1100px){.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}}
+.aibox{margin:10px 0;border:2px solid #2f5f8a;border-radius:14px;background:#fff;overflow:hidden}
+.aibox .aih{display:flex;align-items:center;gap:8px;background:#2f5f8a;color:#fff;padding:8px 12px;font-weight:700}.aibox .aih span{flex:1}.aibox .aih button{background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer}
+.ailog{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto;padding:10px 12px;background:#f3f7fb}
+.aim{max-width:85%;padding:8px 11px;border-radius:12px;line-height:1.45;white-space:pre-wrap}.aim.u{align-self:flex-end;background:#dfeaf5}.aim.a{align-self:flex-start;background:#fff;border:1px solid #d6e2ee}
+.aiprop{margin:8px 0 2px;padding:9px 11px;border-left:4px solid var(--hort,#d07a2c);background:#fff8ef;border-radius:8px;white-space:pre-wrap}.aiprop button{display:block;margin-top:6px}
+.aiin{display:flex;gap:8px;padding:10px 12px;align-items:flex-end;border-top:1px solid #d6e2ee}.aiin textarea{flex:1;min-height:44px;margin:0}
+.aiq{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 10px}.aiq button{border:1px solid #c9d8e6;background:#f3f7fb;border-radius:99px;padding:4px 10px;cursor:pointer;font:inherit;font-size:13px}
+.aiwait{color:#6b7c8c;font-style:italic}
 </style>
 </head>
 <body>
@@ -259,7 +267,7 @@ function drawBus(){const el=$("#b_bus");if(!el)return;
  const fd=a=>{const d=new Date(a);return d.toLocaleDateString("ca",{day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"});};
  el.innerHTML=`<div class="seg">${[["nou","Pendents"],["","Totes"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?C.filter(c=>c.pend).length:C.length}</small></button>`).join("")}</div>`+
  (L.length?L.map(c=>{const open=BOPEN===c.f.uid;return `<details class="sub conv" data-cv="${c.f.uid}"${open?" open":""}><summary><span class="dot" style="background:${c.nous?"var(--hort)":"var(--ok)"}"></span><span class="btx"><b>${esc(c.f.nom||"Usuari")}${c.prem?" ⭐":""}${c.err?` <span class="ebadge">🔧 ${c.err}</span>`:""}${c.want?` <span class="pbadge">vol ser Sembrador</span>`:""}</b><small>${c.fam?"Família "+esc(c.fam.nom||""):esc(c.f.fam||"")} · ${fd(c.last)}</small></span>${c.nous?`<span class="cnt">${c.nous}</span>`:""}<span class="chev sm"></span></summary>${open?`<div class="ubody"><div class="thr">${c.M.map(m=>m.de==="h"?`<div class="bm h"><span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>Tu · ${fd(m.at)}${m.llegit?" · llegit":""}</small></div>`:`<div class="bm u">${m.tipus==="err"?'<b class="etag">🔧 Per millorar</b>':m.tipus==="prem"?'<b class="ptag">⭐ Vol ser Sembrador</b>':""}<span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>${fd(m.at)}${m.pant?" · "+esc(m.pant):""}${m.ver?" · v"+esc(String(m.ver).slice(-4)):""}</small>${m.tipus!=="prem"?(m.premi?`<small class="pmi">🌾 Premiada amb ${m.premi} espigues${m.premiOk?" ✓":""}</small>`:`<button class="pmb" data-premi="${c.f.uid}|${m.k}">🌾 Idea per a tothom: +500 espigues</button>`):""}</div>`).join("")}</div>
-  <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}</div>${c.fam?`<div class="row pflow"><span class="foot">Pla de ${esc(c.fam.nom||"la família")}: <b>${({sol:"Sol·licitat",apr:"Aprovat · pendent de pagament",act:"⭐ Sembrador"})[famSt(c.fam)||(c.want?"sol":"")]||"Gratuït"}</b></span>${!famSt(c.fam)?`<button class="btn sec" data-pmapr="${c.fam.code}|${c.f.uid}">✅ Aprova i envia la informació</button>`:""}${famSt(c.fam)==="apr"?`<button class="btn" data-pmact="${c.fam.code}">⭐ Activa Sembrador (pagat)</button>`:""}${famSt(c.fam)==="act"?`<button class="btn sec" data-pmoff="${c.fam.code}">Treu Sembrador</button>`:""}</div>`:""}</div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
+  <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}<button class="btn sec" data-aiop="${c.f.uid}">💬 Pensem-ho amb Claude</button></div><div id="ai_${c.f.uid}">${typeof aiHtml==="function"?aiHtml(c.f.uid):""}</div><div class="row" style="display:none"></div>${c.fam?`<div class="row pflow"><span class="foot">Pla de ${esc(c.fam.nom||"la família")}: <b>${({sol:"Sol·licitat",apr:"Aprovat · pendent de pagament",act:"⭐ Sembrador"})[famSt(c.fam)||(c.want?"sol":"")]||"Gratuït"}</b></span>${!famSt(c.fam)?`<button class="btn sec" data-pmapr="${c.fam.code}|${c.f.uid}">✅ Aprova i envia la informació</button>`:""}${famSt(c.fam)==="apr"?`<button class="btn" data-pmact="${c.fam.code}">⭐ Activa Sembrador (pagat)</button>`:""}${famSt(c.fam)==="act"?`<button class="btn sec" data-pmoff="${c.fam.code}">Treu Sembrador</button>`:""}</div>`:""}</div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
  const t=el.querySelector(".thr");if(t)t.scrollTop=t.scrollHeight;drawPrem();}
 async function cvSave(uid,mut){const x=FB.find(f=>f.uid===uid);if(!x)return;const items={...(x.items||{})};mut(items);x.items=items;drawBus();kpis();try{await DB.doc("feedback/"+uid).set({nom:x.nom||"",fam:x.fam||"",prem:!!x.prem,items});toast("Desat");}catch(e){toast("No s'ha pogut desar");}}
 document.addEventListener("click",e=>{const f=e.target.closest("[data-fbf]");if(f){FBF=f.dataset.fbf;drawBus();return;}
@@ -690,6 +698,53 @@ function admOrdSave(){const c=admCols();if(!c)return;AORD={a:[...c.children[0].q
   if(e.key==="ArrowUp"){t=d.previousElementSibling;if(t&&t.matches("details.bar"))t.before(d);else return;}else if(e.key==="ArrowDown"){t=d.nextElementSibling;if(t&&t.matches("details.bar"))t.after(d);else return;}
   else if(e.key==="ArrowLeft"||e.key==="ArrowRight"){const o=cs[ci+(e.key==="ArrowLeft"?-1:1)];if(!o)return;o.appendChild(d);}else return;
   e.preventDefault();admOrdSave();g.focus();});})();
+</script>
+
+<script>
+/* ---------- Xat amb Claude per preparar respostes de la bústia ---------- */
+let AICH={},AIOPEN={},AIBUSY={},GUIATX=null;
+try{AICH=JSON.parse(localStorage.getItem("mf_aich")||"{}")}catch(_){}
+const aiSave=()=>{try{localStorage.setItem("mf_aich",JSON.stringify(AICH))}catch(_){}};
+const aiEsc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+function aiMsgHtml(m,uid,i){if(m.role==="user")return `<div class="aim u">${aiEsc(m.vis||m.content)}</div>`;
+ const t=String(m.content||"");const parts=[];let last=0;const re=/<resposta>([\s\S]*?)<\/resposta>/g;let x;
+ while((x=re.exec(t))){parts.push(aiEsc(t.slice(last,x.index)).trim());parts.push(`<div class="aiprop">${aiEsc(x[1].trim())}<button class="btn" data-aiuse="${uid}|${i}|${parts.length}">⬇ Fes-la servir</button></div>`);last=re.lastIndex;}
+ parts.push(aiEsc(t.slice(last)).trim());return `<div class="aim a">${parts.filter(Boolean).join("\n")}</div>`;}
+function aiHtml(uid){if(!AIOPEN[uid])return "";const L=AICH[uid]||[];
+ return `<div class="aibox"><div class="aih">💬<span>Tu i Claude · preparant la resposta</span><button data-aire="${uid}" title="Torna a començar">↺</button><button data-aicl="${uid}" title="Tanca">✕</button></div>
+ <div class="ailog">${L.map((m,i)=>aiMsgHtml(m,uid,i)).join("")}${AIBUSY[uid]?'<div class="aim a aiwait">Claude està pensant…</div>':""}</div>
+ <div class="aiin"><textarea data-aiin="${uid}" placeholder="Parla amb Claude (Enter envia · Maj+Enter salt de línia)"></textarea><button class="btn" data-aisd="${uid}">Envia</button></div>
+ <div class="aiq">${["Proposa'm una resposta","Més curta","Més propera","Digues que ho farem","Digues que ja existeix i com es fa","Explica'm què demana"].map(q=>`<button data-aiq="${uid}">${q}</button>`).join("")}</div></div>`;}
+function aiDraw(uid){const el=document.getElementById("ai_"+uid);if(!el)return;el.innerHTML=aiHtml(uid);const lg=el.querySelector(".ailog");if(lg)lg.scrollTop=lg.scrollHeight;}
+async function aiGuia(){if(GUIATX!==null)return GUIATX;try{const h=await (await fetch("guia.html",{cache:"no-store"})).text();const d=new DOMParser().parseFromString(h,"text/html");d.querySelectorAll("script,style,nav").forEach(e=>e.remove());GUIATX=(d.body.textContent||"").replace(/\s+/g," ").trim().slice(0,11000);}catch(_){GUIATX="";}return GUIATX;}
+async function aiSys(uid){const c=FB.find(f=>f.uid===uid);const fam=uidFam(uid);const M=c?convOf(c):[];
+ const st=fam?({sol:"ha sol·licitat ser Sembradora",apr:"aprovada, pendent de pagament",act:"Sembradora (premium)"})[famSt(fam)]||"Planter (gratuïta)":"sense família";
+ const conv=M.slice(-30).map(m=>`[${String(m.at||"").slice(0,16).replace("T"," ")}] ${m.de==="h"?"HORTOLÀ":"USUARI"}${m.tipus==="err"?" (per millorar)":m.tipus==="prem"?" (vol ser Sembrador)":""}: ${String(m.t||"").slice(0,1500)}${m.premi?` [premiada amb ${m.premi} espigues]`:""}`).join("\n");
+ return `CONTEXT DE LA CONVERSA
+Usuari: ${c&&c.nom||"usuari"} · Família: ${fam&&fam.nom||(c&&c.fam)||"—"} · Pla: ${st}
+Missatges (del més antic al més recent):
+${conv}
+
+ECONOMIA: 100 espigues = 1 €. Les idees útils per a tothom es poden premiar amb espigues (normalment +500).
+
+MANUAL D'USUARI DE L'APP (per saber què ja existeix):
+${await aiGuia()}`;}
+async function aiAsk(uid,txt,vis){if(AIBUSY[uid])return;const L=AICH[uid]=AICH[uid]||[];L.push({role:"user",content:txt,...(vis?{vis}:{})});AIBUSY[uid]=1;aiDraw(uid);
+ try{const sb=window.MF_SB;const msgs=L.slice(-24).map(m=>({role:m.role,content:m.content}));
+  const {data,error}=await sb.functions.invoke("llegeix",{body:{hort:true,messages:msgs,system:await aiSys(uid)}});
+  if(error||!data||data.error)throw new Error((data&&data.error)||(error&&error.message)||"Error");
+  L.push({role:"assistant",content:data.text||"(sense resposta)"});}
+ catch(e){L.pop();toast("No s'ha pogut parlar amb Claude: "+String(e.message||e).slice(0,120));}
+ AIBUSY[uid]=0;aiSave();aiDraw(uid);const ta=document.querySelector(`[data-aiin="${uid}"]`);ta&&ta.focus();}
+document.addEventListener("click",e=>{let b;
+ if((b=e.target.closest("[data-aiop]"))){const u=b.dataset.aiop;AIOPEN[u]=!AIOPEN[u];aiDraw(u);if(AIOPEN[u]&&!(AICH[u]||[]).length)aiAsk(u,"Llegeix la conversa. Explica'm en 2-3 punts què demana i si ja existeix a l'app, i proposa'm una primera resposta.","Analitza la conversa i proposa'm una resposta");return;}
+ if((b=e.target.closest("[data-aicl]"))){AIOPEN[b.dataset.aicl]=0;aiDraw(b.dataset.aicl);return;}
+ if((b=e.target.closest("[data-aire]"))){const u=b.dataset.aire;delete AICH[u];aiSave();aiDraw(u);return;}
+ if((b=e.target.closest("[data-aiq]"))){aiAsk(b.dataset.aiq,b.textContent);return;}
+ if((b=e.target.closest("[data-aisd]"))){const u=b.dataset.aisd;const ta=document.querySelector(`[data-aiin="${u}"]`);const t=ta&&ta.value.trim();if(t){ta.value="";aiAsk(u,t);}return;}
+ if((b=e.target.closest("[data-aiuse]"))){const [u,i,j]=b.dataset.aiuse.split("|");const m=(AICH[u]||[])[+i];if(!m)return;const ps=[...String(m.content).matchAll(/<resposta>([\s\S]*?)<\/resposta>/g)].map(x=>x[1].trim());
+  const k=Math.floor((+j)/2);const t=ps[k]!==undefined?ps[k]:ps[0];const ta=document.querySelector(`[data-cvr="${u}"]`);if(ta&&t){ta.value=t;ta.focus();ta.scrollIntoView({block:"center",behavior:"smooth"});toast("Resposta copiada: revisa-la i prem Envia");}}});
+document.addEventListener("keydown",e=>{const ta=e.target.closest&&e.target.closest("[data-aiin]");if(ta&&e.key==="Enter"&&!e.shiftKey){e.preventDefault();const t=ta.value.trim();if(t){ta.value="";aiAsk(ta.dataset.aiin,t);}}});
 </script>
 </body>
 </html>
