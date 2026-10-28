@@ -155,6 +155,29 @@ div.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:60
 .fmem .btx{flex:1;min-width:0}.fmem small{display:block;overflow:hidden;text-overflow:ellipsis}
 .btn.sm{padding:4px 10px;font-size:12.5px}
 .ptag.req{background:#fdecd9;color:#a55a12}.ptag.pay{background:#e3f0fb;color:#2a5f93}.reqn{margin-left:6px;background:#e07a1f;color:#fff;border-radius:99px;padding:1px 7px;font-size:12px}.pflow2{display:flex;flex-direction:column;gap:6px}
+.bx2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px}
+.bwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:8px}
+.btab{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%}
+.btab th,.btab td{border-bottom:1px solid var(--line);padding:4px;vertical-align:middle}
+.btab thead th{background:#e3f0fb;position:sticky;top:0}
+.btab tr>th:first-child{position:sticky;left:0;background:#fbfaf6;z-index:1;min-width:150px;max-width:180px;text-align:left}
+.btab thead tr>th:first-child{background:#d6e8f8;z-index:2}
+.btab input{width:100%;min-width:96px;box-sizing:border-box;border:0;background:transparent;font:inherit;padding:4px;border-radius:6px}
+.btab tr>th:first-child input{font-weight:700;min-width:130px}
+.btab thead input{font-weight:700;text-align:center}
+.btab td{min-width:112px;text-align:center;position:relative}
+.btab td input{text-align:center}
+.btab td.y{background:#eaf4dc}.btab td.y input{color:#3f8a3a;font-weight:800;font-size:15px}
+.btab td.n{background:#f6f4ee}.btab td.n input{color:#9a968a}
+.btab td.t{background:#fdf3e4}.btab td.t input{color:#8a5a12;font-weight:600}
+.bq{display:none;gap:3px;justify-content:center;margin-top:2px}.btab td:focus-within .bq{display:flex}
+.bq button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:1px 8px;cursor:pointer;font-weight:700}
+.bx{border:0;background:none;color:#b5502e;cursor:pointer;font-size:15px;padding:0 4px}.badd{border:1px dashed #9cbf6e;background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:700;color:#3d5a2a}
+.btab tr>th:first-child{white-space:nowrap}.btab tr>th:first-child input{display:inline-block;width:calc(100% - 22px)}
+.btab textarea{width:100%;box-sizing:border-box;border:0;background:transparent;font:inherit;padding:3px 4px;border-radius:6px;resize:none;line-height:1.25;overflow:hidden;display:block}
+.btab tr>th:first-child textarea{font-weight:700;font-size:12.5px;width:calc(100% - 22px);display:inline-block;vertical-align:middle}
+.btab td textarea{text-align:center}.btab td{min-width:92px}.btab tr>th:first-child{min-width:150px;max-width:160px;white-space:normal}
+.btab td.y textarea{color:#3f8a3a;font-weight:800;font-size:15px}.btab td.n textarea{color:#9a968a}.btab td.t textarea{color:#8a5a12;font-weight:600;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -180,7 +203,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
 
 (async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();let okH=false;try{const r=await SB.rpc("is_hortola");okH=!!(r&&r.data===true);}catch(e){}if(okH)HORTOLA=uid;
  if(!okH){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
- $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app")+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("vei","🏘️","Veïnat","Famílies més actives i regals d'espigues")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
+ $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app")+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("vei","🏘️","Veïnat","Famílies més actives i regals d'espigues")+bar("beta","🧪","Fase beta","Comparador de funcions i subfases")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
  DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();try{if(!PEDIT)drawCat();}catch(_){}},()=>{});
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
@@ -188,7 +211,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
  DB.doc("botiga/premium").onSnapshot(d=>{PREMH=(d.exists&&d.data().h)||{};drawUsu();drawBus();},()=>{});
  DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
  loadFam();loadVer();drawNot();
- document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.id==="vei"&&d.open)veiLoad();if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
+ document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.id==="vei"&&d.open)veiLoad();if(d.id==="beta"&&d.open)betaLoad();if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
 })();
 
 function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
@@ -582,6 +605,34 @@ document.addEventListener("click",async e=>{const zo=e.target.closest("[data-zok
  const go=e.target.closest("[data-vgo]");if(go){const k=go.dataset.vgo,n=VGIFT[k]??50;if(!go.classList.contains("arm")){go.classList.add("arm");go.textContent=`Confirma ${n} 🌾`;setTimeout(()=>{if(go.isConnected&&go.classList.contains("arm")){go.classList.remove("arm");go.textContent="🎁 Regala";}},4000);return;}
   go.disabled=true;go.textContent="Enviant…";const now=new Date(),mes=now.toLocaleDateString("ca",{month:"long"});
   try{await DB.doc("regals/"+k).update({items:{["r"+Date.now().toString(36)]:{n,at:now.toISOString().slice(0,10),motiu:`Família activa del veïnat · ${mes}`}}});go.textContent="Regalat ✓";}catch(err){go.textContent="No s'ha pogut enviar";go.disabled=false;}}});
+
+/* ===== Fase beta: comparador de funcions (Espiga / Sembradora) i de subfases ===== */
+const BETA0={"x": 1000, "t1": {"cols": ["Espiga", "Sembradora"], "rows": [["Menú setmanal i proposta del Capità", "✓", "✓"], ["Receptari i Crea una recepta", "✓", "✓"], ["Capità Enciam (xat, súper, 2 plats alhora)", "100 crides / 5 h", "100 crides / 5 h"], ["Lectura de tiquets, factures i fotos", "10 / 5 h", "10 / 5 h"], ["Il·lustracions i notes de veu", "10 / 5 h", "10 / 5 h"], ["Llista de la compra generada", "1 per setmana", "Il·limitada"], ["Escàner de documents", "✓", "✓"], ["Despesa i preus dels articles", "✓", "✓"], ["On era més barat (en processar tiquets)", "Avís", "Detall i estalvi"], ["Veïnat: preus compartits i On surt més a compte", "✓", "✓"], ["Zones addicionals del veïnat", "—", "✓"], ["Crear un veïnat propi", "—", "✓"], ["Targetes de client", "✓", "✓"], ["El teu hort, missions i espigues", "✓", "✓"], ["Botiga d'El Sortidor", "✓", "✓"], ["Xat directe amb l'Hortolà", "—", "✓"], ["Premi per idees (+500 espigues)", "—", "✓"], ["Personalització de l'app", "—", "✓"]]}, "t2": {"cols": ["Beta 1", "Beta 2", "Beta 3", "Llançament"], "rows": [["Funcions de l'app (menú, receptes, compra, despesa)", "✓", "✓", "✓", "✓"], ["Capità Enciam", "✓", "✓", "✓", "✓"], ["Espigues", "Es guanyen (joc)", "Es guanyen i es gasten", "Descomptes reals", "Descomptes reals"], ["Pas d'Espiga a Sembradora", "Per espigues", "Per espigues", "Per espigues", "De pagament"], ["Botiga d'El Sortidor", "Catàleg com a joc", "Encàrrecs de prova", "Comandes reals", "Servei complet"], ["Entrega a domicili", "—", "Experiències gratuïtes", "Zones de prova", "✓"], ["Pagament", "—", "—", "Proves", "✓"], ["Experiències a canvi d'informació", "—", "✓", "✓", "—"], ["Veïnat i preus compartits", "✓", "✓", "✓", "✓"], ["Tracte preferent al llançament", "Acumula", "Acumula", "Acumula", "S'aplica"]]}};let BETA=null,BSUB=false,btm;
+const bConv=t=>({cols:t.cols.slice(),rows:t.rows.map(r=>Array.isArray(r)?{f:r[0],v:r.slice(1)}:r)});
+function betaLoad(){if(BSUB)return;BSUB=true;DB.doc("admin/beta").onSnapshot(d=>{if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#b_beta input,#b_beta textarea"))return;
+ const x=d.exists?d.data():null;BETA=x&&x.t1?x:{x:BETA0.x,t1:bConv(BETA0.t1),t2:bConv(BETA0.t2)};drawBeta();},()=>{BETA={x:BETA0.x,t1:bConv(BETA0.t1),t2:bConv(BETA0.t2)};drawBeta();});}
+function betaSave(){clearTimeout(btm);const m=$("#bmsg");if(m)m.textContent="Desant…";btm=setTimeout(async()=>{try{await DB.doc("admin/beta").set(BETA);const m=$("#bmsg");if(m)m.textContent="Desat ✓";}catch(e){toast("No s'ha pogut desar");}},600);}
+const bCls=v=>{const t=String(v||"").trim();return t==="✓"?"y":t==="—"||t==="-"||!t?"n":"t";};
+function bTable(k,title,sub){const T=BETA[k];return `<span class="flab">${title}</span>${sub?`<p class="foot">${sub}</p>`:""}<div class="bwrap"><table class="btab"><thead><tr><th>Funció</th>${T.cols.map((c,j)=>`<th><input data-bc="${k}|${j}" value="${esc(c)}">${k==="t2"&&T.cols.length>1?`<button type="button" class="bx" data-bcd="${k}|${j}" aria-label="Treu la columna">×</button>`:""}</th>`).join("")}${k==="t2"?`<th><button type="button" class="badd" data-bca="${k}" aria-label="Afegeix una subfase">＋</button></th>`:""}</tr></thead>
+ <tbody>${T.rows.map((r,i)=>`<tr><th><textarea rows="2" data-bf="${k}|${i}">${esc(r.f)}</textarea><button type="button" class="bx" data-brd="${k}|${i}" aria-label="Treu la fila">×</button></th>${T.cols.map((c,j)=>`<td class="${bCls(r.v[j])}"><textarea rows="2" data-bv="${k}|${i}|${j}" placeholder="—">${esc(r.v[j]||"")}</textarea><span class="bq"><button type="button" data-bq="${k}|${i}|${j}|✓">✓</button><button type="button" data-bq="${k}|${i}|${j}|—">—</button></span></td>`).join("")}${k==="t2"?"<td></td>":""}</tr>`).join("")}</tbody></table></div>
+ <button type="button" class="btn sec" data-bra="${k}">＋ Afegeix una funció</button>`;}
+function drawBeta(){const el=$("#b_beta");if(!el)return;if(!BETA){el.innerHTML=`<p class="foot">Carregant…</p>`;return;}
+ el.innerHTML=`<div class="bx2"><span>Espigues per passar d'Espiga a Sembradora</span><span class="pill"><button type="button" data-bxd="-100">−</button><b>${BETA.x} 🌾</b><button type="button" data-bxd="100">+</button></span></div>
+ ${bTable("t1","Espiga i Sembradora","Què pot fer cada nivell d'usuari. Escriu a cada casella o toca ✓ / —.")}
+ ${bTable("t2","Subfases de la beta","Què s'ofereix a cada subfase. Pots afegir subfases amb ＋.")}
+ <p class="foot" id="bmsg">Es desa sol</p>`;bFit(el);}
+function bFit(r){r.querySelectorAll(".btab textarea").forEach(t=>{t.style.height="auto";t.style.height=t.scrollHeight+"px";});}
+document.addEventListener("input",e=>{const t=e.target;if(!BETA||!t.closest||!t.closest("#b_beta"))return;let a;
+ t.style&&t.tagName==='TEXTAREA'&&(t.style.height='auto',t.style.height=t.scrollHeight+'px');if((a=t.dataset.bv)){const [k,i,j]=a.split("|");BETA[k].rows[+i].v[+j]=t.value;t.parentElement.className=bCls(t.value);betaSave();}
+ else if((a=t.dataset.bf)){const [k,i]=a.split("|");BETA[k].rows[+i].f=t.value;betaSave();}
+ else if((a=t.dataset.bc)){const [k,j]=a.split("|");BETA[k].cols[+j]=t.value;betaSave();}});
+document.addEventListener("click",e=>{if(!BETA||!e.target.closest("#b_beta"))return;let b;
+ if((b=e.target.closest("[data-bq]"))){const [k,i,j,v]=b.dataset.bq.split("|");BETA[k].rows[+i].v[+j]=v;drawBeta();betaSave();return;}
+ if((b=e.target.closest("[data-bxd]"))){BETA.x=Math.max(100,(+BETA.x||0)+(+b.dataset.bxd));drawBeta();betaSave();return;}
+ if((b=e.target.closest("[data-bra]"))){const T=BETA[b.dataset.bra];T.rows.push({f:"Funció nova",v:T.cols.map(()=>"")});drawBeta();betaSave();setTimeout(()=>{const ins=document.querySelectorAll(`[data-bf^="${b.dataset.bra}|"]`);const l=ins[ins.length-1];if(l){l.focus();l.select();}},40);return;}
+ if((b=e.target.closest("[data-brd]"))){if(!b.dataset.sure){sureAsk(b);return;}const [k,i]=b.dataset.brd.split("|");BETA[k].rows.splice(+i,1);drawBeta();betaSave();return;}
+ if((b=e.target.closest("[data-bca]"))){const T=BETA[b.dataset.bca];T.cols.push("Beta "+(T.cols.filter(c=>/^Beta/.test(c)).length+1));T.rows.forEach(r=>r.v.push(""));drawBeta();betaSave();return;}
+ if((b=e.target.closest("[data-bcd]"))){if(!b.dataset.sure){sureAsk(b);return;}const [k,j]=b.dataset.bcd.split("|");BETA[k].cols.splice(+j,1);BETA[k].rows.forEach(r=>r.v.splice(+j,1));drawBeta();betaSave();}});
 </script>
 </body>
 </html>
