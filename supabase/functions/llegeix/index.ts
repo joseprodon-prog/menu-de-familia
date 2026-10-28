@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
     console.log("llegeix: cos llegit");
     // mode xat: missatges + eines definides per l'app (l'app executa les eines i torna a cridar)
     if (Array.isArray(body.messages)) {
-      const q = await quota(su!, sk, auth, "xat", 300);
+      const q = await quota(su!, sk, auth, "xat", 100);
       if (!q.ok) return out({ error: PROU, limit: true }, 429);
       const ms = body.messages, tl = Array.isArray(body.tools) ? body.tools : [];
       if (!ms.length || ms.length > 60 || tl.length > 20 || JSON.stringify(body).length > 400000) return out({ error: "Petició no vàlida" }, 400);
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const pub = `${su}/storage/v1/object/public/assets/`;
     if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || !Array.isArray(urls) || images.length + urls.length > 8 ||
         urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub))) return out({ error: "Petició no vàlida" }, 400);
-    const qd = await quota(su!, sk, auth, "doc", 80);
+    const qd = await quota(su!, sk, auth, "doc", 10);
     if (!qd.ok) return out({ error: PROU, limit: true }, 429);
     const content = [
       ...urls.map((url: string) => ({ type: "image", source: { type: "url", url } })),

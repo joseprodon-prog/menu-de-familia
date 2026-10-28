@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     if (body.mode === "ping") return out({ ok: !!key });
     if (!key) return out({ error: "Falta el secret GEMINI_API_KEY" }, 500);
     if (body.mode === "escolta") {
-      const qe = await quota(su!, sk, auth, "escolta", 60);
+      const qe = await quota(su!, sk, auth, "escolta", 10);
       if (!qe.ok) return out({ error: PROU, limit: true }, 429);
       const audio = String(body.audio || ""), mime = String(body.mime || "audio/mp4").split(";")[0];
       if (!audio || audio.length > 12_000_000 || !/^audio\//.test(mime)) return out({ error: "Petició no vàlida" }, 400);
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
       return out({ text });
     }
     const { mode = "inventa", urls = [], n = "", ing = "", steps = "", nota = "" } = body;
-    const qi = await quota(su!, sk, auth, "imatge", 40);
+    const qi = await quota(su!, sk, auth, "imatge", 10);
     if (!qi.ok) return out({ error: PROU, limit: true }, 429);
     const pub = `${su}/storage/v1/object/public/assets/`;
     if (!["foto", "inventa", "edita"].includes(mode) || !Array.isArray(urls) || urls.length > 3 || urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub)) || (mode !== "inventa" && !urls.length) || (mode === "edita" && !String(nota).trim()))
