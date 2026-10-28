@@ -33,7 +33,7 @@ textarea{display:block;width:100%;border:0;background:transparent;font:inherit;c
 textarea:focus{outline:2px solid #2f74b5;outline-offset:-2px;background:#fff}
 td textarea{text-align:center}
 thead textarea{text-align:center;font-weight:800;font-size:11px}td textarea{font-size:11.5px}
-.grp th{background:#2f74b5;color:#fff;font-size:11.5px;padding:3px 6px;font-weight:800}.grp th:first-child{background:#fafbfc}.gsep{border-left:3px solid #2f74b5!important}td.y{background:var(--y)}td.y textarea{color:var(--yt);font-weight:800}
+.grp th{background:#2f74b5;color:#fff;font-size:11.5px;padding:3px 6px;font-weight:800}.grp th:first-child{background:#fafbfc}.gsep{border-left:3px solid #2f74b5!important}td.e{background:#fff}td.y{background:var(--y)}td.y textarea{color:var(--yt);font-weight:800}
 td.n{background:var(--n)}td.n textarea{color:var(--nt)}
 td.t{background:var(--t)}td.t textarea{color:var(--tt);font-weight:600}
 .del{position:absolute;top:1px;right:2px;border:0;background:none;color:#b5502e;cursor:pointer;font-size:12px;padding:0 2px;display:none}
@@ -58,8 +58,8 @@ tbody th{position:relative}
 <div class="top"><b>🧪 Comparador de la fase beta</b><span class="thr" title="Espigues per passar de Planter a Sembrador durant la beta">Beta: Planter → Sembrador<button type="button" data-x="-100">−</button><span id="xv">— 🌾</span><button type="button" data-x="100">+</button></span><span id="msg"></span><span class="sp"></span><button type="button" onclick="print()">🖨️ Imprimeix</button><a href="/admin">↩ Admin</a></div>
 <div class="rot">📱↻ Gira el mòbil per veure els dos quadres alhora</div>
 <div class="wrap" id="wrap"><p style="padding:10px">Carregant…</p></div>
-<div class="leg"><span><i style="background:var(--y)"></i>Sí (✓)</span><span><i style="background:var(--n)"></i>No (—)</span><span><i style="background:var(--t)"></i>Amb condicions</span><span>Toca una casella per escriure o per triar ✓ / —. Es desa sol.</span></div>
-<div class="qk" id="qk"><button type="button" data-q="✓">✓</button><button type="button" data-q="—">—</button></div>
+<div class="leg"><span><i style="background:var(--y)"></i>Sí (✓)</span><span><i style="background:var(--n)"></i>No (—)</span><span><i style="background:var(--t)"></i>Amb condicions</span><span><i style="background:#fff"></i>No hi aplica (buida)</span><span>Toca una casella per escriure o per triar ✓ / — / ⌫ (buida). Es desa sol.</span></div>
+<div class="qk" id="qk"><button type="button" data-q="✓">✓</button><button type="button" data-q="—">—</button><button type="button" data-q="" title="Deixa-la buida">⌫</button></div>
 <script>window.MF_STORAGEKEY="mf-admin-auth";</script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
@@ -74,6 +74,9 @@ const JOINS=[["capità enciam (xat, súper, 2 plats alhora)","capità enciam"],[
 const SPREAD={"funcions de l'app (menú, receptes, compra, despesa)":["menú setmanal i proposta del capità","receptari i crea una recepta","llista de la compra generada","despesa","preus dels articles"]};
 function spread(T){let ch=false;const ix=f=>T.rows.findIndex(r=>String(r.f).trim().toLowerCase()===f);const emp=v=>!String(v||"").trim()||v==="—";
  Object.entries(SPREAD).forEach(([src,dst])=>{const j=ix(src);if(j<0)return;const S=T.rows[j].v;dst.forEach(d=>{const i=ix(d);if(i<0)return;T.rows[i].v=T.rows[i].v.map((v,k)=>emp(v)&&!emp(S[k])?S[k]:v);});T.rows.splice(ix(src),1);ch=true;});return ch;}
+/* files que només tenen sentit a les subfases: les caselles de Planter i Sembrador queden buides */
+const ONLYB=["pas de planter a sembrador","entrega a domicili","pagament","experiències a canvi d'informació","tracte preferent al llançament"];
+function blank(T){let ch=false;const nA=T.nA||0;T.rows.forEach(r=>{if(ONLYB.includes(String(r.f).trim().toLowerCase()))for(let k=0;k<nA;k++)if(r.v[k]==="—"){r.v[k]="";ch=true;}});return ch;}
 function join(T){let ch=false;const ix=f=>T.rows.findIndex(r=>String(r.f).trim().toLowerCase()===f);
  JOINS.forEach(([a,b])=>{const i=ix(a),j=ix(b);if(i<0||j<0)return;const A=T.rows[i],Bv=T.rows[j].v;A.v=A.v.map((v,k)=>{const e=!String(v||"").trim()||v==="—";const o=String(Bv[k]||"").trim();return e&&o?o:v;});T.rows.splice(j,1);ch=true;});return ch;}
 const SPLITS={"despesa i preus dels articles":["Despesa","Preus dels articles"]};
@@ -82,13 +85,13 @@ function split(T){let ch=false;for(let i=T.rows.length-1;i>=0;i--){const k=Strin
 function merge(a,b){const nA=a.cols.length;const rows=a.rows.map(r=>({f:r.f,v:[...a.cols.map((_,j)=>r.v[j]||""),...b.cols.map(()=>"")]}));
  b.rows.forEach(r=>{const k=String(r.f).trim().toLowerCase();const ex=rows.find(x=>String(x.f).trim().toLowerCase()===k);const vb=b.cols.map((_,j)=>r.v[j]||"");if(ex)vb.forEach((v,j)=>ex.v[nA+j]=v);else rows.push({f:r.f,v:[...a.cols.map(()=>""),...vb]});});
  return {nA,cols:[...a.cols,...b.cols],rows};}
-const cls=v=>{const t=String(v||"").trim();return t==="✓"?"y":(!t||t==="—"||t==="-")?"n":"t";};
+const cls=v=>{const t=String(v||"").trim();return !t?"e":t==="✓"?"y":(t==="—"||t==="-")?"n":"t";};
 const fit=t=>{t.style.height="auto";t.style.height=t.scrollHeight+"px";};
 function save(){clearTimeout(tm);$("#msg").textContent="Desant…";tm=setTimeout(async()=>{try{await DB.doc("admin/beta").set(B);$("#msg").textContent="Desat ✓";}catch(e){$("#msg").textContent="No s'ha pogut desar";}},600);}
 function tbl(k,title){const T=B[k];const nA=T.nA||0;return `<div class="blk k-${k}"><h2><span>${title}</span><span>${k==="tm"?`<button type="button" data-ac="${k}">＋ Subfase</button> `:""}<button type="button" data-ar="${k}">＋ Funció</button></span></h2>
 <table><colgroup><col class="c0">${T.cols.map(()=>'<col class="cv">').join("")}</colgroup>
 <thead>${nA?`<tr class="grp"><th></th><th colspan="${nA}">Nivells d'usuari</th><th colspan="${T.cols.length-nA}">Subfases de la beta</th></tr>`:""}<tr><th><textarea rows="1" readonly tabindex="-1">Funció</textarea></th>${T.cols.map((c,j)=>`<th class="${nA&&j===nA?"gsep":""}"><textarea rows="1" data-c="${k}|${j}">${esc(c)}</textarea>${k==="tm"&&j>=nA&&T.cols.length-nA>1?`<button type="button" class="del" data-dc="${k}|${j}" title="Treu la columna">×</button>`:""}</th>`).join("")}</tr></thead>
-<tbody>${T.rows.map((r,i)=>`<tr><th><textarea rows="1" data-f="${k}|${i}">${esc(r.f)}</textarea><button type="button" class="del" data-dr="${k}|${i}" title="Treu la fila">×</button></th>${T.cols.map((c,j)=>`<td class="${cls(r.v[j])}${nA&&j===nA?" gsep":""}"><textarea rows="1" data-v="${k}|${i}|${j}" placeholder="—">${esc(r.v[j]||"")}</textarea></td>`).join("")}</tr>`).join("")}</tbody></table></div>`;}
+<tbody>${T.rows.map((r,i)=>`<tr><th><textarea rows="1" data-f="${k}|${i}">${esc(r.f)}</textarea><button type="button" class="del" data-dr="${k}|${i}" title="Treu la fila">×</button></th>${T.cols.map((c,j)=>`<td class="${cls(r.v[j])}${nA&&j===nA?" gsep":""}"><textarea rows="1" data-v="${k}|${i}|${j}" placeholder="">${esc(r.v[j]||"")}</textarea></td>`).join("")}</tr>`).join("")}</tbody></table></div>`;}
 function draw(){$("#xv").textContent=(B.x||0)+" 🌾";$("#wrap").innerHTML=tbl("tm","Funcions: nivells d'usuari i subfases de la beta")+tbl("t3","Espigues (els «tokens» de l'Hortolà)");document.querySelectorAll("textarea").forEach(fit);}
 document.addEventListener("input",e=>{const t=e.target;if(t.tagName!=="TEXTAREA")return;fit(t);let a;
  if((a=t.dataset.v)){const [k,i,j]=a.split("|");B[k].rows[+i].v[+j]=t.value;t.parentElement.className=cls(t.value);}
@@ -107,7 +110,7 @@ document.addEventListener("click",e=>{let b;
  if((b=e.target.closest("[data-dc]"))){if(!confirmTap(b))return;const [k,j]=b.dataset.dc.split("|");B[k].cols.splice(+j,1);B[k].rows.forEach(r=>r.v.splice(+j,1));draw();save();return;}});
 function confirmTap(b){if(b.dataset.sure)return true;b.dataset.sure="1";b.textContent="Segur?";b.style.display="block";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.display="";}},3000);return false;}
 (async()=>{try{DB=await window.claude.use("db");}catch(e){}if(!DB){$("#wrap").innerHTML='<p style="padding:10px">Cal entrar a la web de l\'Hortolà.</p>';return;}
- DB.doc("admin/beta").onSnapshot(d=>{if(document.activeElement&&document.activeElement.tagName==="TEXTAREA")return;const x=d.exists?d.data():null;B=x&&x.t1?x:{x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2)};if(!B.t3)B.t3=conv(BETA0.t3);if(B.t1.cols[0]==="Espiga")B.t1.cols[0]="Planter";if(!B.tm)B.tm=merge(B.t1,B.t2);if(split(B.tm)|join(B.tm)|spread(B.tm))save();draw();},()=>{B={x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2),t3:conv(BETA0.t3)};B.tm=merge(B.t1,B.t2);draw();});})();
+ DB.doc("admin/beta").onSnapshot(d=>{if(document.activeElement&&document.activeElement.tagName==="TEXTAREA")return;const x=d.exists?d.data():null;B=x&&x.t1?x:{x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2)};if(!B.t3)B.t3=conv(BETA0.t3);if(B.t1.cols[0]==="Espiga")B.t1.cols[0]="Planter";if(!B.tm)B.tm=merge(B.t1,B.t2);B.tm.rows.forEach(r=>{if(/Espiga\b/.test(r.f)){r.f=r.f.replace(/d'Espiga a Sembradora/,"de Planter a Sembrador").replace(/Espiga\b/,"Planter");B._ren=1;}});if(split(B.tm)|join(B.tm)|spread(B.tm)|blank(B.tm)|!!B._ren){delete B._ren;save();}draw();},()=>{B={x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2),t3:conv(BETA0.t3)};B.tm=merge(B.t1,B.t2);draw();});})();
 })();
 </script>
 </body>
