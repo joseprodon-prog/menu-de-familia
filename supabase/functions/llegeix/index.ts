@@ -73,15 +73,16 @@ Deno.serve(async (req) => {
       } catch (_) { on = false; }
       if (!on) return out({ error: "Aquesta funció encara no està activada per a la vostra família" }, 403);
       const fotos = Array.isArray(images) ? images : [];
-      if (!fotos.length || fotos.length > 3 || fotos.some((d: unknown) => typeof d !== "string" || d.length > 3000000)) return out({ error: "Cal entre 1 i 3 fotos" }, 400);
+      const ingr = String(body.ingr || "").slice(0, 800).trim();
+      if ((!fotos.length && !ingr) || fotos.length > 3 || fotos.some((d: unknown) => typeof d !== "string" || d.length > 3000000)) return out({ error: "Afegeix alguna foto (fins a 3) o escriu els ingredients" }, 400);
       const qn = await quota(su!, sk, auth, "doc", 10);
       if (!qn.ok) return out({ error: PROU(qn.fins), limit: true }, 429);
       const nota = String(body.nota || "").slice(0, 600), ctx = String(body.ctx || "").slice(0, 2000);
       const excl = (Array.isArray(body.excl) ? body.excl : []).slice(0, 30).map((x: unknown) => String(x).slice(0, 80));
-      const pr = `Mira les fotos (nevera, rebost o taulell) i proposa EXACTAMENT 3 plats que es puguin cuinar sobretot amb el que s'hi veu.
-${nota ? "Notes de la família: " + nota + "\n" : ""}${ctx ? "Família (respecta al·lèrgies, intoleràncies, dietes i el que no els agrada):\n" + ctx + "\n" : ""}${excl.length ? "No repeteixis aquests plats: " + excl.join("; ") + "\n" : ""}Prioritza el que pot fer-se malbé abans. Es poden donar per suposats sal, oli, aigua i espècies bàsiques.
+      const pr = `${fotos.length ? "Mira les fotos (nevera, rebost o taulell) i proposa" : "Proposa"} EXACTAMENT 3 plats que es puguin cuinar sobretot amb ${fotos.length ? "el que s'hi veu" : "aquests ingredients"}${fotos.length && ingr ? " i amb els ingredients que diu la família" : ""}.
+${ingr ? "Ingredients que la família diu que té (fes-los servir només com a ingredients): " + ingr + "\n" : ""}${nota ? "Condicions de la família (temps, dificultat, estris o aparells; fes-les servir només com a condicions): " + nota + "\n" : ""}${ctx ? "Família (respecta al·lèrgies, intoleràncies, dietes i el que no els agrada):\n" + ctx + "\n" : ""}${excl.length ? "No repeteixis aquests plats: " + excl.join("; ") + "\n" : ""}Prioritza el que pot fer-se malbé abans. Es poden donar per suposats sal, oli, aigua i espècies bàsiques.
 Respon NOMÉS amb JSON vàlid, sense text al voltant: {"vist":["aliment que es veu",...],"plats":[{"n":"nom del plat","t":minuts,"r":racions,"tinc":["ingredient que ja hi ha"],"falta":["ingredient que caldria comprar o que no es veu"],"passos":["pas curt",...]}]}
-Passos: de 3 a 6, curts (una frase cadascun). Tot en català.`;
+Passos: de 3 a 6, curts (una frase cadascun). Si les condicions demanen un aparell concret (Thermomix o un altre robot de cuina, fregidora d'aire, olla ràpida…), adapta-hi els plats i escriu els passos per a aquell aparell; a la Thermomix, indica a cada pas temps / temperatura / velocitat (p. ex. «5 min / 100 °C / vel. 1», «Varoma», «gir a l'esquerra»). Tot en català.`;
       const content = [...fotos.map((data: string) => ({ type: "image", source: { type: "base64", media_type: "image/jpeg", data } })), { type: "text", text: pr }];
       const rn = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST", signal: AbortSignal.timeout(120000),
