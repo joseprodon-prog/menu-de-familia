@@ -205,9 +205,14 @@ details.bar.bdrag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14p
 .cols{display:flex;flex-direction:column;gap:12px}.col{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:40px}
 @media(min-width:1100px){.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}}
 .aib{display:inline-block;margin:6px 0 0 6px;border:1px solid #2f5f8a;background:#eaf1f8;color:#2f5f8a;border-radius:99px;padding:4px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.aib:hover{background:#2f5f8a;color:#fff}
-#aifl{position:fixed;right:24px;bottom:24px;width:480px;height:72vh;min-width:340px;min-height:260px;max-width:96vw;max-height:94vh;z-index:2000;display:flex;flex-direction:column;background:#fff;border:2px solid #2f5f8a;border-radius:16px;box-shadow:0 18px 50px rgba(20,40,70,.35);overflow:hidden;resize:both}
-#aifl.min{height:auto!important;min-height:0;resize:none}#aifl.min>:not(.aih){display:none}
-#aifl .aih{display:flex;align-items:center;gap:8px;background:#2f5f8a;color:#fff;padding:9px 12px;font-weight:700;cursor:move;user-select:none}#aifl .aih span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#aifl .aih small{font-weight:400;opacity:.85}#aifl .aih button{background:transparent;border:0;color:#fff;font-size:17px;cursor:pointer;padding:0 4px}
+#aiview{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;background:#eef3f8}
+#aiview .avh{display:flex;align-items:center;gap:12px;background:#2f5f8a;color:#fff;padding:10px 18px;font-weight:700;font-size:17px}#aiview .avh span{flex:1}#aiview .avh button{background:#fff;color:#2f5f8a;border:0;border-radius:99px;padding:6px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+#aiview .avb{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:16px}
+#aiview .avl{overflow:auto;background:#fff;border-radius:14px;padding:12px;border:1px solid #d6e2ee}#aiview .avl .thr{max-height:none}
+#aiview .avr{display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #2f5f8a;border-radius:14px;overflow:hidden}
+#aiview .avr .aih{background:#2f5f8a;color:#fff;padding:9px 12px;font-weight:700;display:flex;gap:8px;align-items:center}#aiview .avr .aih span{flex:1}#aiview .avr .aih small{font-weight:400;opacity:.85}#aiview .avr .aih button{background:transparent;border:0;color:#fff;font-size:17px;cursor:pointer}
+.aiempty{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:#6b7c8c;padding:30px}
+.aib.on{background:#2f5f8a;color:#fff}
 .aisug{margin:0;padding:9px 12px;background:#fff8ef;border-bottom:1px solid #ecdcc4;font-size:14px;max-height:120px;overflow:auto}.aisug b{display:block;font-size:12px;color:#8a6a3a;margin-bottom:2px}
 .ailog{flex:1;display:flex;flex-direction:column;gap:8px;overflow:auto;padding:10px 12px;background:#f3f7fb}
 .aim{max-width:88%;padding:8px 11px;border-radius:12px;line-height:1.45;white-space:pre-wrap}.aim.u{align-self:flex-end;background:#dfeaf5}.aim.a{align-self:flex-start;background:#fff;border:1px solid #d6e2ee}
@@ -263,12 +268,12 @@ async function famHashes(){for(const f of FAMS){if(!FAMHS[f.code])FAMHS[f.code]=
 const famSt=f=>{const e=f&&PREMH[FAMHS[f.code]];return e?(e.estat||"act"):null;};const famPrem=f=>famSt(f)==="act";
 const uidFam=u=>FAMS.find(f=>f.membres&&f.membres[u]);
 function convOf(f){const it=Object.entries(f.items||{}).map(([k,x])=>({k,...x}));const out=[];it.forEach(x=>{out.push(x);if(x.resp&&x.de!=="h")out.push({k:x.k+"_r",de:"h",t:x.resp,at:x.respAt||x.at});});return out.sort((a,b)=>String(a.at).localeCompare(String(b.at)));}
-function drawBus(){const el=$("#b_bus");if(!el)return;
+function drawBus(){const el=$("#b_bus");if(!el)return;setTimeout(()=>{try{aiDraw&&document.querySelectorAll(".aib").forEach(b=>b.classList.toggle("on",b.dataset.aiop===AICUR))}catch(_){}},0);
  const C=FB.map(f=>{const M=convOf(f);const fam=uidFam(f.uid);const nous=M.filter(m=>m.de!=="h"&&(m.estat||"nou")==="nou");return {f,M,fam,prem:famPrem(fam)||!!f.prem,nous:nous.length,err:nous.filter(m=>m.tipus==="err").length,want:M.some(m=>m.tipus==="prem")&&!famSt(fam),last:M.length?M[M.length-1].at:""};}).filter(c=>c.M.length);
  C.sort((a,b)=>((b.nous>0)||b.want)-((a.nous>0)||a.want)||(b.prem-a.prem)||(b.err-a.err)||String(b.last).localeCompare(String(a.last)));
  C.forEach(c=>{c.pend=c.nous>0||c.want||famSt(c.fam)==="apr";});const L=FBF==="nou"?C.filter(c=>c.pend):C;
  const fd=a=>{const d=new Date(a);return d.toLocaleDateString("ca",{day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("ca",{hour:"2-digit",minute:"2-digit"});};
- el.innerHTML=`<div class="seg">${[["nou","Pendents"],["","Totes"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?C.filter(c=>c.pend).length:C.length}</small></button>`).join("")}</div>`+
+ el.innerHTML=`${window.AIVIEW?"":`<div class="row" style="justify-content:flex-end;margin:0 0 6px"><button class="btn sec" data-avopen>🗂 Treballa amb Claude (pantalla dividida)</button></div>`}<div class="seg">${[["nou","Pendents"],["","Totes"]].map(([k,l])=>`<button type="button" data-fbf="${k}" aria-pressed="${FBF===k}">${l} <small>${k?C.filter(c=>c.pend).length:C.length}</small></button>`).join("")}</div>`+
  (L.length?L.map(c=>{const open=BOPEN===c.f.uid;return `<details class="sub conv" data-cv="${c.f.uid}"${open?" open":""}><summary><span class="dot" style="background:${c.nous?"var(--hort)":"var(--ok)"}"></span><span class="btx"><b>${esc(c.f.nom||"Usuari")}${c.prem?" ⭐":""}${c.err?` <span class="ebadge">🔧 ${c.err}</span>`:""}${c.want?` <span class="pbadge">vol ser Sembrador</span>`:""}</b><small>${c.fam?"Família "+esc(c.fam.nom||""):esc(c.f.fam||"")} · ${fd(c.last)}</small></span>${c.nous?`<span class="cnt">${c.nous}</span>`:""}<span class="chev sm"></span></summary>${open?`<div class="ubody"><div class="thr">${c.M.map(m=>m.de==="h"?`<div class="bm h"><span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>Tu · ${fd(m.at)}${m.llegit?" · llegit":""}</small></div>`:`<div class="bm u">${m.tipus==="err"?'<b class="etag">🔧 Per millorar</b>':m.tipus==="prem"?'<b class="ptag">⭐ Vol ser Sembrador</b>':""}<span>${esc(m.t).replace(/\n/g,"<br>")}</span><small>${fd(m.at)}${m.pant?" · "+esc(m.pant):""}${m.ver?" · v"+esc(String(m.ver).slice(-4)):""}</small>${m.tipus!=="prem"?(m.premi?`<small class="pmi">🌾 Premiada amb ${m.premi} espigues${m.premiOk?" ✓":""}</small>`:`<button class="pmb" data-premi="${c.f.uid}|${m.k}">🌾 Idea per a tothom: +500 espigues</button>`):""}<button class="aib" data-aiop="${c.f.uid}|${m.k}">💬 Pensem-ho amb Claude</button></div>`).join("")}</div>
   <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}</div>${c.fam?`<div class="row pflow"><span class="foot">Pla de ${esc(c.fam.nom||"la família")}: <b>${({sol:"Sol·licitat",apr:"Aprovat · pendent de pagament",act:"⭐ Sembrador"})[famSt(c.fam)||(c.want?"sol":"")]||"Gratuït"}</b></span>${!famSt(c.fam)?`<button class="btn sec" data-pmapr="${c.fam.code}|${c.f.uid}">✅ Aprova i envia la informació</button>`:""}${famSt(c.fam)==="apr"?`<button class="btn" data-pmact="${c.fam.code}">⭐ Activa Sembrador (pagat)</button>`:""}${famSt(c.fam)==="act"?`<button class="btn sec" data-pmoff="${c.fam.code}">Treu Sembrador</button>`:""}</div>`:""}</div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
  const t=el.querySelector(".thr");if(t)t.scrollTop=t.scrollHeight;drawPrem();}
@@ -705,7 +710,7 @@ function admOrdSave(){const c=admCols();if(!c)return;AORD={a:[...c.children[0].q
 
 <script>
 /* ---------- Xat amb Claude: una suggerència cada cop, en finestra flotant ---------- */
-let AICH={},AICUR=null,AIBUSY=0,GUIATX=null;
+var AICH={},AICUR=null,AIBUSY=0,GUIATX=null;
 try{AICH=JSON.parse(localStorage.getItem("mf_aich2")||"{}")}catch(_){}
 const aiSave=()=>{try{localStorage.setItem("mf_aich2",JSON.stringify(AICH))}catch(_){}};
 const aiEsc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
@@ -715,10 +720,17 @@ function aiMsgHtml(m,i){if(m.role==="user")return `<div class="aim u">${aiEsc(m.
  const t=String(m.content||"");const parts=[];let last=0,n=0;const re=/<resposta>([\s\S]*?)<\/resposta>/g;let x;
  while((x=re.exec(t))){parts.push(aiMd(t.slice(last,x.index)));parts.push(`<div class="aiprop">${aiMd(x[1].trim())}<button class="btn" data-aiuse="${i}|${n++}">⬇ Fes-la servir</button></div>`);last=re.lastIndex;}
  parts.push(aiMd(t.slice(last)));return `<div class="aim a">${parts.filter(Boolean).join("\n")}</div>`;}
-function aiDraw(){let el=document.getElementById("aifl");if(!AICUR){el&&el.remove();return;}
+var AIVIEW=false,AIHOME=null;
+function aiView(on){AIVIEW=on;let v=document.getElementById("aiview");const bb=document.getElementById("b_bus");
+ if(on){if(!v){v=document.createElement("div");v.id="aiview";v.innerHTML=`<div class="avh">📬<span>Bústia · treballant amb Claude</span><button data-avx>✕ Torna a l'admin</button></div><div class="avb"><div class="avl"></div><div class="avr"></div></div>`;document.body.appendChild(v);}
+  if(bb&&bb.parentElement!==v.querySelector(".avl")){AIHOME={p:bb.parentElement,n:bb.nextSibling};v.querySelector(".avl").appendChild(bb);}
+  document.body.style.overflow="hidden";drawBus();aiDraw();}
+ else{if(bb&&AIHOME){AIHOME.p.insertBefore(bb,AIHOME.n&&AIHOME.n.parentElement===AIHOME.p?AIHOME.n:null);AIHOME=null;}v&&v.remove();document.body.style.overflow="";AICUR=null;drawBus();}}
+function aiDraw(){document.querySelectorAll(".aib").forEach(b=>b.classList.toggle("on",b.dataset.aiop===AICUR));
+ const el=document.querySelector("#aiview .avr");if(!el)return;
+ if(!AICUR){el.innerHTML=`<div class="aih">💬<span>Claude</span></div><div class="aiempty">Tria una suggerència a l'esquerra i prem<br><b>💬 Pensem-ho amb Claude</b></div>`;return;}
  const {f,it}=aiMsgOf(AICUR);const L=AICH[AICUR]||[];
- if(!el){el=document.createElement("div");el.id="aifl";document.body.appendChild(el);try{const p=JSON.parse(localStorage.getItem("mf_aipos")||"null");if(p){Object.assign(el.style,{left:p.l+"px",top:p.t+"px",right:"auto",bottom:"auto",width:p.w+"px",height:p.h+"px"});}}catch(_){}}
- el.innerHTML=`<div class="aih">💬<span>Claude <small>· ${aiEsc(f&&f.nom||"")}</small></span><button data-aire title="Torna a començar">↺</button><button data-aimin title="Minimitza">–</button><button data-aicl title="Tanca">✕</button></div>
+ el.innerHTML=`<div class="aih">💬<span>Claude <small>· ${aiEsc(f&&f.nom||"")}</small></span><button data-aire title="Torna a començar">↺</button><button data-aicl title="Tanca aquesta suggerència">✕</button></div>
  <div class="aisug"><b>Suggerència${it&&it.at?" · "+new Date(it.at).toLocaleDateString("ca",{day:"numeric",month:"short"}):""}</b>${aiEsc(it&&it.t||"(no trobada)")}</div>
  <div class="ailog">${L.map((m,i)=>aiMsgHtml(m,i)).join("")}${AIBUSY?'<div class="aim a aiwait">Claude està pensant…</div>':""}</div>
  <div class="aiin"><textarea data-aiin placeholder="Parla amb Claude (Enter envia · Maj+Enter salt de línia)"></textarea><button class="btn" data-aisd>Envia</button></div>
@@ -751,26 +763,23 @@ async function aiAsk(txt,vis){const k=AICUR;if(!k||AIBUSY)return;const L=AICH[k]
   if(error||!data||data.error)throw new Error((data&&data.error)||(error&&error.message)||"Error");
   L.push({role:"assistant",content:data.text||"(sense resposta)"});}
  catch(e){L.pop();toast("No s'ha pogut parlar amb Claude: "+String(e.message||e).slice(0,120));}
- AIBUSY=0;aiSave();if(AICUR===k){aiDraw();const ta=document.querySelector("#aifl [data-aiin]");ta&&ta.focus();}}
-function aiOpen(k){AICUR=k;aiDraw();if(!(AICH[k]||[]).length)aiAsk("Llegeix la suggerència actual. Digues-me en poques línies què demana (si té diversos punts, enumera'ls i quedem-nos amb el primer), si ja existeix a l'app i com, i proposa'm una resposta per a aquest punt.","Llegeix la suggerència i comencem");}
+ AIBUSY=0;aiSave();if(AICUR===k){aiDraw();const ta=document.querySelector("#aiview [data-aiin]");ta&&ta.focus();}}
+function aiOpen(k){AICUR=k;if(!AIVIEW)aiView(true);else aiDraw();if(!(AICH[k]||[]).length)aiAsk("Llegeix la suggerència actual. Digues-me en poques línies què demana (si té diversos punts, enumera'ls i quedem-nos amb el primer), si ja existeix a l'app i com, i proposa'm una resposta per a aquest punt.","Llegeix la suggerència i comencem");}
 function aiUse(i,n){const m=(AICH[AICUR]||[])[+i];if(!m)return;const ps=[...String(m.content).matchAll(/<resposta>([\s\S]*?)<\/resposta>/g)].map(x=>x[1].trim());const t=ps[+n];if(!t)return;const {u}=aiMsgOf(AICUR);
- const bus=document.getElementById("bus");if(bus&&!bus.open)bus.open=true;if(BOPEN!==u){BOPEN=u;drawBus();}
+ if(!AIVIEW){const bus=document.getElementById("bus");if(bus&&!bus.open)bus.open=true;}if(BOPEN!==u){BOPEN=u;drawBus();}
  setTimeout(()=>{const ta=document.querySelector(`[data-cvr="${u}"]`);if(ta){ta.value=t;ta.focus();ta.scrollIntoView({block:"center",behavior:"smooth"});toast("Resposta copiada: revisa-la i prem Envia");}},60);}
 document.addEventListener("click",e=>{let b;
  if((b=e.target.closest("[data-aiop]"))){aiOpen(b.dataset.aiop);return;}
- if(!e.target.closest("#aifl"))return;
+ if(e.target.closest("[data-avopen]")){aiView(true);return;}
+ if(!e.target.closest("#aiview"))return;
+ if(e.target.closest("[data-avx]")){aiView(false);return;}
  if(e.target.closest("[data-aicl]")){AICUR=null;aiDraw();return;}
- if(e.target.closest("[data-aimin]")){document.getElementById("aifl").classList.toggle("min");return;}
  if(e.target.closest("[data-aire]")){delete AICH[AICUR];aiSave();aiOpen(AICUR);return;}
  if((b=e.target.closest("[data-aiq]"))){aiAsk(b.textContent);return;}
- if(e.target.closest("[data-aisd]")){const ta=document.querySelector("#aifl [data-aiin]");const t=ta&&ta.value.trim();if(t){ta.value="";aiAsk(t);}return;}
+ if(e.target.closest("[data-aisd]")){const ta=document.querySelector("#aiview [data-aiin]");const t=ta&&ta.value.trim();if(t){ta.value="";aiAsk(t);}return;}
  if((b=e.target.closest("[data-aiuse]"))){const [i,n]=b.dataset.aiuse.split("|");aiUse(i,n);}});
-document.addEventListener("keydown",e=>{const ta=e.target.closest&&e.target.closest("#aifl [data-aiin]");if(ta&&e.key==="Enter"&&!e.shiftKey){e.preventDefault();const t=ta.value.trim();if(t){ta.value="";aiAsk(t);}}});
-/* arrossegar la finestra per la capçalera i recordar posició i mida */
-(()=>{let d=null;const sv=()=>{const el=document.getElementById("aifl");if(!el)return;const r=el.getBoundingClientRect();try{localStorage.setItem("mf_aipos",JSON.stringify({l:r.left,t:r.top,w:r.width,h:el.classList.contains("min")?Math.max(260,parseFloat(el.style.height)||r.height):r.height}))}catch(_){}};
- document.addEventListener("pointerdown",e=>{const h=e.target.closest("#aifl .aih");if(!h||e.target.closest("button"))return;const el=h.parentElement;const r=el.getBoundingClientRect();d={el,dx:e.clientX-r.left,dy:e.clientY-r.top};Object.assign(el.style,{left:r.left+"px",top:r.top+"px",right:"auto",bottom:"auto"});e.preventDefault();});
- document.addEventListener("pointermove",e=>{if(!d)return;const W=innerWidth,H=innerHeight;d.el.style.left=Math.min(Math.max(0,e.clientX-d.dx),W-120)+"px";d.el.style.top=Math.min(Math.max(0,e.clientY-d.dy),H-44)+"px";});
- document.addEventListener("pointerup",e=>{if(d){d=null;sv();}else if(e.target.closest&&e.target.closest("#aifl"))setTimeout(sv,0);});})();
+document.addEventListener("keydown",e=>{const ta=e.target.closest&&e.target.closest("#aiview [data-aiin]");if(ta&&e.key==="Enter"&&!e.shiftKey){e.preventDefault();const t=ta.value.trim();if(t){ta.value="";aiAsk(t);}}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&AIVIEW&&!e.target.closest("textarea"))aiView(false);});
 </script>
 </body>
 </html>
