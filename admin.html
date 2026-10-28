@@ -181,9 +181,6 @@ div.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:60
 /* ordinador: amplada completa, barres en 2 columnes i llistes en graella */
 @media(min-width:1100px){
  main,.hin{max-width:1560px}
- main{display:grid;grid-template-columns:1fr 1fr;align-items:start;column-gap:16px;grid-auto-flow:row dense}
- main>*:not(details.bar):not(.bar-ph){grid-column:1/-1}
- main>details.bar[open]{grid-column:1/-1}
  .kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
  #b_ord,#b_vei,#b_usu,#b_pre{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:10px 14px;align-items:start}
  #b_ord>:not(.card):not(.ordit),#b_vei>:not(.card),#b_usu>:not(details.sub),#b_pre>:not(.card){grid-column:1/-1}
@@ -205,6 +202,8 @@ details.bar[open]>summary .chev{background-color:#fff}
 details.bar[open]>summary .bgrip{color:rgba(255,255,255,.8)}
 details.bar.bdrag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14px 34px rgba(0,0,0,.25);opacity:.95;cursor:grabbing}
 .bar-ph{border:2px dashed #2f74b5;border-radius:16px;background:rgba(47,116,181,.06)}
+.cols{display:flex;flex-direction:column;gap:12px}.col{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:40px}
+@media(min-width:1100px){.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}}
 </style>
 </head>
 <body>
@@ -238,7 +237,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
  DB.doc("botiga/premium").onSnapshot(d=>{PREMH=(d.exists&&d.data().h)||{};drawUsu();drawBus();},()=>{});
  DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
  loadFam();loadVer();drawNot();
- document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.id==="vei"&&d.open)veiLoad();if(d.id==="beta"&&d.open)betaLoad();if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
+ document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.id==="vei"&&d.open)veiLoad();if(d.id==="beta"&&d.open)betaLoad();if(d.matches&&d.matches("details.bar")&&d.open)(d.parentElement||document).querySelectorAll(":scope>details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
 })();
 
 function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
@@ -662,26 +661,34 @@ document.addEventListener("click",e=>{if(!BETA||!e.target.closest("#b_beta"))ret
  if((b=e.target.closest("[data-bca]"))){const T=BETA[b.dataset.bca];T.cols.push("Beta "+(T.cols.filter(c=>/^Beta/.test(c)).length+1));T.rows.forEach(r=>r.v.push(""));drawBeta();betaSave();return;}
  if((b=e.target.closest("[data-bcd]"))){if(!b.dataset.sure){sureAsk(b);return;}const [k,j]=b.dataset.bcd.split("|");BETA[k].cols.splice(+j,1);BETA[k].rows.forEach(r=>r.v.splice(+j,1));drawBeta();betaSave();}});
 
-/* ===== ordre de les barres: arrossegant la icona ≡ (es desa a l'admin i al navegador) ===== */
+/* ===== dues columnes independents: ordre de les barres arrossegant ≡ (es desa a l'admin i al navegador) ===== */
 let AORD=null;try{AORD=JSON.parse(localStorage.getItem("mf_admord")||"null");}catch(_){}
-function admOrdApply(){const m=$("#main");if(!m||!Array.isArray(AORD))return;const bars=[...m.querySelectorAll(":scope>details.bar")];if(bars.length<2)return;
- const by=Object.fromEntries(bars.map(b=>[b.id,b]));const order=[...AORD.map(i=>by[i]).filter(Boolean),...bars.filter(b=>!AORD.includes(b.id))];
- const anchor=bars[bars.length-1].nextSibling;order.forEach(b=>m.insertBefore(b,anchor));}
-async function admOrdLoad(){try{const d=await DB.doc("admin/ordre").get();if(d.exists&&Array.isArray(d.data().ids)){AORD=d.data().ids;try{localStorage.setItem("mf_admord",JSON.stringify(AORD));}catch(_){}admOrdApply();}}catch(_){}}
-function admOrdSave(){const m=$("#main");AORD=[...m.querySelectorAll(":scope>details.bar")].map(b=>b.id);try{localStorage.setItem("mf_admord",JSON.stringify(AORD));}catch(_){}try{DB.doc("admin/ordre").set({ids:AORD}).catch(()=>{});}catch(_){}}
+function admCols(){const m=$("#main");if(!m)return null;let c=m.querySelector(":scope>.cols");if(!c){const bars=[...m.querySelectorAll(":scope>details.bar")];if(!bars.length)return null;c=document.createElement("div");c.className="cols";c.innerHTML='<div class="col" id="colA"></div><div class="col" id="colB"></div>';bars[0].before(c);
+ bars.forEach((x,i)=>c.children[i%2].appendChild(x));}return c;}
+function admOrdApply(){const c=admCols();if(!c)return;let O=AORD;if(Array.isArray(O))O={a:O.filter((_,i)=>i%2===0),b:O.filter((_,i)=>i%2===1)};if(!O||!O.a)return;
+ const all=[...c.querySelectorAll("details.bar")];const by=Object.fromEntries(all.map(x=>[x.id,x]));const used=new Set();
+ [["a",c.children[0]],["b",c.children[1]]].forEach(([k,col])=>(O[k]||[]).forEach(id=>{const x=by[id];if(x){col.appendChild(x);used.add(id);}}));
+ all.filter(x=>!used.has(x.id)).forEach(x=>{const A=c.children[0],B=c.children[1];(A.children.length<=B.children.length?A:B).appendChild(x);});}
+(()=>{const m=$("#main");if(!m)return;let busy=false;const chk=()=>{if(busy)return;if(m.querySelector(":scope>details.bar")){busy=true;try{admOrdApply();}catch(e){console.log("ord",e);}busy=false;}};new MutationObserver(chk).observe(m,{childList:true});chk();})();
+async function admOrdLoad(){try{const d=await DB.doc("admin/ordre").get();const v=d.exists?d.data():null;if(v&&(v.a||Array.isArray(v.ids))){AORD=v.a?{a:v.a,b:v.b||[]}:v.ids;try{localStorage.setItem("mf_admord",JSON.stringify(AORD));}catch(_){}admOrdApply();}}catch(_){}}
+function admOrdSave(){const c=admCols();if(!c)return;AORD={a:[...c.children[0].querySelectorAll(":scope>details.bar")].map(x=>x.id),b:[...c.children[1].querySelectorAll(":scope>details.bar")].map(x=>x.id)};try{localStorage.setItem("mf_admord",JSON.stringify(AORD));}catch(_){}try{DB.doc("admin/ordre").set({...AORD,ids:null}).catch(()=>{});}catch(_){}}
 (()=>{let drag=null,ph=null,dx=0,dy=0;
  document.addEventListener("click",e=>{if(e.target.closest(".bgrip"))e.preventDefault();},true);
  document.addEventListener("pointerdown",e=>{const g=e.target.closest(".bgrip");if(!g)return;const d=g.closest("details.bar");if(!d)return;e.preventDefault();
   if(d.open)d.open=false;const r=d.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;ph=document.createElement("div");ph.className="bar-ph";ph.style.height=r.height+"px";d.before(ph);
   drag=d;d.classList.add("bdrag");d.style.width=r.width+"px";d.style.left=r.left+"px";d.style.top=r.top+"px";try{g.setPointerCapture(e.pointerId);}catch(_){}});
  document.addEventListener("pointermove",e=>{if(!drag)return;e.preventDefault();drag.style.left=(e.clientX-dx)+"px";drag.style.top=(e.clientY-dy)+"px";
-  const bars=[...$("#main").querySelectorAll(":scope>details.bar")].filter(b=>b!==drag);
-  for(const b of bars){const r=b.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){const before=(e.clientY<r.top+r.height/2);if(before){if(b.previousElementSibling!==ph)b.before(ph);}else if(b.nextElementSibling!==ph)b.after(ph);break;}}
+  const cols=[...document.querySelectorAll("#main .col")];const col=cols.find(c=>{const r=c.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right;})||ph.parentElement;
+  const bars=[...col.querySelectorAll(":scope>details.bar")].filter(b=>b!==drag);let placed=false;
+  for(const b of bars){const r=b.getBoundingClientRect();if(e.clientY<r.top+r.height/2){if(b.previousElementSibling!==ph)b.before(ph);placed=true;break;}}
+  if(!placed&&col.lastElementChild!==ph)col.appendChild(ph);
   if(e.clientY<70)scrollBy(0,-14);else if(e.clientY>innerHeight-60)scrollBy(0,14);},{passive:false});
  const end=()=>{if(!drag)return;const d=drag;drag=null;d.classList.remove("bdrag");d.style.width=d.style.left=d.style.top="";ph.replaceWith(d);ph=null;admOrdSave();};
  document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
  document.addEventListener("keydown",e=>{const g=e.target.closest&&e.target.closest(".bgrip");if(!g)return;const d=g.closest("details.bar");let t=null;
-  if(e.key==="ArrowUp"||e.key==="ArrowLeft"){t=d.previousElementSibling;if(t&&t.matches("details.bar"))t.before(d);else return;}else if(e.key==="ArrowDown"||e.key==="ArrowRight"){t=d.nextElementSibling;if(t&&t.matches("details.bar"))t.after(d);else return;}else return;
+  const cs=[...document.querySelectorAll("#main .col")];const ci=cs.indexOf(d.parentElement);
+  if(e.key==="ArrowUp"){t=d.previousElementSibling;if(t&&t.matches("details.bar"))t.before(d);else return;}else if(e.key==="ArrowDown"){t=d.nextElementSibling;if(t&&t.matches("details.bar"))t.after(d);else return;}
+  else if(e.key==="ArrowLeft"||e.key==="ArrowRight"){const o=cs[ci+(e.key==="ArrowLeft"?-1:1)];if(!o)return;o.appendChild(d);}else return;
   e.preventDefault();admOrdSave();g.focus();});})();
 </script>
 </body>
