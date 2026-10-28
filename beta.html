@@ -43,6 +43,14 @@ tbody th{position:relative}
 .qk button{border:1px solid var(--grid);background:#fff;border-radius:5px;padding:2px 9px;font:800 13px inherit;font-family:inherit;cursor:pointer}
 .leg{padding:0 12px 14px;color:var(--muted);font-size:12px;display:flex;gap:12px;flex-wrap:wrap}
 .leg i{display:inline-block;width:12px;height:12px;border:1px solid var(--grid);vertical-align:-2px;margin-right:4px}
+@media (min-width:1100px){
+ .wrap{flex-wrap:nowrap;justify-content:stretch;padding:10px 14px}
+ .blk{flex:1 1 0;min-width:0}.blk.k-tm{flex:2.1 1 0}
+ .blk table{width:100%}
+ .blk .c0{width:34%}.blk.k-t3 .c0{width:54%}.blk.k-t3{flex:1.15 1 0}.blk .cv{width:auto}
+ tbody th textarea{hyphens:none;-webkit-hyphens:none}
+ html,body{font-size:13px}
+}
 @media print{@page{size:A4 landscape;margin:8mm}.top,.rot,.qk,.blk h2 button,.del{display:none!important}html,body{background:#fff}.wrap{padding:0;gap:6mm;flex-wrap:nowrap}.blk{border-radius:0;overflow:visible}}
 </style>
 </head>
@@ -67,7 +75,7 @@ function merge(a,b){const nA=a.cols.length;const rows=a.rows.map(r=>({f:r.f,v:[.
 const cls=v=>{const t=String(v||"").trim();return t==="✓"?"y":(!t||t==="—"||t==="-")?"n":"t";};
 const fit=t=>{t.style.height="auto";t.style.height=t.scrollHeight+"px";};
 function save(){clearTimeout(tm);$("#msg").textContent="Desant…";tm=setTimeout(async()=>{try{await DB.doc("admin/beta").set(B);$("#msg").textContent="Desat ✓";}catch(e){$("#msg").textContent="No s'ha pogut desar";}},600);}
-function tbl(k,title){const T=B[k];const nA=T.nA||0;return `<div class="blk"><h2><span>${title}</span><span>${k==="tm"?`<button type="button" data-ac="${k}">＋ Subfase</button> `:""}<button type="button" data-ar="${k}">＋ Funció</button></span></h2>
+function tbl(k,title){const T=B[k];const nA=T.nA||0;return `<div class="blk k-${k}"><h2><span>${title}</span><span>${k==="tm"?`<button type="button" data-ac="${k}">＋ Subfase</button> `:""}<button type="button" data-ar="${k}">＋ Funció</button></span></h2>
 <table><colgroup><col class="c0">${T.cols.map(()=>'<col class="cv">').join("")}</colgroup>
 <thead>${nA?`<tr class="grp"><th></th><th colspan="${nA}">Nivells d'usuari</th><th colspan="${T.cols.length-nA}">Subfases de la beta</th></tr>`:""}<tr><th><textarea rows="1" readonly tabindex="-1">Funció</textarea></th>${T.cols.map((c,j)=>`<th class="${nA&&j===nA?"gsep":""}"><textarea rows="1" data-c="${k}|${j}">${esc(c)}</textarea>${k==="tm"&&j>=nA&&T.cols.length-nA>1?`<button type="button" class="del" data-dc="${k}|${j}" title="Treu la columna">×</button>`:""}</th>`).join("")}</tr></thead>
 <tbody>${T.rows.map((r,i)=>`<tr><th><textarea rows="1" data-f="${k}|${i}">${esc(r.f)}</textarea><button type="button" class="del" data-dr="${k}|${i}" title="Treu la fila">×</button></th>${T.cols.map((c,j)=>`<td class="${cls(r.v[j])}${nA&&j===nA?" gsep":""}"><textarea rows="1" data-v="${k}|${i}|${j}" placeholder="—">${esc(r.v[j]||"")}</textarea></td>`).join("")}</tr>`).join("")}</tbody></table></div>`;}
