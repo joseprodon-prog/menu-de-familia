@@ -149,11 +149,12 @@ div.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:60
 .utabs button[aria-pressed="true"]{border-color:#2f74b5;background:#2f74b5;color:#fff}
 .fbadge{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:none}
 .fbadge.prem{background:#fff3c4;box-shadow:0 0 0 2px #e6b422}.fbadge.free{background:#eef3e4}
-.ptag{font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 8px;white-space:nowrap}.ptag.prem{background:#fff3c4;color:#8a6200}.ptag.free{background:#eef3e4;color:#4d6a2a}
+.ptag{display:inline-block;vertical-align:2px;margin-left:4px;font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 8px;white-space:nowrap}.ptag.prem{background:#fff3c4;color:#8a6200}.ptag.free{background:#eef3e4;color:#4d6a2a}
 .fmem{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:6px}
 .fmem li{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
 .fmem .btx{flex:1;min-width:0}.fmem small{display:block;overflow:hidden;text-overflow:ellipsis}
 .btn.sm{padding:4px 10px;font-size:12.5px}
+.ptag.req{background:#fdecd9;color:#a55a12}.ptag.pay{background:#e3f0fb;color:#2a5f93}.reqn{margin-left:6px;background:#e07a1f;color:#fff;border-radius:99px;padding:1px 7px;font-size:12px}.pflow2{display:flex;flex-direction:column;gap:6px}
 </style>
 </head>
 <body>
@@ -406,9 +407,9 @@ Josep`;}
 const SUBJ="🥬 Benvingut a la colla de Menú de Família";
 function drawUsu(err){const el=$("#b_usu");if(!el)return;
  const L=Object.entries(CONV).map(([id,c])=>({id,...c,ei:estOf(c)})).sort((a,b)=>(a.relacio==="Equip"?0:1)-(b.relacio==="Equip"?0:1)||a.ei-b.ei||String(a.nom).localeCompare(String(b.nom),"ca"));
- const PL=L.filter(c=>c.ei<=1);const FL=FAMS.slice().sort((a,b)=>(famPrem(b)-famPrem(a))||String(a.nom||"").localeCompare(String(b.nom||""),"ca"));
+ const PL=L.filter(c=>c.ei<=1);const reqOf=f=>famSt(f)?null:(FB.find(x=>{const fm=uidFam(x.uid);return fm&&fm.code===f.code&&convOf(x).some(m=>m.tipus==="prem");})||null);const NREQ=FAMS.filter(f=>reqOf(f)||famSt(f)==="apr").length;const FL=FAMS.slice().sort((a,b)=>(famPrem(b)-famPrem(a))||String(a.nom||"").localeCompare(String(b.nom||""),"ca"));
  const inFam=new Set();FAMS.forEach(f=>Object.keys(f.membres||{}).forEach(u=>{if(f.membres[u])inFam.add(u);}));const SF=USERS.filter(u=>!inFam.has(u.id));
- const tabs=`<div class="utabs"><button type="button" data-utab="conv" aria-pressed="${UTAB==="conv"}">✉️ Per convidar <small>${PL.length}</small></button><button type="button" data-utab="fam" aria-pressed="${UTAB==="fam"}">👨‍👩‍👧 Famílies <small>${FAMS.length}</small></button></div>`;
+ const tabs=`<div class="utabs"><button type="button" data-utab="conv" aria-pressed="${UTAB==="conv"}">✉️ Per convidar <small>${PL.length}</small></button><button type="button" data-utab="fam" aria-pressed="${UTAB==="fam"}">👨‍👩‍👧 Famílies <small>${FAMS.length}</small>${NREQ?`<span class="reqn">⏳ ${NREQ}</span>`:""}</button></div>`;
  let body="";
  if(UTAB==="conv"){const F=UF===""?PL:PL.filter(c=>ESTATS[c.ei]===UF);
   body=`<div class="seg">${[["","Tots"],[ESTATS[0],ESTATS[0]],[ESTATS[1],ESTATS[1]]].map(([k,l])=>`<button type="button" data-uf="${esc(k)}" aria-pressed="${UF===k}">${esc(l)} <small>${k?PL.filter(c=>ESTATS[c.ei]===k).length:PL.length}</small></button>`).join("")}</div>
@@ -416,14 +417,19 @@ function drawUsu(err){const el=$("#b_usu");if(!el)return;
   (F.length?F.map(c=>{const a=autoOf(c);const open=UOPEN===c.id;return `<details class="sub" data-uid="${c.id}"${open?" open":""}><summary><span class="dot" style="background:${ECOL[c.ei]}"></span><span class="btx"><b>${esc(c.nom||"Sense nom")}</b><small>${esc(ESTATS[c.ei])}${c.familia?" · "+esc(c.familia):""}${c.invitat?" · "+esc(c.invitat):""}</small></span><span class="chev sm"></span></summary>${open?uForm(c,a):""}</details>`;}).join(""):`<p class="foot">Ningú pendent de convidar. Quan una persona instal·la l'app, passa a la pestanya Famílies.</p>`);}
  else{const memHtml=(u)=>{const c=L.find(x=>x.correu&&u.email&&x.correu.trim().toLowerCase()===u.email.toLowerCase());const rec=u.last_sign_in_at&&(Date.now()-new Date(u.last_sign_in_at))<14*864e5;
    return `<li><span class="dot" style="background:${rec?ECOL[3]:ECOL[2]}"></span><span class="btx"><b>${esc((c&&c.nom)||u.email||"Usuari")}</b><small>${esc(u.email||"")}${u.last_sign_in_at?" · entrada "+fdt(u.last_sign_in_at):" · mai ha entrat"}</small></span>${c?`<button type="button" class="btn sec sm" data-uopen="${c.id}">Fitxa</button>`:""}</li>`;};
-  body=(FL.length?FL.map(f=>{const uids=Object.keys(f.membres||{}).filter(k=>f.membres[k]);const us=uids.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);const pend=L.filter(c=>c.familia&&c.familia===f.nom&&c.ei<=1);const pr=famPrem(f);const open=FOPEN===f.code;
+  body=(FL.length?FL.map(f=>{const uids=Object.keys(f.membres||{}).filter(k=>f.membres[k]);const us=uids.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);const pend=L.filter(c=>c.familia&&c.familia===f.nom&&c.ei<=1);const pr=famPrem(f);const st=famSt(f);const rq=reqOf(f);const open=FOPEN===f.code;const tag=pr?["prem","Sembradora"]:st==="apr"?["pay","💳 Pendent de pagament"]:rq?["req","⏳ Vol ser sembradora"]:["free","Gratuïta"];
    const last=us.map(u=>u.last_sign_in_at).filter(Boolean).sort().pop();
-   return `<details class="sub famd" data-fcode="${esc(f.code)}"${open?" open":""}><summary><span class="fbadge ${pr?"prem":"free"}" title="${pr?"Família sembradora":"Família gratuïta"}">${pr?"⭐":"🌱"}</span><span class="btx"><b>${esc(f.nom||"Sense nom")}</b><small>${uids.length} ${uids.length===1?"membre":"membres"}${pend.length?` · ${pend.length} per convidar`:""}${last?" · darrera entrada "+fdt(last):""}</small></span><span class="ptag ${pr?"prem":"free"}">${pr?"Sembradora":"Gratuïta"}</span><span class="chev sm"></span></summary>
+   return `<details class="sub famd" data-fcode="${esc(f.code)}"${open?" open":""}><summary><span class="fbadge ${pr?"prem":"free"}" title="${pr?"Família sembradora":"Família gratuïta"}">${pr?"⭐":"🌱"}</span><span class="btx"><b>${esc(f.nom||"Sense nom")} <span class="ptag ${tag[0]}">${tag[1]}</span></b><small>${uids.length} ${uids.length===1?"membre":"membres"}${pend.length?` · ${pend.length} per convidar`:""}${last?" · darrera entrada "+fdt(last):""}</small></span><span class="chev sm"></span></summary>
    ${open?`<div class="ubody"><ul class="fmem">${us.map(memHtml).join("")}${pend.map(c=>`<li><span class="dot" style="background:${ECOL[c.ei]}"></span><span class="btx"><b>${esc(c.nom)}</b><small>${esc(ESTATS[c.ei])}</small></span><button type="button" class="btn sec sm" data-uopen="${c.id}">Fitxa</button></li>`).join("")}</ul>
-    <div class="row"><small class="foot">Codi ${esc(f.code)}</small><button type="button" class="pltg${pr?" on":""}" data-prem="${esc(f.code)}">${pr?"⭐ Sembradora":"Gratuïta"}</button></div></div>`:""}</details>`;}).join(""):`<p class="foot">Encara no hi ha cap família.</p>`)+
+    <div class="pflow2">${rq?`<p class="foot">⏳ <b>${esc(rq.nom||"Un membre")}</b> ha demanat que la família sigui sembradora.</p><div class="row"><button class="btn" data-pmapr="${esc(f.code)}|${esc(rq.uid)}">✅ Aprova i envia la informació</button><button class="btn sec" data-ubus="${esc(rq.uid)}">💬 Obre la conversa</button></div>`:""}
+    ${st==="apr"?`<p class="foot">💳 Aprovada, pendent de pagament.</p><div class="row"><button class="btn" data-pmact="${esc(f.code)}">⭐ Activa Sembradora (pagat)</button></div>`:""}
+    ${pr?`<div class="row"><button class="btn sec" data-pmoff="${esc(f.code)}">Treu Sembradora</button></div>`:""}
+    ${!rq&&!st?`<div class="row"><button type="button" class="btn sec" data-prem="${esc(f.code)}">⭐ Fes-la sembradora</button></div>`:""}
+    <small class="foot">Codi ${esc(f.code)}</small></div></div>`:""}</details>`;}).join(""):`<p class="foot">Encara no hi ha cap família.</p>`)+
   (SF.length?`<details class="sub famd"><summary><span class="fbadge free">👤</span><span class="btx"><b>Sense família</b><small>${SF.length} ${SF.length===1?"compte":"comptes"} que encara no han creat ni s'han unit a cap família</small></span><span class="chev sm"></span></summary><div class="ubody"><ul class="fmem">${SF.map(memHtml).join("")}</ul></div></details>`:"");}
  el.innerHTML=(err?`<p class="foot">⚠️ Cal aplicar el pegat 5 a Supabase per veure els comptes.</p>`:"")+tabs+body;}
-document.addEventListener("click",e=>{const t=e.target.closest("[data-utab]");if(t){UTAB=t.dataset.utab;drawUsu();return;}
+document.addEventListener("click",e=>{const ub=e.target.closest("[data-ubus]");if(ub){const d=$("#bus");if(d){d.open=true;FBF="tot";BOPEN=ub.dataset.ubus;drawBus();setTimeout(()=>{const c=document.querySelector(`[data-cv="${ub.dataset.ubus}"]`);(c||d).scrollIntoView({behavior:"smooth",block:"start"});},80);}return;}
+ const t=e.target.closest("[data-utab]");if(t){UTAB=t.dataset.utab;drawUsu();return;}
  const o=e.target.closest("[data-uopen]");if(o){e.preventDefault();UTAB="conv";UF="";UOPEN=o.dataset.uopen;drawUsu();setTimeout(()=>{const d=document.querySelector(`[data-uid="${o.dataset.uopen}"]`);if(d)d.scrollIntoView({behavior:"smooth",block:"start"});},50);}});
 addEventListener("toggle",e=>{const d=e.target;if(!d.matches||!d.matches("details.famd[data-fcode]"))return;if(d.open){if(FOPEN!==d.dataset.fcode){FOPEN=d.dataset.fcode;drawUsu();}}else if(FOPEN===d.dataset.fcode)FOPEN=null;},true);
 function uForm(c,a){const wa=c.canal==="WhatsApp";const famOpts=[...new Set([...FAMS.map(f=>f.nom),c.familia].filter(Boolean))];
