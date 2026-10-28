@@ -178,6 +178,20 @@ div.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:60
 .btab tr>th:first-child textarea{font-weight:700;font-size:12.5px;width:calc(100% - 22px);display:inline-block;vertical-align:middle}
 .btab td textarea{text-align:center}.btab td{min-width:92px}.btab tr>th:first-child{min-width:150px;max-width:160px;white-space:normal}
 .btab td.y textarea{color:#3f8a3a;font-weight:800;font-size:15px}.btab td.n textarea{color:#9a968a}.btab td.t textarea{color:#8a5a12;font-weight:600;font-size:12.5px}
+/* ordinador: amplada completa, barres en 2 columnes i llistes en graella */
+@media(min-width:1100px){
+ main,.hin{max-width:1560px}
+ main{display:grid;grid-template-columns:1fr 1fr;align-items:start;column-gap:16px;grid-auto-flow:row dense}
+ main>*:not(details.bar){grid-column:1/-1}
+ main>details.bar[open]{grid-column:1/-1}
+ .kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+ #b_ord,#b_vei,#b_usu,#b_pre{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:10px 14px;align-items:start}
+ #b_ord>:not(.card):not(.ordit),#b_vei>:not(.card),#b_usu>:not(details.sub),#b_pre>:not(.card){grid-column:1/-1}
+ .fmt{grid-template-columns:2fr 1fr 1fr 1.4fr 2fr}.fmt .f:first-child,.fmt .f:nth-child(4),.fmt .f:nth-child(5){grid-column:auto}
+ .fmts{display:grid;grid-template-columns:1fr}
+ [data-pf] .grid2{grid-template-columns:repeat(4,1fr)}
+ .pcard,.pcathead{grid-template-columns:1fr minmax(320px,38%)}
+}
 </style>
 </head>
 <body>
