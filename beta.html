@@ -70,7 +70,10 @@ const BETA0={"t3":{"cols": ["Planter", "Sembrador"], "rows": [["Quota mensual", 
 let DB=null,B=null,tm,cur=null;
 /* separa funcions dobles en dues files (mateixos valors) */
 /* ajunta funcions repetides: es queda la primera i hi passa els valors de la segona */
-const JOINS=[["capità enciam (xat, súper, 2 plats alhora)","capità enciam"],["veïnat: preus compartits i on surt més a compte","veïnat i preus compartits"]];
+const JOINS=[["capità enciam (xat, súper, 2 plats alhora)","capità enciam"],["veïnat: preus compartits i on surt més a compte","veïnat i preus compartits"],["el teu hort, missions i espigues","espigues"]];
+const SPREAD={"funcions de l'app (menú, receptes, compra, despesa)":["menú setmanal i proposta del capità","receptari i crea una recepta","llista de la compra generada","despesa","preus dels articles"]};
+function spread(T){let ch=false;const ix=f=>T.rows.findIndex(r=>String(r.f).trim().toLowerCase()===f);const emp=v=>!String(v||"").trim()||v==="—";
+ Object.entries(SPREAD).forEach(([src,dst])=>{const j=ix(src);if(j<0)return;const S=T.rows[j].v;dst.forEach(d=>{const i=ix(d);if(i<0)return;T.rows[i].v=T.rows[i].v.map((v,k)=>emp(v)&&!emp(S[k])?S[k]:v);});T.rows.splice(ix(src),1);ch=true;});return ch;}
 function join(T){let ch=false;const ix=f=>T.rows.findIndex(r=>String(r.f).trim().toLowerCase()===f);
  JOINS.forEach(([a,b])=>{const i=ix(a),j=ix(b);if(i<0||j<0)return;const A=T.rows[i],Bv=T.rows[j].v;A.v=A.v.map((v,k)=>{const e=!String(v||"").trim()||v==="—";const o=String(Bv[k]||"").trim();return e&&o?o:v;});T.rows.splice(j,1);ch=true;});return ch;}
 const SPLITS={"despesa i preus dels articles":["Despesa","Preus dels articles"]};
@@ -104,7 +107,7 @@ document.addEventListener("click",e=>{let b;
  if((b=e.target.closest("[data-dc]"))){if(!confirmTap(b))return;const [k,j]=b.dataset.dc.split("|");B[k].cols.splice(+j,1);B[k].rows.forEach(r=>r.v.splice(+j,1));draw();save();return;}});
 function confirmTap(b){if(b.dataset.sure)return true;b.dataset.sure="1";b.textContent="Segur?";b.style.display="block";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.display="";}},3000);return false;}
 (async()=>{try{DB=await window.claude.use("db");}catch(e){}if(!DB){$("#wrap").innerHTML='<p style="padding:10px">Cal entrar a la web de l\'Hortolà.</p>';return;}
- DB.doc("admin/beta").onSnapshot(d=>{if(document.activeElement&&document.activeElement.tagName==="TEXTAREA")return;const x=d.exists?d.data():null;B=x&&x.t1?x:{x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2)};if(!B.t3)B.t3=conv(BETA0.t3);if(B.t1.cols[0]==="Espiga")B.t1.cols[0]="Planter";if(!B.tm)B.tm=merge(B.t1,B.t2);if(split(B.tm)|join(B.tm))save();draw();},()=>{B={x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2),t3:conv(BETA0.t3)};B.tm=merge(B.t1,B.t2);draw();});})();
+ DB.doc("admin/beta").onSnapshot(d=>{if(document.activeElement&&document.activeElement.tagName==="TEXTAREA")return;const x=d.exists?d.data():null;B=x&&x.t1?x:{x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2)};if(!B.t3)B.t3=conv(BETA0.t3);if(B.t1.cols[0]==="Espiga")B.t1.cols[0]="Planter";if(!B.tm)B.tm=merge(B.t1,B.t2);if(split(B.tm)|join(B.tm)|spread(B.tm))save();draw();},()=>{B={x:BETA0.x,t1:conv(BETA0.t1),t2:conv(BETA0.t2),t3:conv(BETA0.t3)};B.tm=merge(B.t1,B.t2);draw();});})();
 })();
 </script>
 </body>
