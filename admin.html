@@ -192,6 +192,14 @@ div.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:60
  [data-pf] .grid2{grid-template-columns:repeat(4,1fr)}
  .pcard,.pcathead{grid-template-columns:1fr minmax(320px,38%)}
 }
+/* barra oberta: es distingeix de les tancades */
+details.bar[open]{background:#f8f3e6;border:2px solid #2f74b5;box-shadow:0 6px 18px rgba(47,116,181,.18)}
+details.bar[open]>summary{background:#2f74b5;color:#fff;border-radius:14px 14px 0 0;margin-bottom:12px}
+details.bar[open]>summary .btx b,details.bar[open]>summary .btx small{color:#fff}
+details.bar[open]>summary .btx small{opacity:.88}
+details.bar[open]>summary .bico{background:rgba(255,255,255,.92)}
+details.bar[open]>summary .chev{background-color:#fff}
+@media (prefers-color-scheme:dark){details.bar[open]{background:#1d2633;border-color:#5b9be0}details.bar[open]>summary{background:#24507d}}
 </style>
 </head>
 <body>
