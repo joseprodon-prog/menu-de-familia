@@ -479,22 +479,28 @@ document.addEventListener("input",e=>{if(e.target.id!=="mynote")return;NOTE=e.ta
 
 <script>(function(){const f=()=>{const h=document.querySelector("header");if(h)document.documentElement.style.setProperty("--hh",(h.getBoundingClientRect().bottom)+"px");};addEventListener("resize",f);addEventListener("load",f);setInterval(f,1500);f();})();
 /* ===== Veïnat: rànquing d'activitat (no públic) i regals d'espigues ===== */
-let VEIA=null,VREG={},VPER="mes",VGIFT={},VSUB=false;
+let VEIA=null,VREG={},VPER="mes",VGIFT={},VSUB=false,VZON={};
 const vMon=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x.toISOString().slice(0,10);};
 function veiLoad(){if(VSUB)return;VSUB=true;
  DB.collection("veinat").onSnapshot(s=>{VEIA=s.docs.map(d=>d.data()||{});drawVeiA();},()=>{VEIA=[];drawVeiA();});
+ DB.collection("zones").onSnapshot(s=>{VZON={};s.docs.forEach(d=>{VZON[String(d.id).split("/").pop()]=d.data()||{};});drawVeiA();},()=>{});
  DB.collection("regals").onSnapshot(s=>{VREG={};s.docs.forEach(d=>{VREG[String(d.id).split("/").pop()]=(d.data()||{}).items||{};});drawVeiA();},()=>{});}
 function veiRank(){const now=new Date(),wk=vMon(now),mo=now.toISOString().slice(0,7);const by={};
- (VEIA||[]).forEach(v=>{const k=v.code||v.fh;if(!k)return;const o=by[k]||(by[k]={code:v.code||"",fam:v.fam||"Família",lvl:0,xp:0,wk:{}});o.fam=v.fam||o.fam;if(v.code)o.code=v.code;o.lvl=Math.max(o.lvl,v.lvl||1);o.xp=Math.max(o.xp,v.xp||0);
+ (VEIA||[]).forEach(v=>{const k=v.code||v.fh;if(!k)return;const o=by[k]||(by[k]={code:v.code||"",fam:v.fam||"Família",muni:"",lvl:0,xp:0,wk:{},zreq:{}});o.fam=v.fam||o.fam;if(v.muni)o.muni=v.muni;Object.assign(o.zreq,v.zreq||{});if(v.code)o.code=v.code;o.lvl=Math.max(o.lvl,v.lvl||1);o.xp=Math.max(o.xp,v.xp||0);
   Object.entries(v.wk||{}).forEach(([w,n])=>{o.wk[w]=Math.max(o.wk[w]||0,+n||0);});});
  return Object.values(by).map(o=>{const sm=o.wk[wk]||0,mm=Object.entries(o.wk).filter(([w])=>w.slice(0,7)===mo).reduce((a,[,n])=>a+n,0);
   const rg=Object.values(VREG[o.code]||{}).filter(r=>r&&String(r.at||"").slice(0,7)===mo).reduce((a,r)=>a+(+r.n||0),0);return {...o,sm,mm,rg};}).sort((a,b)=>VPER==="mes"?(b.mm-a.mm)||(b.sm-a.sm):(b.sm-a.sm)||(b.mm-a.mm));}
-function drawVeiA(){const el=$("#b_vei");if(!el)return;if(!VEIA){el.innerHTML=`<p class="foot">Carregant…</p>`;return;}const L=veiRank();const c=$("#c_vei");if(c)c.textContent=L.length||"";
- el.innerHTML=`<p class="foot">Rànquing intern: les famílies no el veuen. Puntuació = espigues guanyades amb missions i accions (setmana en curs o mes en curs).</p>
+function drawVeiA(){const el=$("#b_vei");if(!el)return;if(!VEIA){el.innerHTML=`<p class="foot">Carregant…</p>`;return;}const L=veiRank();
+ const PZ=[];L.forEach(x=>{const Z=VZON[x.code]||{};Object.entries(x.zreq||{}).forEach(([mc,r])=>{if(!(Z.ext||{})[mc]&&!(Z.neg||{})[mc])PZ.push({code:x.code,fam:x.fam,mc,...r});});});
+ const c=$("#c_vei");if(c)c.textContent=(PZ.length?PZ.length+" · ":"")+(L.length||"");
+ el.innerHTML=(PZ.length?`<span class="label">Sol·licituds de zones</span>${PZ.map(z=>`<div class="card vist vrk"><div class="vrkh"><span class="vpos">📍</span><b>${esc(z.fam)} → ${esc(z.n||z.mc)}</b><small>${esc(z.motiu||"")} · ${esc(z.at||"")}</small></div><div class="row"><button type="button" class="btn pvis" data-zok="${esc(z.code)}|${esc(z.mc)}">Aprova</button><button type="button" class="btn sec" data-zno="${esc(z.code)}|${esc(z.mc)}">Descarta</button></div></div>`).join("")}`:"")+`<p class="foot">Rànquing intern: les famílies no el veuen. Puntuació = espigues guanyades amb missions i accions (setmana en curs o mes en curs).</p>
  <div class="seg"><button type="button" data-vper="setm" aria-pressed="${VPER==="setm"}">Aquesta setmana</button><button type="button" data-vper="mes" aria-pressed="${VPER==="mes"}">Aquest mes</button></div>`+
- (L.length?L.map((x,i)=>{const g=VGIFT[x.code]??50;return `<div class="card vist vrk"><div class="vrkh"><span class="vpos">${["🥇","🥈","🥉"][i]||i+1}</span><b>${esc(x.fam)}</b><small>Nivell ${x.lvl} · ${VPER==="mes"?x.mm:x.sm} 🌾 ${VPER==="mes"?"aquest mes":"aquesta setmana"}${x.rg?` · 🎁 ${x.rg} regalades`:""}</small></div>
+ (L.length?L.map((x,i)=>{const g=VGIFT[x.code]??50;return `<div class="card vist vrk"><div class="vrkh"><span class="vpos">${["🥇","🥈","🥉"][i]||i+1}</span><b>${esc(x.fam)}</b><small>${x.muni?"📍 "+esc(x.muni)+" · ":""}Nivell ${x.lvl} · ${VPER==="mes"?x.mm:x.sm} 🌾 ${VPER==="mes"?"aquest mes":"aquesta setmana"}${x.rg?` · 🎁 ${x.rg} regalades`:""}</small></div>
   ${x.code?`<div class="row vgift"><span class="pill"><button type="button" data-vg="${esc(x.code)}" data-d="-10" aria-label="Menys">−</button><b>${g} 🌾</b><button type="button" data-vg="${esc(x.code)}" data-d="10" aria-label="Més">+</button></span><button type="button" class="btn" data-vgo="${esc(x.code)}">🎁 Regala</button></div>`:`<p class="foot">Encara no es pot regalar: cal que la família torni a obrir l'app.</p>`}</div>`;}).join(""):`<p class="foot">Encara no hi ha famílies al veïnat.</p>`);}
-document.addEventListener("click",async e=>{const p=e.target.closest("[data-vper]");if(p){VPER=p.dataset.vper;drawVeiA();return;}
+document.addEventListener("click",async e=>{const zo=e.target.closest("[data-zok],[data-zno]");if(zo){const ok=!!zo.dataset.zok;const [code,mc]=(zo.dataset.zok||zo.dataset.zno).split("|");
+  const x=(veiRank().find(r=>r.code===code)||{}).zreq||{};const r=x[mc]||{};zo.disabled=true;
+  try{await DB.doc("zones/"+code).update(ok?{ext:{[mc]:{n:r.n||mc,motiu:r.motiu||"",at:new Date().toISOString().slice(0,10)}}}:{neg:{[mc]:new Date().toISOString().slice(0,10)}});}catch(err){zo.disabled=false;zo.textContent="No s'ha pogut desar";}return;}
+ const p=e.target.closest("[data-vper]");if(p){VPER=p.dataset.vper;drawVeiA();return;}
  const g=e.target.closest("[data-vg]");if(g){const k=g.dataset.vg;VGIFT[k]=Math.max(10,Math.min(1000,(VGIFT[k]??50)+(+g.dataset.d)));drawVeiA();return;}
  const go=e.target.closest("[data-vgo]");if(go){const k=go.dataset.vgo,n=VGIFT[k]??50;if(!go.classList.contains("arm")){go.classList.add("arm");go.textContent=`Confirma ${n} 🌾`;setTimeout(()=>{if(go.isConnected&&go.classList.contains("arm")){go.classList.remove("arm");go.textContent="🎁 Regala";}},4000);return;}
   go.disabled=true;go.textContent="Enviant…";const now=new Date(),mes=now.toLocaleDateString("ca",{month:"long"});
