@@ -23,15 +23,15 @@ const ESTIL0 = `House photo style of the Catalan family cooking app «Menú de F
 const b64 = (buf: ArrayBuffer) => { const u = new Uint8Array(buf); let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
 
 
-// Límit diari per usuari (pegat 10: ia_compta). Si el pegat encara no hi és, no limita.
-async function quota(su: string, sk: string, auth: string, fn: string, lim: number): Promise<{ ok: boolean; h: boolean }> {
+// Límit per usuari cada 5 hores (pegat 11: ia_compta). Si el pegat encara no hi és, no limita.
+async function quota(su: string, sk: string, auth: string, fn: string, lim: number): Promise<{ ok: boolean; h: boolean; fins: string }> {
   try {
     const r = await fetch(`${su}/rest/v1/rpc/ia_compta`, { method: "POST", headers: { Authorization: auth, apikey: sk, "content-type": "application/json" }, body: JSON.stringify({ p_fn: fn, p_lim: lim }), signal: AbortSignal.timeout(10000) });
-    if (!r.ok) return { ok: true, h: false };
-    const j = await r.json(); return { ok: !!j.ok, h: !!j.h };
-  } catch (_) { return { ok: true, h: false }; }
+    if (!r.ok) return { ok: true, h: false, fins: "" };
+    const j = await r.json(); return { ok: !!j.ok, h: !!j.h, fins: String(j.fins || "") };
+  } catch (_) { return { ok: true, h: false, fins: "" }; }
 }
-const PROU = "Per avui ja has fet servir totes les consultes al Capità Enciam. Demà en tindràs de noves 🥬";
+const PROU = (f: string) => `Has fet servir totes les consultes al Capità Enciam. Es renoven ${f ? "a les " + f : "d'aquí a unes hores"} 🥬`;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
     if (!key) return out({ error: "Falta el secret GEMINI_API_KEY" }, 500);
     if (body.mode === "escolta") {
       const qe = await quota(su!, sk, auth, "escolta", 10);
-      if (!qe.ok) return out({ error: PROU, limit: true }, 429);
+      if (!qe.ok) return out({ error: PROU(qe.fins), limit: true }, 429);
       const audio = String(body.audio || ""), mime = String(body.mime || "audio/mp4").split(";")[0];
       if (!audio || audio.length > 12_000_000 || !/^audio\//.test(mime)) return out({ error: "Petició no vàlida" }, 400);
       const tm = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-2.5-flash";
@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     }
     const { mode = "inventa", urls = [], n = "", ing = "", steps = "", nota = "" } = body;
     const qi = await quota(su!, sk, auth, "imatge", 10);
-    if (!qi.ok) return out({ error: PROU, limit: true }, 429);
+    if (!qi.ok) return out({ error: PROU(qi.fins), limit: true }, 429);
     const pub = `${su}/storage/v1/object/public/assets/`;
     if (!["foto", "inventa", "edita"].includes(mode) || !Array.isArray(urls) || urls.length > 3 || urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub)) || (mode !== "inventa" && !urls.length) || (mode === "edita" && !String(nota).trim()))
       return out({ error: "Petició no vàlida" }, 400);
