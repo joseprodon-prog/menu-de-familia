@@ -64,6 +64,35 @@ Deno.serve(async (req) => {
       const tx = (jj.content || []).filter((c: any) => c.type === "text").map((c: any) => c.text).join("");
       return out({ text: tx, content: jj.content, stop_reason: jj.stop_reason, usage: jj.usage });
     }
+    // mode «Què cuino amb el que tinc?»: només per a famílies amb la funció activada (pegat 16: fam_funcio)
+    if (body.mode === "nevera") {
+      let on = false;
+      try {
+        const rf = await fetch(`${su}/rest/v1/rpc/fam_funcio`, { method: "POST", headers: { Authorization: auth, apikey: sk, "content-type": "application/json" }, body: JSON.stringify({ p_fn: "nevera" }), signal: AbortSignal.timeout(10000) });
+        on = rf.ok && (await rf.json()) === true;
+      } catch (_) { on = false; }
+      if (!on) return out({ error: "Aquesta funció encara no està activada per a la vostra família" }, 403);
+      const fotos = Array.isArray(images) ? images : [];
+      if (!fotos.length || fotos.length > 3 || fotos.some((d: unknown) => typeof d !== "string" || d.length > 3000000)) return out({ error: "Cal entre 1 i 3 fotos" }, 400);
+      const qn = await quota(su!, sk, auth, "doc", 10);
+      if (!qn.ok) return out({ error: PROU(qn.fins), limit: true }, 429);
+      const nota = String(body.nota || "").slice(0, 600), ctx = String(body.ctx || "").slice(0, 2000);
+      const excl = (Array.isArray(body.excl) ? body.excl : []).slice(0, 30).map((x: unknown) => String(x).slice(0, 80));
+      const pr = `Mira les fotos (nevera, rebost o taulell) i proposa EXACTAMENT 3 plats que es puguin cuinar sobretot amb el que s'hi veu.
+${nota ? "Notes de la família: " + nota + "\n" : ""}${ctx ? "Família (respecta al·lèrgies, intoleràncies, dietes i el que no els agrada):\n" + ctx + "\n" : ""}${excl.length ? "No repeteixis aquests plats: " + excl.join("; ") + "\n" : ""}Prioritza el que pot fer-se malbé abans. Es poden donar per suposats sal, oli, aigua i espècies bàsiques.
+Respon NOMÉS amb JSON vàlid, sense text al voltant: {"vist":["aliment que es veu",...],"plats":[{"n":"nom del plat","t":minuts,"r":racions,"tinc":["ingredient que ja hi ha"],"falta":["ingredient que caldria comprar o que no es veu"],"passos":["pas curt",...]}]}
+Passos: de 3 a 6, curts (una frase cadascun). Tot en català.`;
+      const content = [...fotos.map((data: string) => ({ type: "image", source: { type: "base64", media_type: "image/jpeg", data } })), { type: "text", text: pr }];
+      const rn = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", signal: AbortSignal.timeout(120000),
+        headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+        body: JSON.stringify({ model: "claude-sonnet-5-5", max_tokens: 4000, system: AMBIT_DOC, messages: [{ role: "user", content }] }),
+      });
+      const jn = await rn.json();
+      console.log("llegeix: nevera", rn.status, JSON.stringify(jn.usage || jn.error || {}));
+      if (!rn.ok) return out({ error: (jn && jn.error && jn.error.message) || "Error de l'API" }, 502);
+      return out({ text: (jn.content || []).filter((c: any) => c.type === "text").map((c: any) => c.text).join(""), usage: jn.usage });
+    }
     const pub = `${su}/storage/v1/object/public/assets/`;
     if (typeof prompt !== "string" || !prompt || !Array.isArray(images) || !Array.isArray(urls) || images.length + urls.length > 8 ||
         urls.some((u: unknown) => typeof u !== "string" || !u.startsWith(pub))) return out({ error: "Petició no vàlida" }, 400);

@@ -220,6 +220,7 @@ details.bar.bdrag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14p
 .aiin{display:flex;gap:8px;padding:10px 12px 6px;align-items:flex-end;border-top:1px solid #d6e2ee}.aiin textarea{flex:1;min-height:44px;margin:0}
 .aiq{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 10px}.aiq button{border:1px solid #c9d8e6;background:#f3f7fb;border-radius:99px;padding:4px 10px;cursor:pointer;font:inherit;font-size:13px}
 .aiwait{color:#6b7c8c;font-style:italic}
+.funs{margin:10px 0;padding:10px 12px;border:1px dashed #b9c7d6;border-radius:12px;background:#f7fafc}.funs>b{display:block;font-size:13px;color:#506070;margin-bottom:6px}.ftog{display:flex;gap:10px;align-items:flex-start;cursor:pointer}.ftog input{width:20px;height:20px;margin-top:2px}.ftog span b{display:block}.ftog small{color:#6b7c8c}
 </style>
 </head>
 <body>
@@ -251,6 +252,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
  DB.doc("admin/convidats").onSnapshot(d=>{if(!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("[data-uf-id]"))){CONV=(d.exists&&d.data().items)||CONV;}CONVV=true;convSync();drawUsu();kpis();},()=>{CONVV=false;drawUsu(true);});
  DB.doc("botiga/premium").onSnapshot(d=>{PREMH=(d.exists&&d.data().h)||{};drawUsu();drawBus();},()=>{});
+ DB.doc("botiga/funcions").onSnapshot(d=>{FUNH=(d.exists&&d.data().h)||{};drawUsu();},()=>{});
  DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
  loadFam();loadVer();drawNot();
  document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.id==="vei"&&d.open)veiLoad();if(d.id==="beta"&&d.open)betaLoad();if(d.matches&&d.matches("details.bar")&&d.open)(d.parentElement||document).querySelectorAll(":scope>details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
@@ -262,7 +264,10 @@ function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;cons
  $("#c_bus").textContent=nous||"";$("#c_usu").textContent=pc||"";$("#c_ord").textContent=pend||"";}
 
 /* ---------- Bústia: una conversa per usuari ---------- */
-let PREMH={},FAMHS={},BOPEN=null;
+let PREMH={},FAMHS={},BOPEN=null,FUNH={};
+const FUNCS=[["nevera","📸 Què cuino amb el que tinc?","Receptari: 3 plats a partir de fotos de la nevera o el rebost"]];
+const funOn=(f,k)=>{const e=f&&FUNH[FAMHS[f.code]];return !!(e&&e[k]);};
+async function funSet(code,k,on){await famHashes();const h=FAMHS[code];const n=JSON.parse(JSON.stringify(FUNH));n[h]={...(n[h]||{})};if(on)n[h][k]=true;else delete n[h][k];if(!Object.keys(n[h]).length)delete n[h];FUNH=n;drawUsu();try{await DB.doc("botiga/funcions").set({h:n});toast(on?"Funció activada":"Funció desactivada");}catch(e){toast("No s'ha pogut desar");}}
 async function famHashA(code){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("mf:"+code));return [...new Uint8Array(b)].slice(0,6).map(x=>x.toString(16).padStart(2,"0")).join("");}catch(e){return "h"+code.slice(-6).toLowerCase();}}
 async function famHashes(){for(const f of FAMS){if(!FAMHS[f.code])FAMHS[f.code]=await famHashA(f.code);}}
 const famSt=f=>{const e=f&&PREMH[FAMHS[f.code]];return e?(e.estat||"act"):null;};const famPrem=f=>famSt(f)==="act";
@@ -278,6 +283,7 @@ function drawBus(){const el=$("#b_bus");if(!el)return;setTimeout(()=>{try{aiDraw
   <textarea data-cvr="${c.f.uid}" placeholder="Escriu la resposta (li arriba al xat de l'Hortolà)"></textarea><div class="row"><button class="btn" data-cvs="${c.f.uid}">Envia</button>${c.nous?`<button class="btn sec" data-cvl="${c.f.uid}">Marca com a llegit</button>`:""}</div>${c.fam?`<div class="row pflow"><span class="foot">Pla de ${esc(c.fam.nom||"la família")}: <b>${({sol:"Sol·licitat",apr:"Aprovat · pendent de pagament",act:"⭐ Sembrador"})[famSt(c.fam)||(c.want?"sol":"")]||"Gratuït"}</b></span>${!famSt(c.fam)?`<button class="btn sec" data-pmapr="${c.fam.code}|${c.f.uid}">✅ Aprova i envia la informació</button>`:""}${famSt(c.fam)==="apr"?`<button class="btn" data-pmact="${c.fam.code}">⭐ Activa Sembrador (pagat)</button>`:""}${famSt(c.fam)==="act"?`<button class="btn sec" data-pmoff="${c.fam.code}">Treu Sembrador</button>`:""}</div>`:""}</div>`:""}</details>`;}).join(""):`<p class="foot">No hi ha converses ${FBF==="nou"?"pendents":""}.</p>`);
  const t=el.querySelector(".thr");if(t)t.scrollTop=t.scrollHeight;drawPrem();}
 async function cvSave(uid,mut){const x=FB.find(f=>f.uid===uid);if(!x)return;const items={...(x.items||{})};mut(items);x.items=items;drawBus();kpis();try{await DB.doc("feedback/"+uid).set({nom:x.nom||"",fam:x.fam||"",prem:!!x.prem,items});toast("Desat");}catch(e){toast("No s'ha pogut desar");}}
+document.addEventListener("change",e=>{const t=e.target.closest&&e.target.closest("[data-fun]");if(!t)return;const [k,c]=t.dataset.fun.split("|");funSet(c,k,t.checked);});
 document.addEventListener("click",e=>{const f=e.target.closest("[data-fbf]");if(f){FBF=f.dataset.fbf;drawBus();return;}
  const s=e.target.closest("[data-cvs]");if(s){const uid=s.dataset.cvs;const ta=document.querySelector(`[data-cvr="${uid}"]`);const t=(ta&&ta.value.trim())||"";if(!t){ta&&ta.focus();return;}
   cvSave(uid,it=>{for(const k in it)if(it[k].de!=="h"&&(it[k].estat||"nou")!=="fet")it[k]={...it[k],estat:"fet"};it["h"+Date.now().toString(36)]={de:"h",t,at:new Date().toISOString()};});return;}
@@ -484,12 +490,13 @@ function drawUsu(err){const el=$("#b_usu");if(!el)return;
    return `<li><span class="dot" style="background:${rec?ECOL[3]:ECOL[2]}"></span><span class="btx"><b>${esc((c&&c.nom)||u.email||"Usuari")}</b><small>${esc(u.email||"")}${u.last_sign_in_at?" · entrada "+fdt(u.last_sign_in_at):" · mai ha entrat"}</small></span>${c?`<button type="button" class="btn sec sm" data-uopen="${c.id}">Fitxa</button>`:""}</li>`;};
   body=(FL.length?FL.map(f=>{const uids=Object.keys(f.membres||{}).filter(k=>f.membres[k]);const us=uids.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);const pend=L.filter(c=>c.familia&&c.familia===f.nom&&c.ei<=1);const pr=famPrem(f);const st=famSt(f);const rq=reqOf(f);const open=FOPEN===f.code;const tag=pr?["prem","Sembradora"]:st==="apr"?["pay","💳 Pendent de pagament"]:rq?["req","⏳ Vol ser sembradora"]:["free","Gratuïta"];
    const last=us.map(u=>u.last_sign_in_at).filter(Boolean).sort().pop();
-   return `<details class="sub famd" data-fcode="${esc(f.code)}"${open?" open":""}><summary><span class="fbadge ${pr?"prem":"free"}" title="${pr?"Família sembradora":"Família gratuïta"}">${pr?"⭐":"🌱"}</span><span class="btx"><b>${esc(f.nom||"Sense nom")} <span class="ptag ${tag[0]}">${tag[1]}</span></b><small>${uids.length} ${uids.length===1?"membre":"membres"}${pend.length?` · ${pend.length} per convidar`:""}${last?" · darrera entrada "+fdt(last):""}</small></span><span class="chev sm"></span></summary>
+   return `<details class="sub famd" data-fcode="${esc(f.code)}"${open?" open":""}><summary><span class="fbadge ${pr?"prem":"free"}" title="${pr?"Família sembradora":"Família gratuïta"}">${pr?"⭐":"🌱"}</span><span class="btx"><b>${esc(f.nom||"Sense nom")} <span class="ptag ${tag[0]}">${tag[1]}</span></b><small>${uids.length} ${uids.length===1?"membre":"membres"}${pend.length?` · ${pend.length} per convidar`:""}${FUNCS.some(([k])=>funOn(f,k))?" · 🧪 funcions en prova":""}${last?" · darrera entrada "+fdt(last):""}</small></span><span class="chev sm"></span></summary>
    ${open?`<div class="ubody"><ul class="fmem">${us.map(memHtml).join("")}${pend.map(c=>`<li><span class="dot" style="background:${ECOL[c.ei]}"></span><span class="btx"><b>${esc(c.nom)}</b><small>${esc(ESTATS[c.ei])}</small></span><button type="button" class="btn sec sm" data-uopen="${c.id}">Fitxa</button></li>`).join("")}</ul>
     <div class="pflow2">${rq?`<p class="foot">⏳ <b>${esc(rq.nom||"Un membre")}</b> ha demanat que la família sigui sembradora.</p><div class="row"><button class="btn" data-pmapr="${esc(f.code)}|${esc(rq.uid)}">✅ Aprova i envia la informació</button><button class="btn sec" data-ubus="${esc(rq.uid)}">💬 Obre la conversa</button></div>`:""}
     ${st==="apr"?`<p class="foot">💳 Aprovada, pendent de pagament.</p><div class="row"><button class="btn" data-pmact="${esc(f.code)}">⭐ Activa Sembradora (pagat)</button></div>`:""}
     ${pr?`<div class="row"><button class="btn sec" data-pmoff="${esc(f.code)}">Treu Sembradora</button></div>`:""}
     ${!rq&&!st?`<div class="row"><button type="button" class="btn sec" data-prem="${esc(f.code)}">⭐ Fes-la sembradora</button></div>`:""}
+    <div class="funs"><b>Funcions en prova</b>${FUNCS.map(([k,t,d])=>`<label class="ftog"><input type="checkbox" data-fun="${k}|${esc(f.code)}"${funOn(f,k)?" checked":""}><span><b>${t}</b><small>${d}</small></span></label>`).join("")}</div>
     <small class="foot">Codi ${esc(f.code)}</small></div></div>`:""}</details>`;}).join(""):`<p class="foot">Encara no hi ha cap família.</p>`)+
   (SF.length?`<details class="sub famd"><summary><span class="fbadge free">👤</span><span class="btx"><b>Sense família</b><small>${SF.length} ${SF.length===1?"compte":"comptes"} que encara no han creat ni s'han unit a cap família</small></span><span class="chev sm"></span></summary><div class="ubody"><ul class="fmem">${SF.map(memHtml).join("")}</ul></div></details>`:"");}
  el.innerHTML=(err?`<p class="foot">⚠️ Cal aplicar el pegat 5 a Supabase per veure els comptes.</p>`:"")+tabs+body;}
