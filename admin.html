@@ -128,6 +128,7 @@ a.btn{text-decoration:none;display:inline-block}
 .pcard{display:grid;grid-template-columns:1fr minmax(150px,42%);gap:10px;align-items:center;padding:8px 12px}.pl{min-width:0}.pt{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}.pt>b{font-size:15px}.pl>small{display:block;color:#7a766a;font-size:12px;margin-top:3px}.pbt{display:flex;gap:6px;flex-wrap:wrap}.pbt .btn{padding:3px 10px;font-size:12.5px;min-height:0;border-radius:99px}@media(max-width:600px){.pcard,.pcathead{grid-template-columns:1fr 128px}.pbt{flex-wrap:nowrap}.pbt .btn{padding:3px 8px;font-size:12px}.pxt{display:none}}
 .pinds{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
 .pind{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px;font-size:11.5px}.pib{height:3px;border-radius:3px;background:#ece8dc;overflow:hidden}.pib i{display:block;height:100%;border-radius:3px}.pind b{font-size:12px;min-width:18px;text-align:right}
+.vrkh{display:grid;grid-template-columns:30px 1fr;gap:2px 8px;align-items:center}.vrkh small{grid-column:2;color:#7a766a;font-size:12.5px}.vpos{font-size:18px;text-align:center;grid-row:1/3}.vgift{margin-top:6px;align-items:center}.vrk{border-left-color:#6e8c3c}
 </style>
 </head>
 <body>
@@ -153,7 +154,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
 
 (async()=>{DB=await window.claude.use("db");SB=window.MF_SB;const u=await window.claude.use("user");const uid=await u.id();let okH=false;try{const r=await SB.rpc("is_hortola");okH=!!(r&&r.data===true);}catch(e){}if(okH)HORTOLA=uid;
  if(!okH){$("#main").innerHTML=`<div class="noacc">Aquesta pàgina és només per a l'Hortolà. Has entrat amb un altre compte.<br><br><button class="btn" onclick="MF_SB.auth.signOut()">Surt i entra amb el compte de l'Hortolà</button></div>`;return;}
- $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app")+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
+ $("#main").innerHTML=`<div class="kpis" id="kpis"></div>`+bar("usu","👥","Usuaris i invitacions","Qui convidem i qui fa servir l'app")+bar("pre","⭐","Sembradors","Sol·licituds, aprovacions i seguiment")+bar("cre","📈","Creixement","Famílies noves i recomanacions")+bar("vei","🏘️","Veïnat","Famílies més actives i regals d'espigues")+bar("bus","📬","Bústia","Missatges dels usuaris")+bar("ord","🧺","Comandes rebudes","Comandes de la Botiga")+bar("cat","🏷️","Catàleg de la Botiga","Productes d'El Sortidor")+bar("il","🎨","Il·lustracions del Graner","El Capità dibuixa les receptes sense imatge")+bar("ver","🚀","Versions","Què hem canviat a l'app")+bar("not","📝","Notes i enllaços","Accessos i apunts")+`<p class="foot" style="text-align:center"><button class="btn sec" onclick="MF_SB.auth.signOut()">Tanca la sessió</button></p>`;
  DB.collection("feedback").onSnapshot(s=>{FB=s.docs.map(d=>({uid:d.id,...d.data()}));drawBus();kpis();},()=>{});
  DB.collection("comandes").onSnapshot(s=>{ORD=s.docs.map(d=>({uid:d.id,...d.data()}));drawOrd();kpis();try{if(!PEDIT)drawCat();}catch(_){}},()=>{});
  DB.doc("botiga/cataleg").onSnapshot(d=>{SHOP=(d.exists&&d.data().items)||{};drawCat();},()=>{});
@@ -161,7 +162,7 @@ const bar=(id,ico,t,sub,open)=>`<details class="bar" id="${id}"${open?" open":""
  DB.doc("botiga/premium").onSnapshot(d=>{PREMH=(d.exists&&d.data().h)||{};drawUsu();drawBus();},()=>{});
  DB.doc("admin/notes").onSnapshot(d=>{if(document.activeElement&&document.activeElement.id==="mynote")return;NOTE=(d.exists&&d.data().t)||"";drawNot();},()=>drawNot());
  loadFam();loadVer();drawNot();
- document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
+ document.addEventListener("toggle",e=>{const d=e.target;if(d.id==="il"&&d.open)ilLoad();if(d.id==="vei"&&d.open)veiLoad();if(d.matches&&d.matches("details.bar")&&d.open)document.querySelectorAll("details.bar[open]").forEach(o=>{if(o!==d)o.open=false});},true);
 })();
 
 function kpis(){const pc=Object.values(CONV).filter(c=>estOf(c)===0).length;const items=FB.flatMap(f=>Object.values(f.items||{}));const nous=items.filter(i=>i&&i.estat==="nou").length;
@@ -476,6 +477,28 @@ document.addEventListener("input",e=>{if(e.target.id!=="mynote")return;NOTE=e.ta
 
 </script>
 
-<script>(function(){const f=()=>{const h=document.querySelector("header");if(h)document.documentElement.style.setProperty("--hh",(h.getBoundingClientRect().bottom)+"px");};addEventListener("resize",f);addEventListener("load",f);setInterval(f,1500);f();})();</script>
+<script>(function(){const f=()=>{const h=document.querySelector("header");if(h)document.documentElement.style.setProperty("--hh",(h.getBoundingClientRect().bottom)+"px");};addEventListener("resize",f);addEventListener("load",f);setInterval(f,1500);f();})();
+/* ===== Veïnat: rànquing d'activitat (no públic) i regals d'espigues ===== */
+let VEIA=null,VREG={},VPER="mes",VGIFT={},VSUB=false;
+const vMon=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x.toISOString().slice(0,10);};
+function veiLoad(){if(VSUB)return;VSUB=true;
+ DB.collection("veinat").onSnapshot(s=>{VEIA=s.docs.map(d=>d.data()||{});drawVeiA();},()=>{VEIA=[];drawVeiA();});
+ DB.collection("regals").onSnapshot(s=>{VREG={};s.docs.forEach(d=>{VREG[String(d.id).split("/").pop()]=(d.data()||{}).items||{};});drawVeiA();},()=>{});}
+function veiRank(){const now=new Date(),wk=vMon(now),mo=now.toISOString().slice(0,7);const by={};
+ (VEIA||[]).forEach(v=>{const k=v.code||v.fh;if(!k)return;const o=by[k]||(by[k]={code:v.code||"",fam:v.fam||"Família",lvl:0,xp:0,wk:{}});o.fam=v.fam||o.fam;if(v.code)o.code=v.code;o.lvl=Math.max(o.lvl,v.lvl||1);o.xp=Math.max(o.xp,v.xp||0);
+  Object.entries(v.wk||{}).forEach(([w,n])=>{o.wk[w]=Math.max(o.wk[w]||0,+n||0);});});
+ return Object.values(by).map(o=>{const sm=o.wk[wk]||0,mm=Object.entries(o.wk).filter(([w])=>w.slice(0,7)===mo).reduce((a,[,n])=>a+n,0);
+  const rg=Object.values(VREG[o.code]||{}).filter(r=>r&&String(r.at||"").slice(0,7)===mo).reduce((a,r)=>a+(+r.n||0),0);return {...o,sm,mm,rg};}).sort((a,b)=>VPER==="mes"?(b.mm-a.mm)||(b.sm-a.sm):(b.sm-a.sm)||(b.mm-a.mm));}
+function drawVeiA(){const el=$("#b_vei");if(!el)return;if(!VEIA){el.innerHTML=`<p class="foot">Carregant…</p>`;return;}const L=veiRank();const c=$("#c_vei");if(c)c.textContent=L.length||"";
+ el.innerHTML=`<p class="foot">Rànquing intern: les famílies no el veuen. Puntuació = espigues guanyades amb missions i accions (setmana en curs o mes en curs).</p>
+ <div class="seg"><button type="button" data-vper="setm" aria-pressed="${VPER==="setm"}">Aquesta setmana</button><button type="button" data-vper="mes" aria-pressed="${VPER==="mes"}">Aquest mes</button></div>`+
+ (L.length?L.map((x,i)=>{const g=VGIFT[x.code]??50;return `<div class="card vist vrk"><div class="vrkh"><span class="vpos">${["🥇","🥈","🥉"][i]||i+1}</span><b>${esc(x.fam)}</b><small>Nivell ${x.lvl} · ${VPER==="mes"?x.mm:x.sm} 🌾 ${VPER==="mes"?"aquest mes":"aquesta setmana"}${x.rg?` · 🎁 ${x.rg} regalades`:""}</small></div>
+  ${x.code?`<div class="row vgift"><span class="pill"><button type="button" data-vg="${esc(x.code)}" data-d="-10" aria-label="Menys">−</button><b>${g} 🌾</b><button type="button" data-vg="${esc(x.code)}" data-d="10" aria-label="Més">+</button></span><button type="button" class="btn" data-vgo="${esc(x.code)}">🎁 Regala</button></div>`:`<p class="foot">Encara no es pot regalar: cal que la família torni a obrir l'app.</p>`}</div>`;}).join(""):`<p class="foot">Encara no hi ha famílies al veïnat.</p>`);}
+document.addEventListener("click",async e=>{const p=e.target.closest("[data-vper]");if(p){VPER=p.dataset.vper;drawVeiA();return;}
+ const g=e.target.closest("[data-vg]");if(g){const k=g.dataset.vg;VGIFT[k]=Math.max(10,Math.min(1000,(VGIFT[k]??50)+(+g.dataset.d)));drawVeiA();return;}
+ const go=e.target.closest("[data-vgo]");if(go){const k=go.dataset.vgo,n=VGIFT[k]??50;if(!go.classList.contains("arm")){go.classList.add("arm");go.textContent=`Confirma ${n} 🌾`;setTimeout(()=>{if(go.isConnected&&go.classList.contains("arm")){go.classList.remove("arm");go.textContent="🎁 Regala";}},4000);return;}
+  go.disabled=true;go.textContent="Enviant…";const now=new Date(),mes=now.toLocaleDateString("ca",{month:"long"});
+  try{await DB.doc("regals/"+k).update({items:{["r"+Date.now().toString(36)]:{n,at:now.toISOString().slice(0,10),motiu:`Família activa del veïnat · ${mes}`}}});go.textContent="Regalat ✓";}catch(err){go.textContent="No s'ha pogut enviar";go.disabled=false;}}});
+</script>
 </body>
 </html>
