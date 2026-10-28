@@ -24,16 +24,19 @@ html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--body
 .res p{margin:6px 4px;color:var(--muted);font-size:14px}
 /* llibre */
 #book{padding:16px 0 40px;display:flex;flex-direction:column;align-items:center;gap:18px}
-.page{width:210mm;height:297mm;background:var(--paper);box-shadow:0 2px 10px rgba(0,0,0,.18);position:relative;overflow:hidden;padding:20mm 18mm 22mm;display:flex;flex-direction:column}
-.pbody{flex:1;overflow:hidden}
-.phead{position:absolute;top:9mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:10pt;color:var(--muted);border-bottom:.3mm solid var(--line);padding-bottom:2mm}
-.pfoot{position:absolute;bottom:9mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:10pt;color:var(--muted)}
+.page{width:297mm;height:210mm;background:var(--paper);box-shadow:0 2px 10px rgba(0,0,0,.18);position:relative;overflow:hidden;padding:18mm 16mm 17mm;display:flex;flex-direction:column}
+.pcols{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:12mm;background:linear-gradient(var(--line),var(--line)) center/.3mm 100% no-repeat}
+.pbody{overflow:hidden;min-height:0;min-width:0}.pbody>h2:first-child{margin-top:0}
+.cover .pcols{grid-template-columns:1fr;background:none}.cover .pcols .pbody+.pbody{display:none}
+.cover .pbody{display:flex;flex-direction:column;justify-content:center}
+.phead{position:absolute;top:8mm;left:16mm;right:16mm;display:flex;justify-content:space-between;font-size:10pt;color:var(--muted);border-bottom:.3mm solid var(--line);padding-bottom:2mm}
+.pfoot{position:absolute;bottom:7mm;left:16mm;right:16mm;display:flex;justify-content:space-between;font-size:10pt;color:var(--muted)}
 .pfoot b{color:var(--fg)}
 #measure{position:absolute;left:-9999px;top:0;visibility:hidden}
 #src{display:none}
 /* tipografia */
 h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0 0 3mm;color:#1f2a14}
-h2{font-size:21pt;color:var(--blue);margin-top:2mm;padding-bottom:2mm;border-bottom:.6mm solid var(--blues)}
+h2{font-size:18pt;margin-top:6mm;color:var(--blue);margin-top:2mm;padding-bottom:2mm;border-bottom:.6mm solid var(--blues)}
 h3{font-size:13.5pt;margin-top:5mm}
 p,li{font-size:11pt;margin:0 0 2.6mm}
 ul,ol{margin:0 0 3mm;padding-left:6mm}
@@ -71,7 +74,7 @@ mark.cur{background:#ffb84d}
 .toc a{color:inherit;text-decoration:none}
 .toc .dots{flex:1;border-bottom:.35mm dotted #b9b4a6;transform:translateY(-1.2mm)}
 .toc .pg{font-weight:700;min-width:7mm;text-align:right}
-.idx{columns:2;column-gap:8mm;list-style:none;padding:0;margin:0}
+.idx{columns:1;column-gap:8mm;list-style:none;padding:0;margin:0}
 .idx li{break-inside:avoid;font-size:10.5pt;margin:0 0 1.2mm;display:flex;justify-content:space-between;gap:2mm}
 .idx a{text-decoration:none;color:var(--fg)}
 .idx .pgs a{color:var(--blue);font-weight:700;margin-left:1.5mm}
@@ -79,7 +82,7 @@ mark.cur{background:#ffb84d}
  #book .page{zoom:var(--z,1)}
 }
 @media print{
- @page{size:A4;margin:0}
+ @page{size:A4 landscape;margin:0}
  html,body{background:#fff}
  .bar,.res{display:none!important}
  #book{padding:0;gap:0;display:block}
@@ -249,10 +252,21 @@ mark.cur{background:#ffb84d}
 <p>La barra <b>🏷️ Catàleg de la Botiga</b> conté els productes d'El Sortidor que les famílies veuen a la <b id="k-botiga">Botiga</b>.</p>
 <h3 id="s-cat-productes">Afegir i editar productes</h3>
 <ul>
-<li><span class="btnl">＋ Nou producte</span>: nom, categoria, preu, format, descripció, passos per acabar-lo a casa, plats relacionats i <b>ingredients principals</b>.</li>
+<li><span class="btnl">＋ Nou producte</span>: nom, categoria, plats relacionats, <b>ingredients principals</b>, descripció i passos per acabar-lo a casa.</li>
 <li><span class="btnl">📥 Carrega la proposta</span>: afegeix la llista de productes proposats (La Teca i produccions) com a <b>no visibles</b> i <b>sense preu</b>, per revisar-los.</li>
 <li><span class="btnl">Edita</span>, <span class="btnl">🙈 Amaga'l</span> / <span class="btnl">👁️ Fes-lo visible</span> i <span class="btnl">Elimina</span> a cada producte.</li>
 </ul>
+<h3 id="s-cat-formats">Formats de venda</h3>
+<p>Cada producte pot tenir diversos <b id="k-formats">formats</b>, cadascun amb el seu preu. Per a cada format s'indica:</p>
+<table>
+<tr><th>Camp</th><th>Exemple</th></tr>
+<tr><td>Quantitat</td><td>500 g · 1 l · 6 u.</td></tr>
+<tr><td>Racions</td><td>4 (amb −/+)</td></tr>
+<tr><td>Preu</td><td>16,00 € (amb −/+ o escrivint-lo)</td></tr>
+<tr><td>Envàs</td><td>🥡 Tarrina · 🍱 Safata · 🫙 Pot de vidre · 🛍️ Bossa al buit · 🍾 Ampolla · 🧃 Brik · 📦 Caixa · 🥖 Unitat</td></tr>
+<tr><td>Conservació</td><td>Nevera (fresc) · Armari (temperatura ambient) · Congelador</td></tr>
+</table>
+<p><b>Descomptes per unitats</b>: «A partir de 2 u. −10 %», «A partir de 3 u. −15 %»… S'apliquen a cada format segons les unitats que se'n demanen. Les famílies veuen els formats amb les icones de conservació i d'envàs, i el descompte s'aplica sol a la comanda.</p>
 <div class="tip"><p>Els <b>ingredients principals</b> i els <b>plats relacionats</b> permeten que l'app proposi el producte quan el menú d'una família porta un plat semblant.</p></div>
 <h3 id="s-cat-cerca">Cercar i filtrar</h3>
 <ul>
@@ -396,7 +410,7 @@ const KW={menu:["Menú de Família","s-intro"],sembrador:["Sembradors","k-sembra
  capita:["Capità Enciam","k-capita"],limits:["Límits del Capità","k-limits"],graner:["Graner","k-graner"],indicadors:["Indicadors del catàleg","k-indicadors"],
  supabase:["Supabase","k-supabase"],pegat:["Pegats","k-pegat"],problemes:["Solució de problemes","k-problemes"]};
 const EXTRA=[["Comandes","s-ord"],["Convidar","s-usu-convidar"],["Creixement","s-cre"],["Estil de la casa","s-il-estil"],["Funcions (llegeix, dibuixa)","s-sb-funcions"],
- ["Llista de la compra","s-fam"],["Ressenyes","s-cat-indicadors"],["Targetes de client","s-fam"],["Versions","s-ver-versions"],["Notes i enllaços","s-ver-notes"],["Rànquing intern","s-vei-ranquing"],["Regals d'espigues","s-vei-ranquing"],["Instal·lar l'app","s-ver-notes"],["Cercador del catàleg","s-cat-cerca"]];
+ ["Llista de la compra","s-fam"],["Ressenyes","s-cat-indicadors"],["Targetes de client","s-fam"],["Versions","s-ver-versions"],["Notes i enllaços","s-ver-notes"],["Rànquing intern","s-vei-ranquing"],["Regals d'espigues","s-vei-ranquing"],["Instal·lar l'app","s-ver-notes"],["Cercador del catàleg","s-cat-cerca"],["Formats de venda","s-cat-formats"],["Descomptes per unitats","s-cat-formats"],["Conservació (nevera, armari, congelador)","s-cat-formats"]];
 const $=s=>document.querySelector(s);const src=$("#src"),book=$("#book"),meas=$("#measure");
 const TITLE="Manual de l'Hortolà";
 /* enllaços de paraules clau */
@@ -406,32 +420,34 @@ const secs=[...src.querySelectorAll("section[data-t]")];
 $("#tocl").innerHTML=secs.map(s=>{const subs=[...s.querySelectorAll("h3[id]")];return `<li><a href="#${s.id}">${s.dataset.t}</a><span class="dots"></span><span class="pg" data-pg="${s.id}"></span></li>`+subs.map(h=>`<li class="l3"><a href="#${h.id}">${h.textContent}</a><span class="dots"></span><span class="pg" data-pg="${h.id}"></span></li>`).join("");}).join("");
 const IDX=[...Object.values(KW),...EXTRA].sort((a,b)=>a[0].localeCompare(b[0],"ca"));
 $("#idxl").innerHTML=IDX.map(([n,id])=>`<li><a href="#${id}">${n}</a><span class="pgs"><a href="#${id}" data-pg="${id}"></a></span></li>`).join("");
-/* paginació en fulls A4 */
-function newPage(cls){const p=document.createElement("div");p.className="page"+(cls?" "+cls:"");p.innerHTML=`<div class="phead"><span>${TITLE}</span><span class="psec"></span></div><div class="pbody"></div><div class="pfoot"><span>Menú de Família · Web de l'Hortolà</span><b class="pno"></b></div>`;return p;}
+/* paginació en fulls A4 apaïsats, a 2 columnes */
+function newPage(cls){const p=document.createElement("div");p.className="page"+(cls?" "+cls:"");p.innerHTML=`<div class="phead"><span>${TITLE}</span><span class="psec"></span></div><div class="pcols"><div class="pbody"></div><div class="pbody"></div></div><div class="pfoot"><span>Menú de Família · Web de l'Hortolà</span><b class="pno"></b></div>`;return p;}
 function paginate(){book.innerHTML="";meas.innerHTML="";const pages=[];
  const mp=newPage();meas.appendChild(mp);const mb=mp.querySelector(".pbody");const H=()=>mb.clientHeight;
- let cur=null,curSec="";
- const open=(cls,sec)=>{cur=newPage(cls);cur.querySelector(".psec").textContent=sec||"";pages.push(cur);mb.innerHTML="";};
- const fits=el=>{mb.appendChild(el);const ok=mb.scrollHeight<=H()+1;mb.removeChild(el);return ok;};
- const put=el=>{mb.appendChild(el.cloneNode(true));cur.querySelector(".pbody").appendChild(el);};
+ let cur=null,curSec="",col=0;
+ const open=(cls,sec)=>{cur=newPage(cls);cur.querySelector(".psec").textContent=sec||"";pages.push(cur);col=0;mb.innerHTML="";};
+ const colEl=()=>cur.querySelectorAll(".pbody")[col];
+ const next=sec=>{if(col===0&&!cur.classList.contains("cover")){col=1;mb.innerHTML="";const ps=cur.querySelector(".psec");if(sec&&ps.textContent!==sec)ps.textContent=ps.textContent?ps.textContent+" · "+sec:sec;}else open("",sec);};
+ const fits=el=>{mb.appendChild(el);const mt=parseFloat(getComputedStyle(el).marginBottom)||0;const ok=mb.scrollHeight<=H()+1&&(el.getBoundingClientRect().bottom+mt-mb.getBoundingClientRect().top)<=H()-3;mb.removeChild(el);return ok;};
+ const put=el=>{mb.appendChild(el.cloneNode(true));colEl().appendChild(el);};
  for(const s of src.children){
   if(s.hasAttribute("data-cover")){open("cover");[...s.children].forEach(c=>cur.querySelector(".pbody").appendChild(c.cloneNode(true)));continue;}
-  curSec=s.dataset.t||"";open("",curSec==="Índex"?"":curSec);
+  curSec=s.dataset.t||"";if(!cur||cur.classList.contains("cover"))open("",curSec==="Índex"?"":curSec);else{const ps=cur.querySelector(".psec");if((curSec==="Índex alfabètic"||(s.previousElementSibling&&s.previousElementSibling.hasAttribute("data-toc")))&&mb.children.length)next(curSec);else if(!ps.textContent)ps.textContent=curSec;else if(!ps.textContent.includes(curSec))ps.textContent=ps.textContent.split(" · ")[0]+" · "+curSec;}
   const blocks=[...s.children].map(c=>c.cloneNode(true));if(s.id&&blocks[0]&&!blocks[0].id)blocks[0].id=s.id;
   for(let i=0;i<blocks.length;i++){let b=blocks[i];
    const keepNext=/^H[23]$/.test(b.tagName)&&blocks[i+1];
    if(keepNext){const w=document.createElement("div");w.appendChild(b.cloneNode(true));const nx=blocks[i+1].cloneNode(true);
     if(nx.tagName==="UL"||nx.tagName==="OL"||nx.tagName==="TABLE"){const f=nx.tagName==="TABLE"?nx.querySelector("tr"):nx.firstElementChild;const t=nx.cloneNode(false);if(f)t.appendChild(f.cloneNode(true));w.appendChild(t);}else w.appendChild(nx);
-    if(!fits(w)&&mb.children.length)open("",curSec);}
+    if(!fits(w)&&mb.children.length)next(curSec);}
    if(fits(b)){put(b);continue;}
    /* llistes i taules: es parteixen per elements */
    if((b.tagName==="UL"||b.tagName==="OL"||b.tagName==="TABLE")&&b.children.length){
     const isT=b.tagName==="TABLE";const rows=[...(isT?b.querySelectorAll("tr"):b.children)];const head=isT&&rows[0].querySelector("th")?rows.shift():null;
     let part=b.cloneNode(false);if(head)part.appendChild(head.cloneNode(true));let start=b.tagName==="OL"?1:0;
-    for(const r of rows){part.appendChild(r.cloneNode(true));if(!fits(part)){part.removeChild(part.lastChild);if(part.children.length>(head?1:0)){put(part);}open("",curSec);part=b.cloneNode(false);if(head)part.appendChild(head.cloneNode(true));part.appendChild(r.cloneNode(true));if(b.classList.contains("steps")){part.style.counterReset="s "+start;}}
+    for(const r of rows){part.appendChild(r.cloneNode(true));if(!fits(part)){part.removeChild(part.lastChild);if(part.children.length>(head?1:0)){put(part);}next(curSec);part=b.cloneNode(false);if(head)part.appendChild(head.cloneNode(true));part.appendChild(r.cloneNode(true));if(b.classList.contains("steps")){part.style.counterReset="s "+start;}}
      else{}start++;}
     if(part.children.length)put(part);continue;}
-   if(mb.children.length){open("",curSec);}put(b);}
+   if(mb.children.length){next(curSec);}put(b);}
  }
  pages.forEach((p,i)=>{p.querySelector(".pno").textContent=i?String(i+1):"";book.appendChild(p);});meas.innerHTML="";
  /* números de pàgina a l'índex i als enllaços */
@@ -439,7 +455,7 @@ function paginate(){book.innerHTML="";meas.innerHTML="";const pages=[];
  book.querySelectorAll("[data-pg]").forEach(x=>x.textContent=pgOf(x.dataset.pg));
  book.querySelectorAll("a.kw[data-k]").forEach(a=>{const k=KW[a.dataset.k];if(!k)return;const p=pgOf(k[1]);const own=[...book.children].indexOf(a.closest(".page"))+1;if(p&&p!==own)a.dataset.p=p;else delete a.dataset.p;});
  fitZoom();}
-function fitZoom(){const w=Math.min(window.innerWidth,document.documentElement.clientWidth)-16;const px=210*96/25.4;document.documentElement.style.setProperty("--z",Math.min(1,w/px).toFixed(4));
+function fitZoom(){const w=Math.min(window.innerWidth,document.documentElement.clientWidth)-16;const px=297*96/25.4;document.documentElement.style.setProperty("--z",Math.min(1,w/px).toFixed(4));
  document.documentElement.style.setProperty("--barh",$("#bar").offsetHeight+"px");}
 addEventListener("resize",fitZoom);
 /* cerca */
