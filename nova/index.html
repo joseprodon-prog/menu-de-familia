@@ -103,6 +103,16 @@ input.tx{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius
 .hero-ic svg{width:64px;height:64px}
 .badge{font-size:12px;font-weight:700;color:#fff;background:var(--blue);border-radius:99px;padding:2px 8px}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.wel{display:flex;flex-direction:column;margin:-12px -16px 0}
+.welsky{position:relative;background:linear-gradient(180deg,#bfe0f2 0%,#e4f1d8 72%,#7fb944 72%,#6fa83a 100%);height:250px;overflow:hidden}
+.sun{position:absolute;top:22px;right:34px;width:58px;height:58px;border-radius:50%;background:radial-gradient(circle,#ffe58a 0 55%,rgba(255,229,138,.35) 56% 100%)}
+.welart{position:absolute;left:50%;bottom:6px;transform:translateX(-50%)}.welart svg{width:190px;height:190px}
+.welbub{position:absolute;left:14px;top:16px;max-width:62%;background:#fff;border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:14px;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.welbody{padding:18px 16px 4px;display:flex;flex-direction:column;gap:6px}
+.welist{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.welit{display:flex;gap:12px;align-items:center;background:#fff;border-radius:16px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.welit b{display:block;font-size:15.5px}.welit small{color:var(--mut);font-size:13.5px;line-height:1.3}
+.welic{flex:none;width:46px;height:46px;border-radius:12px;background:#fbf3e0;display:grid;place-items:center}.welic svg{width:32px;height:32px}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -130,8 +140,9 @@ function render(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
 
 /* ---------- A · Primer inici ---------- */
 function onb(){const st=[
- ()=>`<div class="load" style="justify-content:center;gap:22px"><div class="hero-ic">${IC.receptari}</div><h1>Menú de Família</h1><p class="mut" style="max-width:30ch">El menú de la setmana, la llista de la compra i les receptes de casa, en un sol lloc.</p>
-   <div class="stack" style="width:100%;max-width:340px;text-align:left">${[["📅","Cada setmana, un menú pensat per a qui menja a casa"],["🛒","La llista de la compra es fa sola"],["📖","Les receptes de la família i les del Graner"]].map(([e,t])=>`<div class="card" style="display:flex;gap:10px;align-items:center"><span style="font-size:22px">${e}</span>${t}</div>`).join("")}</div></div>`,
+ ()=>`<div class="wel"><div class="welsky"><div class="sun"></div><div class="welart">${IC.veiico}</div><div class="welbub">🥬 Hola! Sóc el <b>Capità Enciam</b>. Us ajudo a menjar bé a casa, sense maldecaps.</div></div>
+   <div class="welbody"><h1>Menú de Família</h1><p class="mut">Tot el que passa a la cuina de casa, en un sol lloc.</p>
+   <div class="welist">${[[IC.menu,"El menú de cada setmana","Pensat per a qui menja a casa, la temporada i el temps"],[IC.cart,"La compra feta","La llista surt sola, amb el que ja teniu al rebost"],[IC.receptari,"Les vostres receptes","Les de la família i les del Graner de totes les famílies"],[IC.despesa,"La despesa sota control","Què gasteu cada mes i on és més barat cada producte"]].map(([i,t,d])=>`<div class="welit"><span class="welic">${i}</span><div><b>${t}</b><small>${d}</small></div></div>`).join("")}</div></div></div>`,
  ()=>`<h2>Crea el compte</h2><p class="mut">T'enviarem un enllaç per entrar, sense contrasenya.</p><input class="tx" id="em" type="email" inputmode="email" autocomplete="email" placeholder="el-teu@correu.cat" value="${esc(S.email)}">`,
  ()=>`<h2>Qui sou a casa?</h2><p class="mut">El nom de la família i les persones que hi mengen.</p><input class="tx" id="fn" value="${esc(S.fam)}" aria-label="Nom de la família">
    <div class="stack">${S.mem.map((m,i)=>`<div class="mem"><input class="tx" data-mem="${i}" value="${esc(m)}" aria-label="Membre ${i+1}">${i?`<button data-a="delmem" data-i="${i}" aria-label="Treu">✕</button>`:""}</div>`).join("")}</div><button class="sec" data-a="addmem">＋ Afegeix una persona</button>`,
@@ -143,7 +154,7 @@ function onb(){const st=[
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
  const n=S.onb,ok=[1,!!/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,!!MUNIS.includes(S.muni),1,0][n];
  const lab=["Comencem","Envia l'enllaç","Següent","Següent","Següent","Ja està","" ][n];
- return `<div class="flow" style="position:relative;flex:1"><div class="fh">${n&&n<6?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span><span></span></div>
+ return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}"><div class="fh">${n&&n<6?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span><span></span></div>
  ${n&&n<6?`<div class="prog">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div>`:""}
  <div class="fb">${st[n]()}</div>${lab?`<div class="ff">${n===0?`<button class="sec" data-a="codi">Tinc un codi</button>`:""}${n===5?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button></div>`:""}</div>`;}
 function muniL(){const q=(S.muni||"").toLowerCase();if(!q||MUNIS.includes(S.muni))return S.muni&&MUNIS.includes(S.muni)?`<div class="chip g">✓ ${esc(S.muni)}</div>`:"";return MUNIS.filter(m=>m.toLowerCase().startsWith(q)).slice(0,5).map(m=>`<button class="opt" data-muni="${m}">${m}</button>`).join("")||`<p class="mut">Cap municipi amb aquest nom.</p>`;}
