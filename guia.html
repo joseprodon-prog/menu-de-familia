@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Manual de Menú de Família</title>
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="manual.css?v=1">
+</head>
+<body>
+<div class="bar" id="bar">
+ <a href="/">↩ Torna a l'app</a>
+ <div class="sw"><input type="search" id="q" placeholder="🔍 Cerca al manual" autocomplete="off"></div>
+ <button type="button" id="prt">🖨️ Imprimeix / PDF</button>
+</div>
+<div class="res" id="res"></div>
+<div id="book"></div>
+<div id="measure"></div>
+
+<!-- ===================== CONTINGUT (es pagina automàticament en fulls A4) ===================== -->
+<div id="src">
+
+<section data-cover>
+ <div class="ico">🥬</div>
+ <h1>Manual de Menú de Família</h1>
+ <p class="sub">Guia per a les famílies</p>
+ <p class="meta">Edició d'octubre de 2026<br>menu-de-familia.pages.dev</p>
+</section>
+
+<section data-toc>
+ <h2 id="index">Índex</h2>
+ <ol class="toc" id="tocl"></ol>
+</section>
+
+<section id="s-ini" data-t="1. Primers passos">
+<h2>1. Primers passos</h2>
+<p>Menú de Família us ajuda a planificar els menús de la setmana, fer la llista de la compra, aprofitar el que teniu al <a class="kw" data-k="rebost">rebost</a> i controlar la despesa, amb l'ajuda del <a class="kw" data-k="capita">Capità Enciam</a>.</p>
+<h3 id="s-ini-inst">Instal·lar l'app</h3>
+<ul>
+<li><b>iPhone</b>: obre <span class="k">menu-de-familia.pages.dev</span> amb Safari → Compartir → <b>Afegeix a la pantalla d'inici</b>.</li>
+<li><b>Android</b>: obre-la amb Chrome → ⋮ → <b>Instal·la l'aplicació</b>.</li>
+</ul>
+<h3 id="s-ini-fam">Crear o unir-se a una família</h3>
+<ul class="steps">
+<li>Crea el teu compte amb el correu i una contrasenya.</li>
+<li>Si et van passar una invitació, entraràs directament a la teva família. Si no, tria <b>Crea una família</b> o <b>Ja en tens una?</b> i escriu el codi de la família.</li>
+<li>Comparteix el codi o l'enllaç d'invitació amb la resta de la família des de <a class="kw" data-k="familia">La meva família</a> → Compartir.</li>
+</ul>
+<h3 id="s-ini-pant">La pantalla</h3>
+<ul>
+<li><b>Capçalera</b>: el <a class="kw" data-k="veinat">veïnat</a> (caseretes), la <a class="kw" data-k="botiga">Botiga d'El Sortidor</a>, el paller amb les <a class="kw" data-k="espigues">espigues</a> i l'estrella d'<a class="kw" data-k="hort">El teu hort</a>.</li>
+<li><b>Botons</b>: ⚙️ Família i configuració i 📄 <a class="kw" data-k="docs">Puja documents</a>.</li>
+<li><b>Apartats</b>: Receptari, Menú, A treballar i Despesa.</li>
+<li><b>Bombolla verda</b>: el xat amb el <a class="kw" data-k="capita">Capità Enciam</a>.</li>
+</ul>
+</section>
+
+<section id="s-fam" data-t="2. La meva família">
+<h2>2. La meva família</h2>
+<p>A <b id="k-familia">La meva família</b> (botó ⚙️) hi ha la configuració que fa servir tota la família. Cada apartat és una barra desplegable i tot es desa sol.</p>
+<h3 id="s-fam-membres">Membres, gustos i al·lèrgies</h3>
+<p>Afegiu cada membre amb la seva dieta, al·lèrgies, intoleràncies i gustos. Les propostes de menú i el Capità ho tenen en compte. A <b>A evitar</b> marqueu els aliments que no voleu mai al menú.</p>
+<h3 id="s-fam-casa">La casa</h3>
+<ul>
+<li><b>Equipament de cuina</b>: fogons, forn, robot… El Capità el fa servir per organitzar la cuina.</li>
+<li><b id="k-rebost">El rebost</b>: el que teniu a casa, amb quantitats. El que s'acaba passa a la llista de la compra.</li>
+<li><b>Llista de la compra i pressupost</b>: cada quant compreu i quant voleu gastar.</li>
+<li><b>Calendari setmanal</b>: qui menja a casa i qui s'emporta carmanyola.</li>
+</ul>
+<h3 id="s-fam-apats">Àpats que planifiquem</h3>
+<p>Trieu quins dinars i sopars voleu planificar. Els que no es planifiquen surten en gris al menú i no compten per a la proposta. Setmana a setmana, ho podeu canviar des del menú amb <b>🗓️ Àpats</b>.</p>
+<h3 id="s-fam-tg">Targetes de client</h3>
+<p>Deseu les <b id="k-targetes">targetes de client</b> de les botigues on compreu: escriviu el número o feu una foto del codi de barres. A la caixa, obriu-la des de la llista de la compra i ensenyeu el codi a pantalla completa. Les targetes són de tota la família.</p>
+<h3 id="s-fam-apartats">Apartats de l'app</h3>
+<p>Cada família tria quins apartats fa servir: menús setmanals, receptari, el rebost i despesa. El joc i la Botiga hi són sempre.</p>
+</section>
+
+<section id="s-rec" data-t="3. Receptari">
+<h2>3. Receptari</h2>
+<p>El receptari té dues parts: les receptes <b>de la família</b> i les del <b id="k-graner">Graner</b>, comunes a totes les famílies. Les receptes es poden valorar i desar a la família.</p>
+<h3 id="s-rec-crea">Crea una recepta</h3>
+<ul class="steps">
+<li><b>Aporta</b>: el nom de la recepta i el material, combinable: fotos, vídeo, text, un enllaç o una nota de veu.</li>
+<li><b>Il·lustra</b>: la teva foto millorada amb l'estil de la casa, una imatge d'internet d'ús lliure, o una il·lustració del Capità.</li>
+<li><b>Revisa</b>: la fitxa (ingredients, passos, racions i temps) és editable. Desa-la a la família o puja-la al Graner.</li>
+</ul>
+<div class="tip"><p>Si a <a class="kw" data-k="docs">Puja documents</a> hi poses una recepta, s'obre «Crea una recepta» amb el material ja posat.</p></div>
+</section>
+
+<section id="s-menu" data-t="4. Menú setmanal">
+<h2>4. Menú setmanal</h2>
+<p>El <b id="k-menu">menú setmanal</b> es veu en una quadrícula de dinars i sopars. Al mòbil es pot girar la pantalla per veure-la sencera.</p>
+<h3 id="s-menu-disp">Qui vindrà a dinar?</h3>
+<p>A la barra <b>🍽️ Qui vindrà a dinar?</b> cada membre marca quins àpats fa a casa. L'app us reconeix pel compte; també podeu canviar la disponibilitat dels altres membres.</p>
+<h3 id="s-menu-prop">Proposa'm un menú setmanal</h3>
+<p>El botó <b>✨ Proposa'm un menú setmanal</b> fa una proposta amb les receptes que us agraden, la dieta dels membres, el que teniu al rebost i el pressupost. Cada plat es pot canviar tocant-lo.</p>
+<h3 id="s-menu-sor">Plats d'El Sortidor</h3>
+<p>Alguns plats porten una marca d'El Sortidor: 🏪 amb el preu, 🌾 −30 % o 🎁 gratis segons les <a class="kw" data-k="espigues">espigues</a> que tingueu. Tocant-la, el podeu encarregar. A sota hi ha <b>Completa el menú amb El Sortidor</b> i el <b>Resum de la setmana</b> (cost, temps de cuina, compra i El Sortidor).</p>
+</section>
+
+<section id="s-tre" data-t="5. A treballar i la compra">
+<h2>5. A treballar i la compra</h2>
+<ul>
+<li><b>Produccions · batch cooking</b>: feines del menú que es poden fer juntes en una sola sessió.</li>
+<li><b>Planificació de la cuina</b>: què cal preparar i quan.</li>
+</ul>
+<h3 id="s-tre-llista">Llista de la compra</h3>
+<p>La <b id="k-compra">llista de la compra</b> es genera a partir del menú (diària, setmanal o mensual) i descompta el que ja teniu al rebost. També hi podeu afegir productes a mà.</p>
+<div class="alert"><p>Les famílies gratuïtes poden generar la llista una vegada per setmana (de dilluns a diumenge). Les <a class="kw" data-k="sembradora">famílies sembradores</a>, sempre que vulguin.</p></div>
+<h3 id="s-tre-compte">On surt més a compte</h3>
+<p>Si la família forma part del <a class="kw" data-k="veinat">veïnat</a>, a sota de la llista veureu quant costaria la compra a cada botiga i on és més barat cada producte, amb els preus de les famílies del vostre municipi. A dalt de la llista hi ha les vostres <a class="kw" data-k="targetes">targetes de client</a>.</p>
+</section>
+
+<section id="s-docs" data-t="6. Puja documents i despesa">
+<h2>6. Puja documents i despesa</h2>
+<p>A <b id="k-docs">Puja documents</b> (botó 📄) hi podeu deixar tiquets, factures, receptes, menús i fotos de la nevera o del rebost. També hi podeu escriure una nota o enganxar un enllaç. Cada fitxer pot portar notes (per exemple, «compta només les línies en verd»).</p>
+<h3 id="s-docs-esc">Escàner de documents</h3>
+<p>Toqueu <b>escaneja'ls</b>: feu la foto i l'app troba les cantonades del paper, l'endreça i treu les ombres. Podeu triar Document, B/N o Color i afegir diverses pàgines, que es desen en un sol PDF.</p>
+<h3 id="s-docs-proc">Processar</h3>
+<p>Amb <b>Processa</b>, el Capità llegeix els documents: les compres van a Despesa i als preus, les receptes al receptari, i l'estoc i l'equipament a La meva família.</p>
+<h3 id="s-desp">Despesa i preus</h3>
+<ul>
+<li><b>Compres</b>: totes les compres amb el seu tiquet. <b>Nova compra</b> per apuntar-ne una a mà.</li>
+<li><b>Què comprem</b>: en què gasteu, per grups i botigues.</li>
+<li><b>Preus dels articles</b>: el preu de cada article a cada botiga, per kg, litre o unitat.</li>
+<li>En processar un tiquet, les famílies sembradores veuen quins articles eren més barats en una altra botiga i quant haurien estalviat.</li>
+</ul>
+</section>
+
+<section id="s-cap" data-t="7. El Capità Enciam">
+<h2>7. El Capità Enciam</h2>
+<p>El <b id="k-capita">Capità Enciam</b> és l'assistent de l'app. Respon dubtes de cuina, receptes, la compra, el rebost, els menús, el pressupost, El Sortidor i l'ús de l'app. No parla d'altres temes.</p>
+<h3 id="s-cap-usos">Coses que fa molt bé</h3>
+<ul>
+<li><b>🛒 Soc al súper</b>: digues-li un producte i et dirà com és, com es cuina, receptes per a la família i què pots aprofitar del rebost.</li>
+<li><b>⏱️ Cuina 2 plats alhora</b>: et fa una línia de temps per cuinar-los en paral·lel i et diu quant temps estalvies.</li>
+<li><b>🥫 Què faig amb el que tinc a casa</b>: plats amb el que hi ha al rebost.</li>
+<li>Consultar la vostra despesa, els preus o els tiquets repetits.</li>
+</ul>
+<h3 id="s-cap-veu">Notes de veu</h3>
+<p>Al micròfon pots parlar en lloc d'escriure; el Capità ho passa a text.</p>
+<h3 id="s-cap-limits">Límits</h3>
+<p>Els <b id="k-limits">límits</b> es renoven cada 5 hores: 100 crides de xat (una pregunta en pot gastar 2 o 3), 10 lectures de documents, 10 imatges i 10 notes de veu. Si s'acaben, l'app us diu a quina hora es renoven.</p>
+</section>
+
+<section id="s-hort" data-t="8. El teu hort i les espigues">
+<h2>8. El teu hort i les espigues</h2>
+<p><b id="k-hort">El teu hort</b> (estrella de la capçalera) és el joc de l'app. Cada setmana hi ha tres missions al tauler de comandes: cuinar plats del menú, pujar tiquets, valorar receptes…</p>
+<ul>
+<li>Les missions i les accions donen <b id="k-espigues">espigues</b> 🌾, que es guarden al paller i fan pujar de nivell.</li>
+<li>Les espigues serveixen per a descomptes (−30 %) i plats de regal a la <a class="kw" data-k="botiga">Botiga</a>. Les que gasteu es resten del saldo, però el nivell no baixa.</li>
+<li>L'Hortolà regala espigues a les famílies més actives del <a class="kw" data-k="veinat">veïnat</a>.</li>
+</ul>
+</section>
+
+<section id="s-vei" data-t="9. El veïnat">
+<h2>9. El veïnat</h2>
+<p>El <b id="k-veinat">veïnat</b> agrupa les famílies del mateix municipi. Per entrar-hi, toqueu les caseretes de la capçalera, trieu el vostre municipi i activeu «La nostra família forma part del veïnat».</p>
+<ul>
+<li>Compartiu els preus dels tiquets <b>sense dir de qui són</b>, i rebeu la comparativa <a class="kw" data-k="compra">On surt més a compte</a>.</li>
+<li>Veureu les dades del veïnat: famílies, preus del mes i les botigues amb més preus baixos.</li>
+<li>L'activitat de la família no és pública: només la veu l'Hortolà per repartir regals.</li>
+<li>Les <a class="kw" data-k="sembradora">famílies sembradores</a> poden demanar zones addicionals: segona residència, caps de setmana, vacances o compres habituals.</li>
+</ul>
+</section>
+
+<section id="s-bot" data-t="10. Botiga d'El Sortidor">
+<h2>10. Botiga d'El Sortidor</h2>
+<p>A la <b id="k-botiga">Botiga d'El Sortidor</b> (parada de la capçalera) hi ha plats i bases fets a l'obrador, per categories: bases de batch cooking, selectes acabats, per congelar i escalfar, precuinats i temporada.</p>
+<h3 id="s-bot-fmt">Formats i descomptes</h3>
+<p>Cada plat pot tenir diversos formats: quantitat, racions, envàs i conservació, amb la icona de <b>Nevera</b>, <b>Armari</b> o <b>Congelador</b>. Alguns plats tenen descompte a partir de 2 o més unitats, que s'aplica sol a la comanda.</p>
+<h3 id="s-bot-com">Comandes</h3>
+<ul class="steps">
+<li>Afegiu els productes a <b>La teva comanda</b>.</li>
+<li>Escriviu l'adreça, el telèfon, el dia d'entrega i una nota, i envieu-la.</li>
+<li>Seguiu l'estat a <b>Les teves comandes</b>: rebuda, confirmada, enviada i entregada.</li>
+<li>Expliqueu amb text què us ha semblat cada producte: les vostres ressenyes ajuden les altres famílies.</li>
+</ul>
+</section>
+
+<section id="s-sem" data-t="11. Famílies sembradores">
+<h2>11. Famílies sembradores</h2>
+<p>Les <b id="k-sembradora">famílies sembradores</b> donen suport al projecte i tenen avantatges:</p>
+<ul>
+<li>Xat directe amb l'Hortolà (botó 🧑‍🌾) i contacte preferent.</li>
+<li>Llista de la compra sense límit.</li>
+<li>Detall de les diferències de preu de cada tiquet.</li>
+<li>Zones addicionals al veïnat i possibilitat de crear el vostre propi veïnat.</li>
+<li>Premi d'espigues quan una idea vostra es posa al servei de tothom.</li>
+<li>Personalització de l'app, incentius i regals.</li>
+</ul>
+<p>Per fer-vos-en, toqueu el botó 🧑‍🌾 i <b>⭐ Fes-te Sembrador</b>. L'Hortolà us enviarà la informació.</p>
+</section>
+
+<section id="s-faq" data-t="12. Preguntes freqüents">
+<h2>12. Preguntes freqüents</h2>
+<table>
+<tr><th>Pregunta</th><th>Resposta</th></tr>
+<tr><td>Com veig la versió nova de l'app?</td><td>S'actualitza sola en obrir-la. Si la teniu oberta, el Capità us avisa amb un número vermell.</td></tr>
+<tr><td>Puc fer servir l'app amb la meva parella?</td><td>Sí: compartiu el codi de la família i veureu el mateix menú, llista i despesa.</td></tr>
+<tr><td>Qui veu els nostres preus?</td><td>Només les famílies del vostre veïnat, i sense saber de qui són.</td></tr>
+<tr><td>S'han acabat les consultes al Capità</td><td>Es renoven cada 5 hores; el missatge diu a quina hora.</td></tr>
+<tr><td>No puc generar la llista de la compra</td><td>Les famílies gratuïtes la generen un cop per setmana; podeu afegir productes a mà.</td></tr>
+<tr><td>Com tanco la sessió?</td><td>A ⚙️ Família i configuració, a baix de tot.</td></tr>
+</table>
+</section>
+
+<section id="s-idx" data-idx data-t="Índex alfabètic">
+<h2>Índex alfabètic</h2>
+<ul class="idx" id="idxl"></ul>
+</section>
+
+</div>
+<script type="application/json" id="mcfg">{"title": "Manual de Menú de Família", "foot": "Menú de Família · Manual de l'usuari", "kw": {"capita": ["Capità Enciam", "k-capita"], "familia": ["La meva família", "k-familia"], "rebost": ["El rebost", "k-rebost"], "espigues": ["Espigues", "k-espigues"], "hort": ["El teu hort", "k-hort"], "veinat": ["El veïnat", "k-veinat"], "botiga": ["Botiga d'El Sortidor", "k-botiga"], "sembradora": ["Famílies sembradores", "k-sembradora"], "docs": ["Puja documents", "k-docs"], "compra": ["Llista de la compra", "k-compra"], "menu": ["Menú setmanal", "k-menu"], "graner": ["El Graner", "k-graner"], "limits": ["Límits del Capità", "k-limits"], "targetes": ["Targetes de client", "k-targetes"]}, "extra": [["Instal·lar l'app", "s-ini-inst"], ["Crear o unir-se a una família", "s-ini-fam"], ["Al·lèrgies i gustos", "s-fam-membres"], ["Àpats que planifiquem", "s-fam-apats"], ["Crea una recepta", "s-rec-crea"], ["Qui vindrà a dinar?", "s-menu-disp"], ["Proposa'm un menú setmanal", "s-menu-prop"], ["On surt més a compte", "s-tre-compte"], ["Escàner de documents", "s-docs-esc"], ["Tiquets i preus", "s-desp"], ["Missions", "s-hort"], ["Formats i descomptes", "s-bot-fmt"], ["Comandes", "s-bot-com"], ["Ressenyes", "s-bot-com"], ["Notes de veu", "s-cap-veu"], ["Municipi", "s-vei"]]}</script>
+<script src="manual.js?v=2"></script>
+</body>
+</html>
