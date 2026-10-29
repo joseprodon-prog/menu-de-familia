@@ -321,7 +321,7 @@ function onb(){const st=[
    ${S.addk==="alg"?addBox("alg"):""}`,
  ()=>{loadMU();const top=`<div class="accbig">${PI("lloc_poble")}</div><h2 class="acch">On viviu?</h2>`;
   if(!MU)return top+`<p class="mut" style="text-align:center">Carregant els pobles…</p>`;
-  if(muniOk())return top+`<div class="found"><div><b>${esc(S.muni)}</b><small>${esc(provName())} · ${esc(S.pais)}</small></div><span class="ok">✓</span></div><button class="lnk" data-a="muchg" style="display:block;flex:none;margin:10px auto 0">Canvia</button>`;
+  if(muniOk())return top+`<div class="found"><div><b>${esc(S.muni)}</b><small>${S.prov==="ma"?"Escrit a mà":esc(provName())+" · "+esc(S.pais)}</small></div><span class="ok">✓</span></div><button class="lnk" data-a="muchg" style="display:block;flex:none;margin:10px auto 0">Canvia</button>`;
   return top+`<button class="geo" data-a="geo"><b></b>Fes servir la meva ubicació</button><div class="or2">o escriu el poble</div><input class="tx srchi" id="mq" placeholder="Poble o ciutat" value="${esc(MQ)}" autocomplete="off" autocapitalize="words"><div class="sug" id="mql">${mqL()}</div>`;},
  ()=>infoS(),
  ()=>`<div class="tria"><img class="trimg big" src="img/cuina_afinar.png" alt=""><h2>Voleu afinar-ho ara?</h2><p class="mut">Si ens dieu què hi teniu al rebost i quins estris a la cuina, els menús i la llista de la compra seran més encertats. Són un parell de minuts.</p><div class="icrow">${["rebost","eq_robot","nav_menu","icona_compra"].map(f=>`<img src="img/${f}.png" alt="">`).join("")}</div>
@@ -382,9 +382,9 @@ function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.valu
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
 let MQ="",ALLM=null;
 function allM(){if(ALLM||!MU)return ALLM;ALLM=[];MU.c.forEach(([c,pv])=>pv.forEach(([k,pn])=>(MU.m[k]||[]).forEach(n=>ALLM.push({n,k,pn,c,q:norm(n)}))));return ALLM;}
-function provName(){const pv=provs().find(p=>p[0]===S.prov);return pv?pv[1]:"";}
+function provName(){if(S.prov==="ma")return "Escrit a mà";const pv=provs().find(p=>p[0]===S.prov);return pv?pv[1]:"";}
 function mqL(){const q=norm(MQ);if(!q||!allM())return "";const a=ALLM.filter(m=>m.q.startsWith(q)),b=q.length>2?ALLM.filter(m=>!m.q.startsWith(q)&&m.q.includes(q)):[];const L=[...a,...b].slice(0,6);
- return L.map(m=>`<button data-mpick="${ALLM.indexOf(m)}">${esc(m.n)}<small>${esc(m.pn)} · ${esc(m.c)}</small></button>`).join("")||`<p class="mut" style="padding:10px 14px;margin:0">No el trobem. Prova-ho amb un altre nom.</p>`;}
+ return L.map(m=>`<button data-mpick="${ALLM.indexOf(m)}">${esc(m.n)}<small>${esc(m.pn)} · ${esc(m.c)}</small></button>`).join("")+(MQ.trim().length>1?`<button data-a="muman"><span style="color:var(--blue2)">Fes servir «${esc(MQ.trim())}»</span><small>Escrit a mà</small></button>`:"");}
 function mPick(m){S.pais=m.c;S.prov=m.k;S.muni=m.n;MQ="";render();}
 function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
@@ -412,7 +412,7 @@ function a2hs(){
 const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g," ").trim();
 let MU=null;function loadMU(){if(MU||loadMU.p)return;loadMU.p=fetch("municipis.json").then(r=>r.json()).then(j=>{MU=j;if(!S.prov){const pv=provs();if(pv.length===1)S.prov=pv[0][0];}if(S.onb===4)render();}).catch(()=>{loadMU.p=null;});}
 function provs(){return MU?(MU.c.find(c=>c[0]===S.pais)||MU.c[0])[1]:[];}
-function muniOk(){return !!(MU&&S.prov&&(MU.m[S.prov]||[]).includes(S.muni));}
+function muniOk(){if(S.prov==="ma")return !!(S.muni||"").trim();return !!(MU&&S.prov&&(MU.m[S.prov]||[]).includes(S.muni));}
 const LANDQ=matchMedia("(orientation: landscape) and (max-height: 560px)");let ROT=LANDQ.matches;
 (LANDQ.addEventListener?LANDQ.addEventListener("change",e=>{ROT=e.matches;render();}):LANDQ.addListener(e=>{ROT=e.matches;render();}));
 const ROT_SVG=`<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="7" y="3" width="10" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 15a8 8 0 0 0 6 6M21 9a8 8 0 0 0-6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 21h2.5v-2.5M16 3h-2.5v2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -517,6 +517,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"addmem":S.mem.push("");render();break;
   case"pgo":{if(S.onb===8&&MIC)MIC.stop();S.onb=+t.dataset.n;render();break;}
   case"pers":persOpen(+t.dataset.i);break;
+  case"muman":{const v=MQ.trim();if(v){S.muni=v.charAt(0).toUpperCase()+v.slice(1);S.prov="ma";MQ="";render();}break;}
   case"muchg":S.muni="";render();setTimeout(()=>{const m=$("#mq");if(m)m.focus();},60);break;
   case"geo":{if(!navigator.geolocation){toast("Aquest mòbil no dona la ubicació");break;}t.disabled=true;t.lastChild.textContent="Buscant on sou…";
    navigator.geolocation.getCurrentPosition(async pos=>{try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=ca&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);const j=await r.json();const a=j.address||{};const nm=a.village||a.town||a.city||a.municipality||a.hamlet||"";allM();const q=norm(nm);const hit=ALLM&&(ALLM.find(m=>m.q===q)||ALLM.find(m=>q&&m.q.startsWith(q)));if(hit){mPick(hit);}else{MQ=nm;render();toast("No l'hem trobat: escriu el poble");}}catch(e){render();toast("No s'ha pogut saber on sou");}},()=>{render();toast("Sense permís d'ubicació: escriu el poble");},{timeout:10000,maximumAge:600000});break;}
