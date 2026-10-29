@@ -233,6 +233,8 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .permb p{margin:0;font-size:14.5px;color:var(--mut);font-weight:600}
 .prow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .prow .q{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 13.5px var(--body);color:var(--ink);padding:0;max-width:70px}
+.qav{position:relative;display:block}
+.qav em{position:absolute;top:-3px;right:-5px;min-width:20px;height:20px;border-radius:10px;background:#e2533d;color:#fff;font:700 12px var(--body);font-style:normal;display:grid;place-items:center;border:2px solid var(--paper);box-sizing:border-box;padding:0 4px}
 .prow .q i{font-style:normal;font-size:11px;color:#c8352b;font-weight:700;min-height:13px;text-align:center;line-height:1.15}
 .who{display:flex;flex-direction:column;align-items:center;gap:4px}
 .who b{font:700 22px var(--disp)}
@@ -345,8 +347,8 @@ function persOpen(i){if(!S.memx)S.memx=S.mem.map((m,k)=>mx(k));PNEW=i<0;if(i<0){
 function persClose(){if(TI>=0&&!(S.mem[TI]||"").trim()){S.mem.splice(TI,1);S.memx.splice(TI,1);}TI=-1;TMP=null;PNEW=false;render();}
 function persAv(){const e=$("#pav");if(e)e.innerHTML=avt(TMP,110,TI);}
 function algItems(){return [...ALG.map(x=>[x,"alg_"+x.toLowerCase().replace(" ","_")]),...S.algx.map(x=>[x,"alg_afegit"])];}
-function permRow(){return `<div class="permb"><p>Només algú de vosaltres?</p><div class="prow">${S.mem.map((m,i)=>{const a=(mx(i).alg||[]);return `<button class="q" data-a="palg" data-i="${i}">${avt(mx(i),48,i)}<b>${esc(m)}</b><i>${esc(a.join(", "))}</i></button>`;}).join("")}</div></div>`;}
-function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div><p class="famn">${S.alg.length?"El de tota la família ja hi és":"Marca el que no pot menjar"}</p>
+function permRow(){return `<div class="permb"><div class="prow">${S.mem.map((m,i)=>{const a=(mx(i).alg||[]);return `<button class="q" data-a="palg" data-i="${i}" aria-label="${esc(m)}${a.length?": "+esc(a.join(", ")):""}"><span class="qav">${avt(mx(i),48,i)}${a.length?`<em>${a.length}</em>`:""}</span><b>${esc(m)}</b></button>`;}).join("")}</div></div>`;}
+function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div>
  <div class="agr">${algItems().map(([y,f])=>{const fam=S.alg.includes(y);return `<button class="at2${fam?" fam":a.includes(y)?" on":""}" ${fam?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}<span>${esc(y)}</span></button>`;}).join("")}</div>`;}
 let PAI=-1;
 function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
