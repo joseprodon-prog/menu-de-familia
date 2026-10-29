@@ -165,6 +165,10 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .welg b{font-size:18px}
 .welq{font:700 28px var(--disp);margin:22px 0 10px}
 .welmu{width:100%;text-align:left}
+.algh{font-size:28px!important;margin:-6px 0 0!important}
+.agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
+.at2.mes{color:var(--blue2)}
+@media (max-height:720px){.welsky{height:240px!important}}
 .ovc{position:absolute;right:-70px;bottom:-60px;width:310px;height:auto;transform:scaleX(-1);pointer-events:none;z-index:0}
 .flow:has(.ovc){overflow:hidden}.flow:has(.ovc) .fb{position:relative;z-index:1}
 .cfgl .row .pi{width:40px;height:40px}.cfgl .row b{flex:1;font-size:17px}.cfgl .row .r{color:var(--mut);font-size:14px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -327,10 +331,8 @@ function stepH(n){const st=[
    <div class="famt"><label class="famin"><input id="fn" value="${esc(S.fam)}" placeholder="Nom de la família" autocomplete="off" aria-label="Nom de la família"><span>Família</span></label></div>
    <div class="avg">${S.mem.map((m,i)=>`<button class="pp" data-a="pers" data-i="${i}">${avt(mx(i),78,i)}<b>${esc(m)}</b></button>`).join("")}<button class="pp" data-a="pers" data-i="-1"><span class="avt add">${PI("afegeix")}</span><b>Afegeix</b></button></div>
    <div class="calx"><span>Al calendari</span>${S.mem.map((m,i)=>`<i style="background:${mcol(i)}">${esc((m||"?")[0])}</i>`).join("")}</div>`,
- ()=>`<h2 class="acch" style="font-size:30px;margin-top:2px">Què no podeu menjar?</h2>
-   <button class="opt tot" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button>
-   <div class="agr">${algItems().map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>
-   ${S.addk==="alg"?addBox("alg"):""}`,
+ ()=>`<h2 class="acch algh">Què no podeu menjar?</h2>
+   <div class="agr agm">${algItems().filter(([x])=>ALGM.includes(x)||S.alg.includes(x)).map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 mes" data-a="algmes">${PI("alg_altres")}<span>Més</span></button></div>`,
  ()=>`<div class="wel">${welSky()}<div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p><h2 class="welq">On viviu?</h2><div class="welmu">${muniB()}</div></div></div>`,
  ()=>infoS(),
  ()=>`<div class="tria"><img class="trimg big" src="img/cuina_afinar.png" alt=""><h2>Voleu afinar-ho ara?</h2><p class="mut">Si ens dieu què hi teniu al rebost i quins estris a la cuina, els menús i la llista de la compra seran més encertats. Són un parell de minuts.</p><div class="icrow">${["rebost","eq_robot","nav_menu","icona_compra"].map(f=>`<img src="img/${f}.png" alt="">`).join("")}</div>
@@ -396,13 +398,16 @@ function muniB(){loadMU();const top="";
   return top+`<button class="geo" data-a="geo"><b></b>Fes servir la meva ubicació</button><div class="or2">o escriu el poble</div><input class="tx srchi" id="mq" placeholder="Poble o ciutat" value="${esc(MQ)}" autocomplete="off" autocapitalize="words"><div class="sug" id="mql">${mqL()}</div>`;}
 function welSky(){return `<div class="welsky"><div class="welart"><img src="img/benvinguda_ovella.jpg" alt="" aria-hidden="true"></div></div>`;}
 let CFG=-1;
-const CFGL=[[4,"hud_veinat","On viviu",()=>S.muni||""],[1,"compte_bustia","El compte",()=>S.email||""],[2,"familia_taula","Qui seu a taula",()=>S.mem.filter(m=>m.trim()).length+" persones"],[3,"alg_afegit","Què no podeu menjar",()=>{if(S.res)return "Ho mengem tot";const k=S.alg.length+(S.memx||[]).reduce((a,x)=>a+((x.alg||[]).length),0);return k?k+(k===1?" cosa":" coses"):"";}],[7,"eq_robot","Estris de cuina",()=>S.equip.length?S.equip.length+(S.equip.length===1?" estri":" estris"):""],[8,"rebost","El rebost",()=>""],[9,"app-192","Pantalla d'inici",()=>""]];
+const CFGL=[[4,"hud_veinat","On viviu",()=>S.muni||""],[1,"compte_bustia","El compte",()=>S.email||""],[2,"familia_taula","Qui seu a taula",()=>S.mem.filter(m=>m.trim()).length+" persones"],[3,"alg_afegit","Què no podeu menjar",()=>{const k=S.alg.length+(S.memx||[]).reduce((a,x)=>a+((x.alg||[]).length),0);return k?k+(k===1?" cosa":" coses"):"Ho mengem tot";}],[7,"eq_robot","Estris de cuina",()=>S.equip.length?S.equip.length+(S.equip.length===1?" estri":" estris"):""],[8,"rebost","El rebost",()=>""],[9,"app-192","Pantalla d'inici",()=>""]];
 function cfgH(n){if(n===4)return `<div class="accbig">${PI("hud_veinat")}</div><h2 class="acch">On viviu?</h2>${muniB()}`;if(n===1)return `<div class="accbig">${PI("compte_bustia")}</div><h2 class="acch">El compte</h2><div class="tx emfix"><span>${esc(S.email||"—")}</span></div><button class="sec" data-a="pwchg">Canvia la contrasenya</button>`;
  if(n===7||n===8)return `<div class="cfgx">${stepH(n)}</div>`;
  return stepH(n)+(n===3?`<div class="ff ffin">${permRow()}</div>`:"");}
 function cfgRef(){const sh=document.querySelector(".dim .sheet.cfgsh");if(!sh)return false;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",cfgH(CFG));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;setTimeout(fitFam,0);return true;}
 function cfgOpen(){const k=CFG;sheet(cfgH(k));CFG=k;const sh=document.querySelector(".dim .sheet");if(sh)sh.classList.add("cfgsh");SHCB=()=>{CFG=-1;};setTimeout(fitFam,0);}
 let HV="a";
+const ALGM=["Gluten","Lactosa","Fruits secs","Marisc","Ou"];
+function algMesH(){return `<h3>Més coses</h3><div class="agr">${algItems().filter(([x])=>!ALGM.includes(x)).map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>${S.addk==="alg"?addBox("alg"):""}`;}
+function algMesRef(){const sh=document.querySelector(".dim .sheet.algmes");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",algMesH());const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;}
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
@@ -413,7 +418,7 @@ function mqL(){const q=norm(MQ);if(!q||!allM())return "";const a=ALLM.filter(m=>
  return L.map(m=>`<button data-mpick="${ALLM.indexOf(m)}">${esc(m.n)}<small>${esc(m.pn)} · ${esc(m.c)}</small></button>`).join("")+(MQ.trim().length>1?`<button data-a="muman"><span style="color:var(--blue2)">Fes servir «${esc(MQ.trim())}»</span><small>Escrit a mà</small></button>`:"");}
 function mPick(m){S.pais=m.c;S.prov=m.k;S.muni=m.n;MQ="";render();}
 function stDone(n){return n===1?(!!S.acc&&S.vis>0)||okStep(1):!!okStep(n);}
-function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
+function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),1,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
 const EQUIP=[["Forn","eq_forn"],["Microones","eq_microones"],["Vitroceràmica","eq_vitro"],["Inducció","eq_induccio"],["Foc de gas","eq_gas"],["Thermomix o robot de cuina","eq_robot"],["Fregidora d'aire","eq_fregidora"],["Olla exprés","eq_olla"],["Batedora","eq_batedora"],["Sandvitxera","eq_sandvitxera"],["Torradora","eq_torradora"],["Barbacoa","eq_barbacoa"]];
@@ -503,7 +508,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
  if(t.dataset.tab){S.tab=t.dataset.tab;render();return;}
  if(t.dataset.sub){const[k,v]=t.dataset.sub.split(":");S.sub[k]=v;render();return;}
  if(t.dataset.pa!=null&&PAI>=0){const x=S.memx[PAI];x.alg=x.alg||[];const y=t.dataset.pa;x.alg=x.alg.includes(y)?x.alg.filter(z=>z!==y):[...x.alg,y];palgRef();saveS();return;}
- if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{S.res=false;S.alg=S.alg.includes(x)?S.alg.filter(y=>y!==x):[...S.alg,x];}render();return;}
+ if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{S.res=false;S.alg=S.alg.includes(x)?S.alg.filter(y=>y!==x):[...S.alg,x];}if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();return;}render();return;}
  if(t.dataset.muni){S.muni=t.dataset.muni;render();return;}
  if(t.dataset.mpick!=null&&ALLM){mPick(ALLM[+t.dataset.mpick]);return;}
  if(t.dataset.eq){const x=t.dataset.eq;S.equip=S.equip.includes(x)?S.equip.filter(y=>y!==x):[...S.equip,x];render();return;}
@@ -528,8 +533,8 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"pwforgot":toast("T'hem enviat un correu per canviar-la");break;
   case"eye":{const f=$("#"+t.dataset.t);if(f){f.type=f.type==="password"?"text":"password";t.textContent=f.type==="password"?"Mostra":"Amaga";}break;}
   case"oback":if(S.onb===5&&S.inf>0){infGo(-1);return;}if(S.onb===8&&MIC)MIC.stop();S.onb=S.onb===10?(STANDALONE?(S.cfg?8:6):9):S.onb===9?(S.cfg?8:6):S.onb===7?6:S.onb===6?5:Math.max(0,S.onb-1);render();break;
-  case"addopen":S.addk=t.dataset.k;render();setTimeout(()=>{const i=$("#addin");if(i)i.focus();},50);break;
-  case"addok":{const v=($("#addin")||{}).value;const x=(v||"").trim();if(x){x.charAt(0);const y=x.charAt(0).toUpperCase()+x.slice(1);const base=t.dataset.k==="eq"?EQUIP.map(e=>e[0]):ALG;const ex=base.find(e=>norm(e)===norm(y));if(ex){if(t.dataset.k==="eq"){if(!S.equip.includes(ex))S.equip.push(ex);}else{if(!S.alg.includes(ex))S.alg.push(ex);S.res=false;}S.addk="";render();break;}if(t.dataset.k==="eq"){if(!S.equipx.includes(y))S.equipx.push(y);if(!S.equip.includes(y))S.equip.push(y);}else{if(!S.algx.includes(y))S.algx.push(y);if(!S.alg.includes(y))S.alg.push(y);S.res=false;}}S.addk="";render();}break;
+  case"addopen":S.addk=t.dataset.k;if(document.querySelector(".dim .sheet.algmes"))algMesRef();else render();setTimeout(()=>{const i=$("#addin");if(i)i.focus();},50);break;
+  case"addok":{const v=($("#addin")||{}).value;const x=(v||"").trim();if(x){x.charAt(0);const y=x.charAt(0).toUpperCase()+x.slice(1);const base=t.dataset.k==="eq"?EQUIP.map(e=>e[0]):ALG;const ex=base.find(e=>norm(e)===norm(y));if(ex){if(t.dataset.k==="eq"){if(!S.equip.includes(ex))S.equip.push(ex);}else{if(!S.alg.includes(ex))S.alg.push(ex);S.res=false;}S.addk="";render();break;}if(t.dataset.k==="eq"){if(!S.equipx.includes(y))S.equipx.push(y);if(!S.equip.includes(y))S.equip.push(y);}else{if(!S.algx.includes(y))S.algx.push(y);if(!S.alg.includes(y))S.alg.push(y);S.res=false;}}S.addk="";if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}break;
   case"infskip":S.inf=INFO.length-1;S.onb=6;render();break;
   case"cfgnow":S.cfg=true;goTo(7);break;
   case"cfglater":S.cfg=false;goTo(9);break;
@@ -566,6 +571,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
    else if(S.step===1){S.step=2;render();}else{S.flow=null;S.ready=true;S.tab="setmana";render();toast("Llista compartida ✓");}break;
   case"sclose":close();break;
   case"conf":CFG=-1;sheet(`<h3>Configuració</h3><div class="cfgl">${CFGL.map(([n,f,t,v])=>`<button class="row" data-a="cfgo" data-n="${n}">${PI(f)}<b>${t}</b><span class="r">${esc(v())} ›</span></button>`).join("")}</div>${rows([["💶","Pressupost setmanal",""],["🧭","Apartats de l'app","4 de 4"],["🔔","Avisos","Diumenge"]])}${rows([["🚪","Surt d'aquesta família",""],["🗑️","Esborra el compte",""]])}<button class="sec" data-a="reset">Torna a començar (versió de prova)</button>`);break;
+  case"algmes":S.addk="";sheet(algMesH());{const sh=document.querySelector(".dim .sheet");if(sh)sh.classList.add("algmes");}SHCB=()=>{S.addk="";render();};break;
   case"cfgo":CFG=+t.dataset.n;cfgOpen();break;
   case"pwchg":toast("T'enviarem un correu per canviar-la");break;
   case"reset":window._noSave=true;try{localStorage.removeItem("mf_nova");localStorage.removeItem("mf_accts");}catch(e){}location.reload();break;
