@@ -163,6 +163,10 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .lnk{background:none;border:0;color:var(--blue2);font:600 16px var(--body);text-decoration:underline;text-underline-offset:3px;padding:6px;flex-basis:100%;text-align:center}
 .ff{flex-wrap:wrap}
 .ff .lnk{flex:0 0 100%;text-align:center;justify-content:center;display:flex}
+.grabz{padding:6px 0 10px;margin:-10px -16px 0;cursor:grab;touch-action:none}
+.sheet{animation:shUp .24s ease-out}
+@keyframes shUp{from{transform:translateY(100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -298,7 +302,14 @@ function flowB(){const st=S.step,t=["Qui hi serà?","El menú","La llista"][st];
  return `<div class="flow"><div class="fh"><button class="rb" data-a="fback" aria-label="Enrere">‹</button><b>${t}</b><button class="rb" data-a="fclose" aria-label="Tanca">✕</button></div><div class="prog">${[0,1,2].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div><div class="fb">${b}</div><div class="ff"><button class="cta" data-a="fnext" ${st===1&&!S.menu?"disabled":""}>${lab}</button></div></div>`;}
 
 /* ---------- Fulls inferiors ---------- */
-function sheet(h){close();const d=document.createElement("div");d.className="dim";d.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${h}</div>`;d.addEventListener("click",e=>{if(e.target===d)close();});$("#app").appendChild(d);}
+function sheet(h){close();const d=document.createElement("div");d.className="dim";d.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grabz" aria-label="Llisca avall per tancar"><div class="grab"></div></div>${h}</div>`;d.addEventListener("click",e=>{if(e.target===d)shut(d);});$("#app").appendChild(d);dragSheet(d);}
+function shut(d){const sh=d.querySelector(".sheet");sh.style.transition="transform .22s ease-in";sh.style.transform="translateY(110%)";d.style.transition="background .22s";d.style.background="transparent";setTimeout(()=>d.remove(),220);}
+function dragSheet(d){const sh=d.querySelector(".sheet");let y0=null,dy=0,t0=0;
+ const start=e=>{const top=e.target.closest(".grabz");if(!top&&sh.scrollTop>0)return;y0=e.touches?e.touches[0].clientY:e.clientY;t0=Date.now();dy=0;sh.style.transition="none";};
+ const move=e=>{if(y0===null)return;const y=e.touches?e.touches[0].clientY:e.clientY;dy=Math.max(0,y-y0);if(dy>0){sh.style.transform=`translateY(${dy}px)`;if(e.cancelable)e.preventDefault();}};
+ const end=()=>{if(y0===null)return;const v=dy/Math.max(1,Date.now()-t0);y0=null;if(dy>90||v>.6){shut(d);}else{sh.style.transition="transform .2s ease-out";sh.style.transform="";}};
+ sh.addEventListener("touchstart",start,{passive:true});sh.addEventListener("touchmove",move,{passive:false});sh.addEventListener("touchend",end);
+ const gz=sh.querySelector(".grabz");gz.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")return;start(e);const mv=ev=>move(ev),up=()=>{end();removeEventListener("pointermove",mv);removeEventListener("pointerup",up);};addEventListener("pointermove",mv);addEventListener("pointerup",up);});}
 function close(){document.querySelectorAll(".dim").forEach(x=>x.remove());}
 function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;$("#app").appendChild(d);setTimeout(()=>d.remove(),2200);}
 const rows=L=>`<div class="card" style="padding:4px 12px">${L.map(([i,t,r])=>`<button class="row" data-a="nop"><span style="width:30px;display:grid;place-items:center">${i}</span><b>${t}</b><span class="r">${r||""} <span class="chev">›</span></span></button>`).join("")}</div>`;
