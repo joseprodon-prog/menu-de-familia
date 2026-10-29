@@ -168,6 +168,20 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .algh{font-size:28px!important;margin:-6px 0 0!important}
 .agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
 .at2.mes{color:#2f6b1f}
+.at2.lv2{color:#c46a06}.at2.lv1{color:#9a7600}
+.at2.lv2::after,.at2.lv1::after{content:"";position:absolute;top:50%;left:50%;width:74px;height:74px;margin:-48px 0 0 -37px;border-radius:50%;border:6px solid rgba(240,138,28,.95);box-sizing:border-box}
+.at2.lv1::after{border-color:rgba(240,196,28,.95)}
+.agm .at2.on::after,.agm .at2.lv2::after,.agm .at2.lv1::after{width:66px;height:66px;margin:-42px 0 0 -33px}
+.bars{position:absolute;right:calc(50% - 40px);top:44px;display:flex;align-items:flex-end;gap:2px;background:#fff;border-radius:6px;padding:3px 4px;box-shadow:0 1px 4px rgba(0,0,0,.2);z-index:2}
+.bars i{width:5px;border-radius:2px;background:#e3dfd3;display:block}.bars i:nth-child(1){height:6px}.bars i:nth-child(2){height:10px}.bars i:nth-child(3){height:14px}
+.bars.l1 i:nth-child(1){background:#f0c41c}.bars.l2 i:nth-child(-n+2){background:#f08a1c}.bars.l3 i{background:#d63428}
+.alleg{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:14px;color:var(--mut);margin:6px 0 2px}.alleg .sp{width:10px}
+.alleg i{display:block;width:20px;height:20px;border-radius:50%;border:4px solid;box-sizing:border-box}.alleg i.lgY{border-color:#f0c41c}.alleg i.lgI{border-color:#f08a1c}.alleg i.lgA{border-color:#d63428;background:linear-gradient(135deg,transparent 40%,#d63428 40%,#d63428 60%,transparent 60%)}
+.alpop{position:absolute;transform:translateX(-50%);background:#fff;border-radius:99px;padding:7px 9px;display:flex;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:60}
+.lvd{width:38px;height:38px;min-height:0;border-radius:50%;border:5px solid #e3dfd3;background:#fff;padding:0;box-shadow:none;box-sizing:border-box}
+.lvd.l1{border-color:#f0c41c}.lvd.l2{border-color:#f08a1c}.lvd.l3{border-color:#d63428;background:linear-gradient(135deg,#fff 40%,#d63428 40%,#d63428 60%,#fff 60%)}
+.lvd.on{outline:3px solid var(--blue2);outline-offset:2px}.lvd.l1.on{background:#fdf3c4}.lvd.l2.on{background:#fde2c4}
+.lvl{display:flex;flex-direction:column;gap:6px}.lvr{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:6px 10px}.lvr .pi{width:40px;height:40px}.lvr b{flex:1;font-size:16px}.lvr .lvc{display:flex;gap:6px}.lvr .lvd{width:32px;height:32px;border-width:4px}.lvr.fam{opacity:.45}
 .avs{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;-webkit-mask-image:linear-gradient(#000 88%,transparent);mask-image:linear-gradient(#000 88%,transparent);padding-bottom:14px}
 @media (max-height:720px){.welsky{height:240px!important}}
 .ovc{position:absolute;right:-70px;bottom:-60px;width:310px;height:auto;transform:scaleX(-1);pointer-events:none;z-index:0}
@@ -331,8 +345,8 @@ function stepH(n){const st=[
    <div class="famt"><label class="famin"><input id="fn" value="${esc(S.fam)}" placeholder="Nom de la família" autocomplete="off" aria-label="Nom de la família"><span>Família</span></label></div>
    <div class="avg">${S.mem.map((m,i)=>`<button class="pp" data-a="pers" data-i="${i}">${avt(mx(i),78,i)}<b>${esc(m)}</b></button>`).join("")}<button class="pp" data-a="pers" data-i="-1"><span class="avt add">${PI("afegeix")}</span><b>Afegeix</b></button></div>
 `,
- ()=>`<h2 class="acch algh">Què no podeu menjar?</h2>
-   <div class="agr agm">${algItems().filter(([x])=>ALGM.includes(x)||S.alg.includes(x)).map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 mes" data-a="algmes">${PI("afegeix")}<span>Més</span></button></div>`,
+ ()=>`<h2 class="acch algh">Què no podeu menjar?</h2>${legH()}
+   <div class="agr agm">${algItems().filter(([x])=>ALGM.includes(x)||S.alg.includes(x)).map(([x,f])=>tileF(x,f)).join("")}<button class="at2 mes" data-a="algmes">${PI("afegeix")}<span>Més</span></button></div>`,
  ()=>`<div class="wel">${welSky()}<div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p><h2 class="welq">On viviu?</h2><div class="welmu">${muniB()}</div></div></div>`,
  ()=>infoS(),
  ()=>`<div class="tria"><img class="trimg big" src="img/cuina_afinar.png" alt=""><h2>Voleu afinar-ho ara?</h2><p class="mut">Si ens dieu què hi teniu al rebost i quins estris a la cuina, els menús i la llista de la compra seran més encertats. Són un parell de minuts.</p><div class="icrow">${["rebost","eq_robot","nav_menu","icona_compra"].map(f=>`<img src="img/${f}.png" alt="">`).join("")}</div>
@@ -388,7 +402,7 @@ function persAv(){const e=$("#pav");if(e)e.innerHTML=avt(TMP,110,TI);}
 function algItems(){return [...ALG.map(x=>[x,"alg_"+x.toLowerCase().replace(" ","_")]),...S.algx.map(x=>[x,"alg_afegit"])];}
 function permRow(){return `<div class="permb"><div class="prow">${S.mem.map((m,i)=>{const a=(mx(i).alg||[]);return `<button class="q" data-a="palg" data-i="${i}" aria-label="${esc(m)}${a.length?": "+esc(a.join(", ")):""}"><span class="qav">${avt(mx(i),48,i)}${a.length?`<em>${a.length}</em>`:""}</span><b>${esc(m)}</b></button>`;}).join("")}</div></div>`;}
 function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div>
- <div class="agr">${algItems().map(([y,f])=>{const fam=S.alg.includes(y);return `<button class="at2${fam?" on fam":a.includes(y)?" on":""}" ${fam?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}<span>${esc(y)}</span></button>`;}).join("")}<button class="at2 add" data-a="paadd">${PI("afegeix")}<span>Afegeix</span></button></div>
+ ${ALV==="c"?`<div class="lvl">${algItems().map(([y,f])=>{const fl=lvF(y),n=lvP(i,y);return `<div class="lvr${fl?" fam":""}">${PI(f)}<b>${esc(y)}</b><span class="lvc">${[1,2,3].map(k=>`<button class="lvd l${k}${(fl||n)===k?" on":""}" ${fl?"disabled":`data-pav="${k}" data-pa2="${esc(y)}"`} aria-label="Grau ${k}"></button>`).join("")}</span></div>`;}).join("")}</div><div class="agr" style="max-height:none">`:`<div class="agr">${algItems().map(([y,f])=>{const fl=lvF(y),n=fl||lvP(i,y);return `<button class="at2${lvc(n)}${fl?" fam":""}${bars(n)?" hb":""}" ${fl?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}${bars(n)}<span>${esc(y)}</span></button>`;}).join("")}`}<button class="at2 add" data-a="paadd">${PI("afegeix")}<span>Afegeix</span></button></div>
  ${PADD?`<div class="addbx"><input class="tx" id="paddin" placeholder="Per exemple: api" autocomplete="off"><button class="cta" data-a="paaddok">Afegeix</button></div>`:""}`;}
 let PADD=false;
 function palgRef(){const sh=document.querySelector(".dim .sheet");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",palgH(PAI));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;}
@@ -405,8 +419,19 @@ function cfgH(n){if(n===4)return `<div class="accbig">${PI("hud_veinat")}</div><
 function cfgRef(){const sh=document.querySelector(".dim .sheet.cfgsh");if(!sh)return false;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",cfgH(CFG));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;setTimeout(fitFam,0);return true;}
 function cfgOpen(){const k=CFG;sheet(cfgH(k));CFG=k;const sh=document.querySelector(".dim .sheet");if(sh)sh.classList.add("cfgsh");SHCB=()=>{CFG=-1;};setTimeout(fitFam,0);}
 let HV="a";
+const ALV=(new URLSearchParams(location.search).get("alg")||"").replace(/[^abc]/g,"").slice(0,1);let ALP=null;
+function lvF(x){if(!S.alg.includes(x))return 0;return (S.algl||{})[x]||3;}
+function setF(x,n){S.algl=S.algl||{};if(n){S.algl[x]=n;if(!S.alg.includes(x))S.alg.push(x);}else{delete S.algl[x];S.alg=S.alg.filter(y=>y!==x);}S.res=false;}
+function lvP(i,x){const p=S.memx[i];if(!(p.alg||[]).includes(x))return 0;return (p.algl||{})[x]||3;}
+function setP(i,x,n){const p=S.memx[i];p.alg=p.alg||[];p.algl=p.algl||{};if(n){p.algl[x]=n;if(!p.alg.includes(x))p.alg.push(x);}else{delete p.algl[x];p.alg=p.alg.filter(y=>y!==x);}}
+function lvc(n){return n===3?" on":n===2?" lv2":n===1?" lv1":"";}
+function bars(n){return ALV==="c"&&n?`<span class="bars l${n}"><i></i><i></i><i></i></span>`:"";}
+function nextLv(n){return ALV==="a"?({0:2,1:2,2:3,3:0})[n]:(n?0:3);}
+function tileF(x,f){const n=lvF(x);return `<button class="at2${lvc(n)}${bars(n)?" hb":""}" data-alg="${esc(x)}">${PI(f)}${bars(n)}<span>${esc(x)}</span></button>`;}
+function legH(){return ALV==="a"?`<div class="alleg"><span><i class="lgI"></i></span><span>1 toc</span><span class="sp"></span><span><i class="lgA"></i></span><span>2 tocs</span></div>`:ALV==="b"?`<div class="alleg"><span><i class="lgY"></i></span><span>poc</span><span class="sp"></span><span><i class="lgI"></i></span><span>força</span><span class="sp"></span><span><i class="lgA"></i></span><span>gens</span></div>`:"";}
+function popShow(){document.querySelectorAll(".alpop").forEach(e=>e.remove());if(!ALP)return;const sel=ALP.p>=0?`.dim [data-pa="${CSS.escape(ALP.x)}"]`:`[data-alg="${CSS.escape(ALP.x)}"]`;const els=[...document.querySelectorAll(sel)];const el=els[els.length-1];if(!el){ALP=null;return;}const r=el.getBoundingClientRect(),ap=$("#app"),ar=ap.getBoundingClientRect();const cur=ALP.p>=0?lvP(ALP.p,ALP.x):lvF(ALP.x);const d=document.createElement("div");d.className="alpop";d.innerHTML=[1,2,3].map(k=>`<button class="lvd l${k}${cur===k?" on":""}" data-alv="${k}" aria-label="Grau ${k}"></button>`).join("");d.style.left=(r.left-ar.left-ap.clientLeft+r.width/2)+"px";d.style.top=(r.top-ar.top-ap.clientTop+r.height-6)+"px";$("#app").appendChild(d);}
 const ALGM=["Gluten","Lactosa","Fruits secs","Marisc","Ou"];
-function algMesH(){return `<h3>Més coses</h3><div class="agr">${algItems().filter(([x])=>!ALGM.includes(x)).map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>${S.addk==="alg"?addBox("alg"):""}`;}
+function algMesH(){return `<h3>Més coses</h3><div class="agr">${algItems().filter(([x])=>!ALGM.includes(x)).map(([x,f])=>tileF(x,f)).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>${S.addk==="alg"?addBox("alg"):""}`;}
 function algMesRef(){const sh=document.querySelector(".dim .sheet.algmes");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",algMesH());const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;}
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
@@ -504,11 +529,14 @@ document.addEventListener("input",e=>{const t=e.target;if(t.id==="mq"){MQ=t.valu
  if(t.id==="pr"){S.prov=t.value;S.muni="";render();setTimeout(()=>{const m=$("#mu");if(m)m.focus();},50);return;}
  if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
  const b=document.querySelector('.ff .cta');if(b&&S.onb<99){b.disabled=!okStep(S.onb);}});
-document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;const a=t.dataset.a;
+document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){if(ALP&&!e.target.closest(".alpop")){ALP=null;document.querySelectorAll(".alpop").forEach(x=>x.remove());}return;}const a=t.dataset.a;
  if(t.dataset.tab){S.tab=t.dataset.tab;render();return;}
  if(t.dataset.sub){const[k,v]=t.dataset.sub.split(":");S.sub[k]=v;render();return;}
- if(t.dataset.pa!=null&&PAI>=0){const x=S.memx[PAI];x.alg=x.alg||[];const y=t.dataset.pa;x.alg=x.alg.includes(y)?x.alg.filter(z=>z!==y):[...x.alg,y];palgRef();saveS();return;}
- if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{S.res=false;S.alg=S.alg.includes(x)?S.alg.filter(y=>y!==x):[...S.alg,x];}if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();return;}render();return;}
+ if(t.dataset.alv){const k=+t.dataset.alv,A=ALP;ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());if(A){if(A.p>=0){const c=lvP(A.p,A.x);setP(A.p,A.x,c===k?0:k);palgRef();saveS();}else{const c=lvF(A.x);setF(A.x,c===k?0:k);if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}}return;}
+ if(ALP){ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());}
+ if(t.dataset.pav&&PAI>=0){const k=+t.dataset.pav,y=t.dataset.pa2,c=lvP(PAI,y);setP(PAI,y,c===k?0:k);palgRef();saveS();return;}
+ if(t.dataset.pa!=null&&PAI>=0){const y=t.dataset.pa;if(ALV==="b"){ALP={x:y,p:PAI};popShow();return;}setP(PAI,y,nextLv(lvP(PAI,y)));palgRef();saveS();return;}
+ if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{if(ALV==="b"){ALP={x,p:-1};popShow();return;}setF(x,nextLv(lvF(x)));}if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();return;}render();return;}
  if(t.dataset.muni){S.muni=t.dataset.muni;render();return;}
  if(t.dataset.mpick!=null&&ALLM){mPick(ALLM[+t.dataset.mpick]);return;}
  if(t.dataset.eq){const x=t.dataset.eq;S.equip=S.equip.includes(x)?S.equip.filter(y=>y!==x):[...S.equip,x];render();return;}
