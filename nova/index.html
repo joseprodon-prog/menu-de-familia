@@ -67,7 +67,10 @@ p{margin:0}.mut{color:var(--mut)}
 .fh{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;text-align:center}
 .fh b{font-size:17px}
 .rb{width:40px;height:40px;border-radius:50%;border:0;background:#efebe1;font-size:18px}
-.prog{display:flex;gap:6px;padding:0 16px 8px}.prog i{flex:1;height:5px;border-radius:3px;background:#e3dfd3}.prog i.on{background:var(--green)}
+.prog{display:flex;gap:6px;padding:0 16px 8px;background:none}
+.prog.top{padding-top:calc(14px + env(safe-area-inset-top,0px))}
+.prog>*{flex:1;display:block;background:none!important;border:0;padding:10px 0;margin:-10px 0;cursor:default;min-height:0;height:auto;box-shadow:none;border-radius:0}
+.prog>button{cursor:pointer}.prog i{display:block;height:6px;border-radius:3px;background:#e3dfd3}.prog .on i{background:var(--green)}
 .fb{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 16px 16px;display:flex;flex-direction:column;gap:14px}
 .ff{padding:14px 16px max(24px,calc(16px + env(safe-area-inset-bottom,0px)));display:flex;gap:10px;background:inherit;box-shadow:0 -8px 16px -12px rgba(0,0,0,.18)}
 .ff .cta{flex:1}.ffin{padding:6px 0 24px;box-shadow:none;background:none}
@@ -336,9 +339,9 @@ function onb(){const st=[
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
  const n=S.onb,ok=okStep(n);
  const lab=["Comencem",!S.acc?"Continua":S.acc==="nou"?"Crea el compte":"Entra","Següent","Següent","Següent",S.inf<INFO.length-1?"Següent":"Som-hi","","Següent","Següent","Ja està","",""][n];
- const PR=S.cfg?[1,2,3,4,7,8,9]:[1,2,3,4,9],pi=PR.indexOf(n);
- return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n?`<div class="fh">${n<11?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span>${n===5?`<button class="skip" data-a="infskip">Salta</button>`:"<span></span>"}</div>`:""}
- ${pi>=0?`<div class="prog">${PR.map((s,k)=>`<i class="${k<=pi?"on":""}"></i>`).join("")}</div>`:""}
+ const SEQ=[1,4,2,3,5,6,7,8,9,10],PR=S.cfg?[1,4,2,3,7,8,9]:[1,4,2,3,9];let pi=-1;if(n>0&&n<11)PR.forEach((s2,k)=>{if(SEQ.indexOf(s2)<=SEQ.indexOf(n))pi=k;});
+ return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n===5?`<div class="fh"><span></span><span></span><button class="skip" data-a="infskip">Salta</button></div>`:""}
+ ${pi>=0?`<div class="prog${n===5?"":" top"}">${PR.map((s2,k)=>k<pi||(k===pi&&s2!==n)?`<button class="on" data-a="pgo" data-n="${s2}" aria-label="Torna al pas ${k+1}"><i></i></button>`:`<span class="${k<=pi?"on":""}"><i></i></span>`).join("")}</div>`:""}
  <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}${n===3?permRow():""}</div>`:""}</div></div>`;}
 const ICT=[["Capità","capita_enciam"],["rebost","rebost"],["estris","eq_robot"],["menú","nav_menu"],["llista de la compra","icona_compra"],["La llista","icona_compra"],["Graner","nav_graner"],["tiquet","nav_puja_documents"],["despesa","nav_despesa"],["nevera","nav_que_cuino"],["configuració","GEAR"],["El Sortidor","sortidor_casa"],["espigues","espigues_regals"]];
 const GEARI=`<svg class="inic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>`;
@@ -493,7 +496,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
      PW1=PW2="";}
    if(S.onb===5&&S.inf<INFO.length-1){infGo(1);return;}
    if(S.onb===8&&MIC)MIC.stop();
-   goTo(S.onb===5?6:S.onb===8?9:S.onb+1);break;
+   goTo(S.onb===5?6:S.onb===8?9:S.onb===1?4:S.onb===4?2:S.onb===3?5:S.onb+1);break;
   case"emchg":S.acc=null;PW1=PW2="";render();break;
   case"pwforgot":toast("T'hem enviat un correu per canviar-la");break;
   case"eye":{const f=$("#"+t.dataset.t);if(f){f.type=f.type==="password"?"text":"password";t.textContent=f.type==="password"?"Mostra":"Amaga";}break;}
@@ -512,6 +515,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"install":if(BIP){BIP.prompt();BIP.userChoice.then(r=>{BIP=null;if(r.outcome==="accepted"){goTo(10);}});}break;
   case"codi":sheet(`<h3>Uneix-te a una família</h3><input class="tx" placeholder="Codi de 16 lletres"><button class="cta" data-a="sclose">Entra</button>`);break;
   case"addmem":S.mem.push("");render();break;
+  case"pgo":{if(S.onb===8&&MIC)MIC.stop();S.onb=+t.dataset.n;render();break;}
   case"pers":persOpen(+t.dataset.i);break;
   case"muchg":S.muni="";render();setTimeout(()=>{const m=$("#mq");if(m)m.focus();},60);break;
   case"geo":{if(!navigator.geolocation){toast("Aquest mòbil no dona la ubicació");break;}t.disabled=true;t.lastChild.textContent="Buscant on sou…";
