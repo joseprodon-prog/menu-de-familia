@@ -167,6 +167,27 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .sheet{animation:shUp .24s ease-out}
 @keyframes shUp{from{transform:translateY(100%)}to{transform:none}}
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}}
+.accbig{display:flex;justify-content:center;margin-top:4px}
+.accbig .pi{width:150px;height:150px;margin:0}
+.acch{text-align:center;font-size:32px;margin:6px 0 14px}
+.emfix{display:flex;align-items:center;justify-content:space-between;color:var(--ink);min-height:56px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:16px;background:#fff;padding:0 6px 0 16px;font-size:17px}
+.emfix span{overflow:hidden;text-overflow:ellipsis}
+.pwf{position:relative}
+.pwf .tx{padding-right:84px}
+.eye{background:none;border:0;color:var(--blue2);font:700 14px var(--body);padding:8px}
+.pwf .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%)}
+.drop{border-top:1.5px dashed var(--line);margin-top:14px;padding-top:12px;display:flex;flex-direction:column;gap:10px;animation:dropIn .25s ease-out}
+.drop h3{margin:0;font:700 19px var(--body);display:flex;align-items:center;gap:8px}
+.drop h3 i{font-style:normal;font-size:13px;font-weight:700;border-radius:99px;padding:2px 9px}
+.drop h3 i.n{background:var(--greensoft);color:#2f6b1f}
+.drop h3 i.e{background:#e6eef8;color:#17599a}
+.drop .lnk{flex-basis:auto;align-self:center;display:flex;justify-content:center}
+.req{display:flex;gap:8px;justify-content:center}
+.req b{font-size:13.5px;font-weight:600;background:#f1ede3;color:var(--mut);border-radius:99px;padding:3px 10px}
+.req b.ok{background:var(--greensoft);color:#2f6b1f}
+.req b.ok::before{content:"✓ "}
+@keyframes dropIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.drop{animation:none}}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -200,7 +221,17 @@ function onb(){const st=[
  ()=>`<div class="wel"><div class="welsky"><div class="welart"><img src="img/benvinguda_ovella.jpg" alt="" aria-hidden="true"></div></div>
    <div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p>
    <div class="welgrid">${[["nav_menu","Menús"],["icona_compra","Compra"],["nav_receptari","Receptes"],["nav_despesa","Despesa"]].map(([f,t])=>`<div class="welg">${PI(f)}<b>${t}</b></div>`).join("")}</div></div></div>`,
- ()=>`<h2>Crea el compte</h2><p class="mut">T'enviarem un enllaç per entrar, sense contrasenya.</p><input class="tx" id="em" type="email" inputmode="email" autocomplete="email" placeholder="el-teu@correu.cat" value="${esc(S.email)}">`,
+ ()=>{const eye=id=>`<button class="eye" data-a="eye" data-t="${id}">Mostra</button>`;
+   const top=`<div class="accbig">${PI("compte_bustia")}</div><h2 class="acch">El teu correu</h2>`;
+   if(!S.acc)return top+`<input class="tx" id="em" type="email" inputmode="email" autocomplete="email" placeholder="nom@correu.cat" value="${esc(S.email)}">`;
+   const em=`<div class="tx emfix"><span>${esc(S.email)}</span><button class="eye" data-a="emchg">Canvia</button></div>`;
+   if(S.acc==="nou")return top+em+`<div class="drop"><h3>Crea el compte <i class="n">nou</i></h3>
+     <div class="pwf"><input class="tx" id="pw1" type="password" autocomplete="new-password" placeholder="Contrasenya">${eye("pw1")}</div>
+     <div class="pwf"><input class="tx" id="pw2" type="password" autocomplete="new-password" placeholder="Repeteix la contrasenya">${eye("pw2")}</div>
+     <div class="req"><b id="rq1">8 caràcters</b><b id="rq2">Coincideixen</b></div></div>`;
+   return top+em+`<div class="drop"><h3>Hola de nou! <i class="e">ja tens compte</i></h3>
+     <div class="pwf"><input class="tx" id="pw1" type="password" autocomplete="current-password" placeholder="Contrasenya">${eye("pw1")}</div>
+     <button class="lnk" data-a="pwforgot">He oblidat la contrasenya</button></div>`;},
  ()=>`<h2>Qui sou a casa?</h2><p class="mut">El nom de la família i les persones que hi mengen.</p><input class="tx" id="fn" value="${esc(S.fam)}" aria-label="Nom de la família">
    <div class="stack">${S.mem.map((m,i)=>`<div class="mem"><input class="tx" data-mem="${i}" value="${esc(m)}" aria-label="Membre ${i+1}">${i?`<button data-a="delmem" data-i="${i}" aria-label="Treu">✕</button>`:""}</div>`).join("")}</div><button class="sec" data-a="addmem">＋ Afegeix una persona</button>`,
  ()=>`<h2>Hi ha alguna cosa que no podeu menjar?</h2><p class="mut">Al·lèrgies o intoleràncies de qualsevol de vosaltres. Ho podreu detallar per a cada persona més endavant a <svg class="ingear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>.</p>
@@ -225,7 +256,7 @@ function onb(){const st=[
    <button class="tcard" data-a="m1no"><img src="img/icona_menu.png" alt=""><span><b>No, més tard</b><small>Entreu a l'app i ho feu quan vulgueu</small></span></button></div>`,
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
  const n=S.onb,ok=okStep(n);
- const lab=["Comencem","Envia l'enllaç","Següent","Següent","Següent",S.inf<INFO.length-1?"Següent":"Som-hi","","Següent","Següent","Ja està","",""][n];
+ const lab=["Comencem",!S.acc?"Continua":S.acc==="nou"?"Crea el compte":"Entra","Següent","Següent","Següent",S.inf<INFO.length-1?"Següent":"Som-hi","","Següent","Següent","Ja està","",""][n];
  const PR=S.cfg?[1,2,3,4,7,8,9]:[1,2,3,4,9],pi=PR.indexOf(n);
  return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n?`<div class="fh">${n<11?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span>${n===5?`<button class="skip" data-a="infskip">Salta</button>`:"<span></span>"}</div>`:""}
  ${pi>=0?`<div class="prog">${PR.map((s,k)=>`<i class="${k<=pi?"on":""}"></i>`).join("")}</div>`:""}
@@ -235,7 +266,9 @@ const GEARI=`<svg class="inic" viewBox="0 0 24 24" aria-hidden="true"><circle cx
 function ICX(s){const used=new Set();return ICT.reduce((t,[w,f])=>{if(used.has(f))return t;const i=t.indexOf(w);if(i<0)return t;used.add(f);return t.slice(0,i)+`<span class="icw">${f==="GEAR"?GEARI:`<img class="inic" src="img/${f}.png" alt="">`}${w}</span>`+t.slice(i+w.length);},s);}
 function addBox(k){if(S.addk!==k)return `<button class="opt add" data-a="addopen" data-k="${k}">${PI("afegeix")}Afegeix-hi més coses</button>`;
  return `<div class="addbx"><input class="tx" id="addin" placeholder="${k==="eq"?"Per exemple: iogurtera":"Per exemple: api"}" autocomplete="off"><button class="cta" data-a="addok" data-k="${k}">Afegeix</button></div>`;}
-function okStep(n){return [1,/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
+let PW1="",PW2="";
+function updPw(){const a=$("#rq1"),b=$("#rq2");if(a)a.className=PW1.length>=8?"ok":"";if(b)b.className=PW2&&PW1===PW2?"ok":"";const c=document.querySelector(".ff .cta");if(c)c.disabled=!okStep(1);}
+function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
 const EQUIP=[["Forn","eq_forn"],["Microones","eq_microones"],["Vitroceràmica","eq_vitro"],["Inducció","eq_induccio"],["Foc de gas","eq_gas"],["Thermomix o robot de cuina","eq_robot"],["Fregidora d'aire","eq_fregidora"],["Olla exprés","eq_olla"],["Batedora","eq_batedora"],["Sandvitxera","eq_sandvitxera"],["Torradora","eq_torradora"],["Barbacoa","eq_barbacoa"]];
@@ -316,7 +349,7 @@ const rows=L=>`<div class="card" style="padding:4px 12px">${L.map(([i,t,r])=>`<b
 
 /* ---------- Esdeveniments ---------- */
 document.addEventListener("input",()=>setTimeout(saveS,0));document.addEventListener("change",e=>{if(e.target.id==="rbfoto"){FOTOS=[...FOTOS,...[...e.target.files].map(f=>URL.createObjectURL(f))].slice(0,6);render();}});addEventListener("pagehide",saveS);document.addEventListener("keydown",e=>{if(e.target.id==="addin"&&e.key==="Enter"){e.preventDefault();const b=document.querySelector("[data-a=addok]");if(b)b.click();}});
-document.addEventListener("input",e=>{const t=e.target;if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
+document.addEventListener("input",e=>{const t=e.target;if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
  if(t.id==="pa"){S.pais=t.value;const pv=provs();S.prov=pv.length===1?pv[0][0]:"";S.muni="";render();return;}
  if(t.id==="pr"){S.prov=t.value;S.muni="";render();setTimeout(()=>{const m=$("#mu");if(m)m.focus();},50);return;}
  if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
@@ -336,9 +369,17 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
  if(t.dataset.alt){const[i,j,...x]=t.dataset.alt.split(":");S.menu[+i][+j]=x.join(":");close();render();return;}
  switch(a){
   case"onext":if(S.onb>=10)return;
+   if(S.onb===1){let L=[];try{L=JSON.parse(localStorage.getItem("mf_accts")||"[]")}catch(e){}
+     if(!S.acc){S.acc=L.includes(S.email.trim().toLowerCase())?"existent":"nou";PW1=PW2="";render();setTimeout(()=>{const f=$("#pw1");if(f)f.focus();},50);return;}
+     if(S.acc==="nou"){L.push(S.email.trim().toLowerCase());try{localStorage.setItem("mf_accts",JSON.stringify(L))}catch(e){}}
+     else{S.acc=null;PW1=PW2="";S.onb=99;render();toast("Hola de nou!");return;}
+     PW1=PW2="";}
    if(S.onb===5&&S.inf<INFO.length-1){infGo(1);return;}
    if(S.onb===8&&MIC)MIC.stop();
    goTo(S.onb===5?6:S.onb===8?9:S.onb+1);break;
+  case"emchg":S.acc=null;PW1=PW2="";render();break;
+  case"pwforgot":toast("T'hem enviat un correu per canviar-la");break;
+  case"eye":{const f=$("#"+t.dataset.t);if(f){f.type=f.type==="password"?"text":"password";t.textContent=f.type==="password"?"Mostra":"Amaga";}break;}
   case"oback":if(S.onb===5&&S.inf>0){infGo(-1);return;}if(S.onb===8&&MIC)MIC.stop();S.onb=S.onb===10?(STANDALONE?(S.cfg?8:6):9):S.onb===9?(S.cfg?8:6):S.onb===7?6:S.onb===6?5:Math.max(0,S.onb-1);render();break;
   case"addopen":S.addk=t.dataset.k;render();setTimeout(()=>{const i=$("#addin");if(i)i.focus();},50);break;
   case"addok":{const v=($("#addin")||{}).value;const x=(v||"").trim();if(x){x.charAt(0);const y=x.charAt(0).toUpperCase()+x.slice(1);const base=t.dataset.k==="eq"?EQUIP.map(e=>e[0]):ALG;const ex=base.find(e=>norm(e)===norm(y));if(ex){if(t.dataset.k==="eq"){if(!S.equip.includes(ex))S.equip.push(ex);}else{if(!S.alg.includes(ex))S.alg.push(ex);S.res=false;}S.addk="";render();break;}if(t.dataset.k==="eq"){if(!S.equipx.includes(y))S.equipx.push(y);if(!S.equip.includes(y))S.equip.push(y);}else{if(!S.algx.includes(y))S.algx.push(y);if(!S.alg.includes(y))S.alg.push(y);S.res=false;}}S.addk="";render();}break;
