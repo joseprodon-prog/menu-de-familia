@@ -144,7 +144,7 @@ function render(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
 
 /* ---------- A · Primer inici ---------- */
 function onb(){const st=[
- ()=>`<div class="wel"><div class="welsky"><div class="welart"><img src="img/benvinguda_veinat.png" alt="" aria-hidden="true"></div></div>
+ ()=>`<div class="wel"><div class="welsky"><div class="welart"><img src="img/benvinguda_veinat.jpg" alt="" aria-hidden="true"></div></div>
    <div class="welbody"><h1>Menú de Família</h1><p class="mut">Tot el que passa a la cuina de casa, en un sol lloc.</p>
    <div class="welist">${[[PI("icona_menu"),"El menú de cada setmana","Pensat per a qui menja a casa i la temporada"],[PI("icona_compra"),"La compra feta","La llista surt sola, amb el que ja teniu al rebost"],[PI("icona_receptes"),"Les vostres receptes","Les de la família i les del Graner de totes les famílies"],[PI("icona_despesa"),"La despesa sota control","Què gasteu cada mes i a quines botigues podeu comprar"]].map(([i,t,d])=>`<div class="welit"><span class="welic">${i}</span><div><b>${t}</b><small>${d}</small></div></div>`).join("")}</div></div></div>`,
  ()=>`<h2>Crea el compte</h2><p class="mut">T'enviarem un enllaç per entrar, sense contrasenya.</p><input class="tx" id="em" type="email" inputmode="email" autocomplete="email" placeholder="el-teu@correu.cat" value="${esc(S.email)}">`,
