@@ -165,10 +165,12 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .welg b{font-size:18px}
 .welq{font:700 28px var(--disp);margin:22px 0 10px}
 .welmu{width:100%;text-align:left}
+.cfgl .row .pi{width:40px;height:40px}.cfgl .row b{flex:1;font-size:17px}.cfgl .row .r{color:var(--mut);font-size:14px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cfgsh .accbig .pi{width:110px;height:110px}.cfgsh .acch{font-size:27px;margin-bottom:10px}.cfgsh .ffin{padding:4px 0 8px}
 .prog.hov{position:absolute;left:0;right:0;top:0;z-index:3}.prog.hov i{background:rgba(255,255,255,.75)}.prog.hov .on i{background:var(--green)}
 .welbody.hb{text-align:left;align-items:stretch;gap:0}.welbody.hb .acch{margin-top:0}
 .hva .accbig{display:none}.hva .welbody.hb{margin-top:-20px}
-.hvb .welsky{height:170px}.hvb .accbig{margin-top:-70px}.hvb .accbig .pi{width:120px;height:120px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18))}.hvb .welbody.hb{margin-top:0}
+
 .lnk{background:none;border:0;color:var(--blue2);font:600 16px var(--body);text-decoration:underline;text-underline-offset:3px;padding:6px;flex-basis:100%;text-align:center}
 .ff{flex-wrap:wrap}
 .ff .lnk{flex:0 0 100%;text-align:center;justify-content:center;display:flex}
@@ -293,7 +295,7 @@ let S={onb:0,email:"",fam:"Rodon Aymar",mem:["Josep","Lídia","Josep","Marina"],
 try{const sv=JSON.parse(localStorage.getItem("mf_nova")||"null");if(sv){if(!sv.memx&&sv.mem)sv.memx=sv.mem.map((m,i)=>({b:"",g:"n",c:i%8}));if(sv.memx)sv.memx.forEach(x=>{if(x.b===undefined)x.b="";delete x.e;});Object.assign(S,sv);if(S.onb>=10)S.onb=99;S.algx=(S.algx||[]).filter(x=>!["Gluten","Lactosa","Fruits secs","Marisc","Ou","Peix","Soja","Porc"].some(a=>a.toLowerCase()===x.toLowerCase()));S.equipx=(S.equipx||[]).filter(x=>x.toLowerCase()!=="torradora");S.flow=null;}}catch(e){}
 function saveS(){if(window._noSave)return;try{localStorage.setItem("mf_nova",JSON.stringify(S));}catch(e){}}
 
-function render(){setTimeout(fitFam,0);const _ag=[...document.querySelectorAll("#app > :not(.dim) .agr")].map(e=>e.scrollTop);const _k=S.onb<99?"o"+S.onb:"t"+S.tab+(S.flow?"f"+S.step:""),_e=document.querySelector(".fb")||document.querySelector(".scr"),_t=_e&&_e.scrollTop;render0();saveS();document.querySelectorAll("#app > :not(.dim) .agr").forEach((e,i)=>{if(_ag[i])e.scrollTop=_ag[i];});if(_e&&_k===render._k){const e=document.querySelector(".fb")||document.querySelector(".scr");if(e)e.scrollTop=_t;}render._k=_k;}
+function render(){setTimeout(fitFam,0);const _ag=[...document.querySelectorAll("#app > :not(.dim) .agr")].map(e=>e.scrollTop);const _k=S.onb<99?"o"+S.onb:"t"+S.tab+(S.flow?"f"+S.step:""),_e=document.querySelector(".fb")||document.querySelector(".scr"),_t=_e&&_e.scrollTop;render0();saveS();document.querySelectorAll("#app > :not(.dim) .agr").forEach((e,i)=>{if(_ag[i])e.scrollTop=_ag[i];});if(_e&&_k===render._k){const e=document.querySelector(".fb")||document.querySelector(".scr");if(e)e.scrollTop=_t;}render._k=_k;if(S.onb>=99&&CFG>=0&&!cfgRef()&&!document.querySelector(".dim"))cfgOpen();}
 function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
  a.innerHTML=`<div class="top"><b>${esc(S.fam)}<small style="display:block;font:600 11px var(--body);opacity:.8">Versió de prova · dades d'exemple</small></b><button class="pillb" data-a="joc" aria-label="Joc, botiga i veïnat: 175 espigues">${IC.hudsilo}175 🌾</button><button class="gear" data-a="conf" aria-label="Configuració"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg></button></div>
  <div class="scr">${({setmana:tSet,compra:tCompra,receptes:tRec,despesa:tDesp})[S.tab]()}</div>
@@ -302,7 +304,7 @@ function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
  ${S.flow?flowB():""}`;}
 
 /* ---------- A · Primer inici ---------- */
-function onb(){const st=[
+function stepH(n){const st=[
  ()=>`<div class="wel">${welSky()}
    <div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p>
    <div class="welgrid">${[["nav_menu","Menús"],["icona_compra","Compra"],["nav_receptari","Receptes"],["nav_despesa","Despesa"]].map(([f,t])=>`<div class="welg">${PI(f)}<b>${t}</b></div>`).join("")}</div></div></div>`,
@@ -340,12 +342,13 @@ function onb(){const st=[
    <button class="tcard" data-a="m1si"><img src="img/capita_enciam.png" alt=""><span><b>Sí, ara</b><small>Qui hi serà, el menú i la llista</small></span></button>
    <button class="tcard" data-a="m1no"><img src="img/icona_menu.png" alt=""><span><b>No, més tard</b><small>Entreu a l'app i ho feu quan vulgueu</small></span></button></div>`,
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
- const n=S.onb,ok=okStep(n);
+ return st[n]();}
+function onb(){const n=S.onb,ok=okStep(n);
  const lab=["Comencem",!S.acc?"Continua":S.acc==="nou"?"Crea el compte":"Entra","Següent","Següent","Següent",S.inf<INFO.length-1?"Següent":"Som-hi","","Següent","Següent","Ja està","",""][n];
  const SEQ=[4,1,2,3,5,6,7,8,9,10],PR=S.cfg?[4,1,2,3,7,8,9]:[4,1,2,3,9];if(SEQ.indexOf(n)>(S.vis??-1))S.vis=SEQ.indexOf(n);let pi=-1;if(n>0&&n<11)PR.forEach((s2,k)=>{if(SEQ.indexOf(s2)<=SEQ.indexOf(n))pi=k;});
  return `<div class="flow" style="position:relative;flex:1;${n===0||n===4||(HV&&[1,2,3].includes(n))?"background:var(--crema)":""}">${n===5?`<div class="fh"><span></span><span></span><button class="skip" data-a="infskip">Salta</button></div>`:""}
  ${pi>=0&&n!==4?`<div class="prog${n===5?"":" top"}${HV&&[1,2,3].includes(n)?" hov":""}">${PR.map((s2,k)=>{const back=k<pi||(k===pi&&s2!==n),fw=k>pi&&SEQ.indexOf(s2)<=S.vis&&PR.slice(pi,k).every(stDone)&&(PR[pi]===n||okStep(n));return back||fw?`<button class="on" data-a="pgo" data-n="${s2}" aria-label="Ves al pas ${k+1}"><i></i></button>`:`<span class="${k<=pi?"on":""}"><i></i></span>`;}).join("")}</div>`:""}
- <div class="fb">${HV&&[1,2,3].includes(n)?`<div class="wel hv${HV}">${welSky()}<div class="welbody hb">${st[n]()}</div></div>`:st[n]()}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}${n===3?permRow():""}</div>`:""}</div></div>`;}
+ <div class="fb">${HV&&[1,2,3].includes(n)?`<div class="wel hv${HV}">${welSky()}<div class="welbody hb">${stepH(n)}</div></div>`:stepH(n)}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}${n===3?permRow():""}</div>`:""}</div></div>`;}
 const ICT=[["Capità","capita_enciam"],["rebost","rebost"],["estris","eq_robot"],["menú","nav_menu"],["llista de la compra","icona_compra"],["La llista","icona_compra"],["Graner","nav_graner"],["tiquet","nav_puja_documents"],["despesa","nav_despesa"],["nevera","nav_que_cuino"],["configuració","GEAR"],["El Sortidor","sortidor_casa"],["espigues","espigues_regals"]];
 const GEARI=`<svg class="inic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>`;
 function ICX(s){const used=new Set();return ICT.reduce((t,[w,f])=>{if(used.has(f))return t;const i=t.indexOf(w);if(i<0)return t;used.add(f);return t.slice(0,i)+`<span class="icw">${f==="GEAR"?GEARI:`<img class="inic" src="img/${f}.png" alt="">`}${w}</span>`+t.slice(i+w.length);},s);}
@@ -388,7 +391,14 @@ function muniB(){loadMU();const top="";
   if(muniOk())return top+`<button class="found" data-a="muchg" aria-label="Canvia el poble: ${esc(S.muni)}"><div><b>${esc(S.muni)}</b><small>${S.prov==="ma"?"Escrit a mà":esc(provName())+" · "+esc(S.pais)}</small></div><span class="ok">✓</span></button>`;
   return top+`<button class="geo" data-a="geo"><b></b>Fes servir la meva ubicació</button><div class="or2">o escriu el poble</div><input class="tx srchi" id="mq" placeholder="Poble o ciutat" value="${esc(MQ)}" autocomplete="off" autocapitalize="words"><div class="sug" id="mql">${mqL()}</div>`;}
 function welSky(){return `<div class="welsky"><div class="welart"><img src="img/benvinguda_ovella.jpg" alt="" aria-hidden="true"></div></div>`;}
-let HV=(new URLSearchParams(location.search).get("prova")||"").replace(/[^ab]/g,"").slice(0,1);
+let CFG=-1;
+const CFGL=[[4,"hud_veinat","On viviu",()=>S.muni||""],[1,"compte_bustia","El compte",()=>S.email||""],[2,"familia_taula","Qui seu a taula",()=>S.mem.filter(m=>m.trim()).length+" persones"],[3,"alg_afegit","Què no podeu menjar",()=>{if(S.res)return "Ho mengem tot";const k=S.alg.length+(S.memx||[]).reduce((a,x)=>a+((x.alg||[]).length),0);return k?k+(k===1?" cosa":" coses"):"";}],[7,"eq_robot","Estris de cuina",()=>S.equip.length?S.equip.length+(S.equip.length===1?" estri":" estris"):""],[8,"rebost","El rebost",()=>""],[9,"app-192","Pantalla d'inici",()=>""]];
+function cfgH(n){if(n===4)return `<div class="accbig">${PI("hud_veinat")}</div><h2 class="acch">On viviu?</h2>${muniB()}`;if(n===1)return `<div class="accbig">${PI("compte_bustia")}</div><h2 class="acch">El compte</h2><div class="tx emfix"><span>${esc(S.email||"—")}</span></div><button class="sec" data-a="pwchg">Canvia la contrasenya</button>`;
+ if(n===7||n===8)return `<div class="cfgx">${stepH(n)}</div>`;
+ return stepH(n)+(n===3?`<div class="ff ffin">${permRow()}</div>`:"");}
+function cfgRef(){const sh=document.querySelector(".dim .sheet.cfgsh");if(!sh)return false;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",cfgH(CFG));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;setTimeout(fitFam,0);return true;}
+function cfgOpen(){const k=CFG;sheet(cfgH(k));CFG=k;const sh=document.querySelector(".dim .sheet");if(sh)sh.classList.add("cfgsh");SHCB=()=>{CFG=-1;};setTimeout(fitFam,0);}
+let HV="a";
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
@@ -423,7 +433,7 @@ function a2hs(){
  if(IOS)return `<div class="card stack"><div class="stp"><b>1</b><span>Toca el botó ${SHARE_SVG} <b>Comparteix</b> de Safari (a baix o a dalt de tot).</span></div><div class="stp"><b>2</b><span>Baixa i tria <b>Afegeix a la pantalla d'inici</b>.</span></div><div class="stp"><b>3</b><span>Toca <b>Afegeix</b> i obre l'app des de la icona nova.</span></div></div>${link}`;
  return `<div class="card stack"><div class="stp"><b>1</b><span>Toca el menú <b>⋮</b> del navegador.</span></div><div class="stp"><b>2</b><span>Tria <b>Afegeix a la pantalla d'inici</b> o <b>Instal·la l'app</b>.</span></div></div>${link}`;}
 const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g," ").trim();
-let MU=null;function loadMU(){if(MU||loadMU.p)return;loadMU.p=fetch("municipis.json").then(r=>r.json()).then(j=>{MU=j;if(!S.prov){const pv=provs();if(pv.length===1)S.prov=pv[0][0];}if(S.onb===4)render();}).catch(()=>{loadMU.p=null;});}
+let MU=null;function loadMU(){if(MU||loadMU.p)return;loadMU.p=fetch("municipis.json").then(r=>r.json()).then(j=>{MU=j;if(!S.prov){const pv=provs();if(pv.length===1)S.prov=pv[0][0];}if(S.onb===4||CFG===4)render();}).catch(()=>{loadMU.p=null;});}
 function provs(){return MU?(MU.c.find(c=>c[0]===S.pais)||MU.c[0])[1]:[];}
 function muniOk(){if(S.prov==="ma")return !!(S.muni||"").trim();return !!(MU&&S.prov&&(MU.m[S.prov]||[]).includes(S.muni));}
 const LANDQ=matchMedia("(orientation: landscape) and (max-height: 560px)");let ROT=LANDQ.matches;
@@ -466,7 +476,7 @@ function flowB(){const st=S.step,t=["Qui hi serà?","El menú","La llista"][st];
  return `<div class="flow"><div class="fh"><button class="rb" data-a="fback" aria-label="Enrere">‹</button><b>${t}</b><button class="rb" data-a="fclose" aria-label="Tanca">✕</button></div><div class="prog">${[0,1,2].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div><div class="fb">${b}</div><div class="ff"><button class="cta" data-a="fnext" ${st===1&&!S.menu?"disabled":""}>${lab}</button></div></div>`;}
 
 /* ---------- Fulls inferiors ---------- */
-function sheet(h){close();const d=document.createElement("div");d.className="dim";d.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grabz" aria-label="Llisca avall per tancar"><div class="grab"></div></div>${h}</div>`;d.addEventListener("click",e=>{if(e.target===d)shut(d);});$("#app").appendChild(d);dragSheet(d);}
+function sheet(h){const _c=CFG;close();CFG=_c;const d=document.createElement("div");d.className="dim";d.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grabz" aria-label="Llisca avall per tancar"><div class="grab"></div></div>${h}</div>`;d.addEventListener("click",e=>{if(e.target===d)shut(d);});$("#app").appendChild(d);dragSheet(d);}
 function shut(d){if(SHCB){const cb=SHCB;SHCB=null;setTimeout(cb,230);}const sh=d.querySelector(".sheet");sh.style.transition="transform .22s ease-in";sh.style.transform="translateY(110%)";d.style.transition="background .22s";d.style.background="transparent";setTimeout(()=>d.remove(),220);}
 function dragSheet(d){const sh=d.querySelector(".sheet");let y0=null,dy=0,t0=0;
  const start=e=>{const top=e.target.closest(".grabz");if(!top&&sh.scrollTop>0)return;y0=e.touches?e.touches[0].clientY:e.clientY;t0=Date.now();dy=0;sh.style.transition="none";};
@@ -551,7 +561,9 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"fnext":if(S.step===0){S.step=1;S.menu=null;render();setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.menu=MENU0.map((r,i)=>r.map((x,j)=>S.disp[i][j].length?x:"—"));render();},1700);}
    else if(S.step===1){S.step=2;render();}else{S.flow=null;S.ready=true;S.tab="setmana";render();toast("Llista compartida ✓");}break;
   case"sclose":close();break;
-  case"conf":sheet(`<h3>Configuració</h3>${rows([["👨‍👩‍👧","Membres i gustos",S.mem.length+" persones"],["📍","Municipi",S.muni||"—"],["🍳","Equipament de cuina",""],["💶","Pressupost setmanal",""],["🧭","Apartats de l'app","4 de 4"],["🔔","Avisos","Diumenge"]])}${rows([["🚪","Surt d'aquesta família",""],["🗑️","Esborra el compte",""]])}<button class="sec" data-a="reset">Torna a començar (versió de prova)</button>`);break;
+  case"conf":CFG=-1;sheet(`<h3>Configuració</h3><div class="cfgl">${CFGL.map(([n,f,t,v])=>`<button class="row" data-a="cfgo" data-n="${n}">${PI(f)}<b>${t}</b><span class="r">${esc(v())} ›</span></button>`).join("")}</div>${rows([["💶","Pressupost setmanal",""],["🧭","Apartats de l'app","4 de 4"],["🔔","Avisos","Diumenge"]])}${rows([["🚪","Surt d'aquesta família",""],["🗑️","Esborra el compte",""]])}<button class="sec" data-a="reset">Torna a començar (versió de prova)</button>`);break;
+  case"cfgo":CFG=+t.dataset.n;cfgOpen();break;
+  case"pwchg":toast("T'enviarem un correu per canviar-la");break;
   case"reset":window._noSave=true;try{localStorage.removeItem("mf_nova");localStorage.removeItem("mf_accts");}catch(e){}location.reload();break;
   case"joc":sheet(`<h3>L'hort</h3><p class="mut">175 espigues · Nivell 2</p>${rows([[IC.hudsilo,"El paller","175 🌾"],[IC.shopico,"Botiga d'El Sortidor",""],[IC.veiico,"El veïnat","Teià"]])}`);break;
   case"capita":sheet(`<h3 style="display:flex;align-items:center;gap:8px"><img src="img/capita_enciam.png" alt="" style="width:28px;height:28px">Capità Enciam</h3><div class="card">Què vols saber? Puc canviar plats del menú, explicar-te una recepta o dir-te què fer amb el que teniu.</div><div class="chips"><span class="chip">Què sopem avui?</span><span class="chip">Canvia el dinar de dimarts</span><span class="chip">Tinc carbassa: idees?</span></div><input class="tx" placeholder="Escriu o dicta…"><button class="row" data-a="nop" style="border:0"><b>💬 Parla amb l'Hortolà</b><span class="r">Sembradors ›</span></button>`);break;
