@@ -168,6 +168,18 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .algh{font-size:28px!important;margin:-6px 0 0!important}
 .agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
 .at2.mes{color:#2f6b1f}
+.mrow{display:flex;align-items:center;gap:4px}.mrow .dd{flex:1;min-width:0}
+.mok{flex:none;width:24px;height:24px;min-height:0;border-radius:50%;border:2px solid #cfc2a0;background:#fff;padding:0;box-shadow:none;font:800 13px var(--body);color:#fff;display:grid;place-items:center}.mok.on{background:var(--green);border-color:var(--green)}
+@media (max-height:720px){.mc{font-size:12.5px;padding:3px 6px;min-height:40px;gap:1px}.mok{width:20px;height:20px}.mib img{width:58px!important;height:58px!important}.mgr{gap:3px}}
+.mft{gap:18px;justify-content:center;padding-right:84px}.mib{background:none;border:0;padding:0;min-height:0;height:auto;box-shadow:none}.mib img{width:74px;height:74px;display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.2))}
+
+.mgr{display:grid;grid-template-columns:24px 1fr 1fr;gap:5px;align-items:stretch;overflow:auto;min-height:0;flex:1 1 auto;align-content:start}.mgr>b{font:700 12.5px var(--body);color:var(--mut);align-self:center}
+.mc{display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff8e8;border-radius:12px;padding:5px 8px;min-height:48px;font-size:13.5px;font-weight:600;line-height:1.15}.mc.no{align-items:center;color:#b9a87c;font-weight:700;background:none;border:2px dashed #e3d6b2}
+.dd{margin:-2px -4px;padding:2px 4px;border-radius:8px;display:flex;gap:5px;align-items:baseline;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}.dd u{text-decoration:none;font-size:10.5px;font-weight:800;color:#b9a87c;flex:none}.dd.off span{opacity:.35;text-decoration:line-through}.dd.drag{opacity:.3}.dd.over{background:#dbe8f6;box-shadow:0 0 0 2px var(--blue2)}
+.ghost{position:fixed;pointer-events:none;z-index:99;background:#fff;border-radius:10px;padding:6px 10px;font:600 14px var(--body);box-shadow:0 8px 20px rgba(0,0,0,.3);transform:translate(-50%,-120%)}
+.fll{position:relative;margin-left:34px;height:42px;min-height:0;border:0;border-radius:21px;background:var(--blue);color:#fff;font:700 17px var(--body);padding:0 22px 0 52px;box-shadow:none;display:flex;align-items:center}.fll img{position:absolute;left:-34px;top:50%;transform:translateY(-50%);width:80px;height:80px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.25))}
+.qft{min-height:64px;align-items:center}
+
 .qhero{height:min(190px,24vh);flex:none;overflow:hidden;position:relative}.qhero img{width:100%;height:100%;object-fit:cover;object-position:50% 62%;-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20390%20170%22%20preserveAspectRatio%3D%22none%22%3E%3Cfilter%20id%3D%22b%22%20x%3D%22-20%25%22%20y%3D%22-20%25%22%20width%3D%22140%25%22%20height%3D%22140%25%22%3E%3CfeGaussianBlur%20stdDeviation%3D%226%22/%3E%3C/filter%3E%3Cpolygon%20points%3D%22-40%2C-40%20430%2C-40%20430%2C156%20212%2C134%20-40%2C152%22%20fill%3D%22%23fff%22%20filter%3D%22url%28%23b%29%22/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20390%20170%22%20preserveAspectRatio%3D%22none%22%3E%3Cfilter%20id%3D%22b%22%20x%3D%22-20%25%22%20y%3D%22-20%25%22%20width%3D%22140%25%22%20height%3D%22140%25%22%3E%3CfeGaussianBlur%20stdDeviation%3D%226%22/%3E%3C/filter%3E%3Cpolygon%20points%3D%22-40%2C-40%20430%2C-40%20430%2C156%20212%2C134%20-40%2C152%22%20fill%3D%22%23fff%22%20filter%3D%22url%28%23b%29%22/%3E%3C/svg%3E");-webkit-mask-size:100% 100%;mask-size:100% 100%}
 .qtt{position:absolute;left:0;right:0;bottom:4px;margin:0;text-align:center;font:700 32px var(--disp);text-shadow:0 0 10px var(--crema),0 0 18px var(--crema),0 0 4px var(--crema)}
 .qbd{flex:1;display:flex;flex-direction:column;gap:8px;padding:2px 12px 14px;min-height:0}
@@ -364,7 +376,7 @@ function avgFit(){const g=document.querySelector("#app .fb .avg, #app .fb .agm")
 function render(){setTimeout(fitFam,0);setTimeout(ovFit,0);setTimeout(avgFit,0);const _ag=[...document.querySelectorAll("#app > :not(.dim) .agr")].map(e=>e.scrollTop);const _k=S.onb<99?"o"+S.onb:"t"+S.tab+(S.flow?"f"+S.step:""),_e=document.querySelector(".fb")||document.querySelector(".scr"),_t=_e&&_e.scrollTop;render0();saveS();document.querySelectorAll("#app > :not(.dim) .agr").forEach((e,i)=>{if(_ag[i])e.scrollTop=_ag[i];});if(_e&&_k===render._k){const e=document.querySelector(".fb")||document.querySelector(".scr");if(e)e.scrollTop=_t;}render._k=_k;if(S.onb>=99&&CFG>=0&&!cfgRef()&&!document.querySelector(".dim"))cfgOpen();}
 function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
  if(!S.tab||S.tab==="cuina"){a.innerHTML=cuinaH()+(S.flow?flowB():"");return;}
- if(S.tab==="setmana"&&!S.ready){a.innerHTML=quiH()+(S.flow?flowB():"");return;}
+ if(S.tab==="setmana"&&!S.ready){a.innerHTML=(S.mview&&S.m2?menuH():quiH())+(S.flow?flowB():"");return;}
  a.innerHTML=`<div class="top"><b>${esc(S.fam)}<small style="display:block;font:600 11px var(--body);opacity:.8">Versió de prova · dades d'exemple</small></b><button class="pillb" data-a="joc" aria-label="Joc, botiga i veïnat: 175 espigues">${IC.hudsilo}175</button><button class="gear" data-tab="cuina" aria-label="A l'inici"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><path d="M6.5 11.6 12 7l5.5 4.6M8.2 10.3V17h2.9v-3.6h1.8V17h2.9v-6.7" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
  <div class="scr">${({setmana:tSet,compra:tCompra,receptes:tRec,despesa:tDesp})[S.tab]()}</div>
  <button class="cap" data-a="capita" aria-label="Pregunta al Capità Enciam"><img src="img/capita_enciam.png" alt=""></button>
@@ -502,7 +514,22 @@ function quiH(){initDisp();const q=Math.min(QSEL,S.mem.length-1),c=mcol(q);
  return `<div class="kc qv"><div class="khdr"><button class="kesp" data-a="joc" aria-label="Espigues: 175"><img src="img/hud_sitja.png" alt="">175</button><button class="gear" data-tab="cuina" aria-label="A l'inici"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><path d="M6.5 11.6 12 7l5.5 4.6M8.2 10.3V17h2.9v-3.6h1.8V17h2.9v-6.7" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="qhero"><img src="img/taula_hero.jpg" alt=""><h2 class="qtt">Qui vindrà?</h2></div>
  <div class="qbd">${who}${pw}<div class="qov">${ov}</div><div class="qft"><button class="cta" data-a="fesmenu">Fes el menú</button></div></div>
  <button class="cap" data-a="capita" aria-label="Pregunta al Capità Enciam"><img src="img/capita_enciam.png" alt=""></button></div>`;}
-function genMenu(){initDisp();S.flow=1;S.step=1;S.menu=null;render();setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.menu=MENU0.map((r,i)=>r.map((x,j)=>S.disp[i][j].length?x:"—"));render();},1700);}
+function genMenu(){initDisp();S.m2=JSON.parse(JSON.stringify(MENU2));S.moff=[];S.mok=[];S.menu=MENU0.map((r,i)=>r.map((x,j)=>S.disp[i][j].length?x:"—"));S.mview=1;render();}
+const MENU2=[[["Llenties estofades","Truita de carbassó"],["Crema de carbassa","Lluç a la planxa"]],[["Amanida verda","Arròs de verdures"],["Sopa de galets","Pollastre a la planxa"]],[["Cigrons amb espinacs","Bacallà al forn"],["Escudella","Carn d'olla"]],[["Mongetes amb pernil","Pollastre al forn"],["Amanida de cigrons","Truita francesa"]],[["Macarrons","Llom arrebossat"],["Sopa de peix","Calamars"]],[["Fideuà","Fruita"],["Verdura al vapor","Croquetes"]],[["Canelons","Rostit"],["Pa amb tomàquet","Embotit"]]];
+function menuH(){const D=S.m2;let g=`<span></span><span class="qoh"><img src="img/ic_sol.png" alt="Dinar"></span><span class="qoh"><img src="img/ic_lluna.png" alt="Sopar"></span>`;
+ DIES.forEach((d,i)=>{g+=`<b>${d}</b>`;[0,1].forEach(j=>{if(!S.disp[i][j].length){g+=`<span class="mc no">fora</span>`;return;}g+=`<span class="mc">${D[i][j].map((x,k)=>`<div class="mrow"><p class="dd${(S.moff||[]).includes(i+":"+j+":"+k)?" off":""}" data-dd="${i}:${j}:${k}"><u>${k?"2n":"1r"}</u><span>${esc(x)}</span></p><button class="mok${(S.mok||[]).includes(i+":"+j+":"+k)?" on":""}" data-mok="${i}:${j}:${k}" aria-label="Valida o canvia">${(S.mok||[]).includes(i+":"+j+":"+k)?"✓":""}</button></div>`).join("")}</span>`;});});
+ return `<div class="kc qv"><div class="khdr"><button class="kesp" data-a="joc" aria-label="Espigues: 175"><img src="img/hud_sitja.png" alt="">175</button><button class="gear" data-tab="cuina" aria-label="A l'inici"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><path d="M6.5 11.6 12 7l5.5 4.6M8.2 10.3V17h2.9v-3.6h1.8V17h2.9v-6.7" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="qhero"><img src="img/taula_hero.jpg" alt=""><h2 class="qtt">El menú</h2></div>
+ <div class="qbd"><div class="mgr">${g}</div><div class="qft mft"><button class="mib" data-a="fesllista" aria-label="Fes la llista de la compra"><img src="img/icona_compra.png" alt=""></button><button class="mib" data-a="batch" aria-label="Planifica el cuinat de la setmana"><img src="img/batch_cooking.png" alt=""></button></div></div>
+ <button class="cap" data-a="capita" aria-label="Pregunta al Capità Enciam"><img src="img/capita_enciam.png" alt=""></button></div>`;}
+(()=>{let src=null,gh=null,tm=null,mv=false,sx=0,sy=0;const at=e=>{const el=document.elementFromPoint(e.clientX,e.clientY);return el&&el.closest(".dd");};
+ const start=()=>{mv=true;src.classList.add("drag");gh=document.createElement("div");gh.className="ghost";gh.textContent=src.querySelector("span").textContent;document.body.appendChild(gh);};
+ document.addEventListener("pointerdown",e=>{const d=e.target.closest(".dd");if(!d)return;src=d;mv=false;sx=e.clientX;sy=e.clientY;tm=setTimeout(()=>{start();gh.style.left=sx+"px";gh.style.top=sy+"px";},280);});
+ document.addEventListener("pointermove",e=>{if(!src)return;if(!mv&&Math.hypot(e.clientX-sx,e.clientY-sy)>8){clearTimeout(tm);start();}if(gh){e.preventDefault();gh.style.left=e.clientX+"px";gh.style.top=e.clientY+"px";document.querySelectorAll(".dd.over").forEach(x=>x.classList.remove("over"));const o=at(e);if(o&&o!==src)o.classList.add("over");}},{passive:false});
+ document.addEventListener("pointerup",e=>{clearTimeout(tm);if(!src)return;const a=src.dataset.dd;S.moff=S.moff||[];
+  if(!mv){S.moff=S.moff.includes(a)?S.moff.filter(x=>x!==a):[...S.moff,a];}
+  else{const o=at(e);if(o&&o!==src){const b=o.dataset.dd,[i1,j1,k1]=a.split(":").map(Number),[i2,j2,k2]=b.split(":").map(Number);const t=S.m2[i1][j1][k1];S.m2[i1][j1][k1]=S.m2[i2][j2][k2];S.m2[i2][j2][k2]=t;const ao=S.moff.includes(a),bo=S.moff.includes(b);S.moff=S.moff.filter(x=>x!==a&&x!==b);if(ao)S.moff.push(b);if(bo)S.moff.push(a);}}
+  if(gh)gh.remove();gh=null;src=null;render();});
+ document.addEventListener("click",e=>{if(e.target.closest(".dd"))e.stopPropagation();},true);})();
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
@@ -600,6 +627,9 @@ document.addEventListener("input",e=>{const t=e.target;if(t.id==="mq"){MQ=t.valu
  if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
  const b=document.querySelector('.ff .cta');if(b&&S.onb<99){b.disabled=!okStep(S.onb);}});
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){if(ALP&&!e.target.closest(".alpop")){ALP=null;document.querySelectorAll(".alpop").forEach(x=>x.remove());}return;}const a=t.dataset.a;
+ if(t.dataset.mok){const id=t.dataset.mok,[i,j,k]=id.split(":").map(Number);S.mok=S.mok||[];const nm=S.m2[i][j][k];sheet(`<h3>${esc(nm)}</h3><button class="opt" data-mokv="${id}">✓ El fem així</button><p class="mut" style="margin:6px 0 0">O canvia'l per:</p>${ALTS.filter(x=>x!==nm).slice(0,3).map(x=>`<button class="opt" data-mchg="${id}|${esc(x)}">${esc(x)}</button>`).join("")}`);return;}
+ if(t.dataset.mokv){const id=t.dataset.mokv;S.mok=S.mok||[];if(!S.mok.includes(id))S.mok.push(id);close();render();return;}
+ if(t.dataset.mchg){const[id,x]=t.dataset.mchg.split("|"),[i,j,k]=id.split(":").map(Number);S.m2[i][j][k]=x;S.mok=(S.mok||[]).filter(z=>z!==id);S.mok.push(id);close();render();return;}
  if(t.dataset.qsel!=null){QSEL=+t.dataset.qsel;render();return;}
  if(t.dataset.qd){const[i,j]=t.dataset.qd.split(":").map(Number);const v=dv(QSEL,i,j);dset(QSEL,i,j,v===1?2:v===2?0:1);render();return;}
  if(t.dataset.tab){S.tab=t.dataset.tab;render();return;}
@@ -668,7 +698,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){
   case"famok":shut(document.querySelector(".dim"));render();break;
   case"delmem":S.mem.splice(+t.dataset.i,1);render();break;
   case"prep":startB();break;
-  case"fback":if(S.step===0){S.flow=null;}else S.step--;render();break;
+  case"fback":if(S.step===0||(S.step===2&&S.mview)){S.flow=null;}else S.step--;render();break;
   case"fclose":S.flow=null;render();toast("Esborrany desat");break;
   case"fnext":if(S.step===0){S.step=1;S.menu=null;render();setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.menu=MENU0.map((r,i)=>r.map((x,j)=>S.disp[i][j].length?x:"—"));render();},1700);}
    else if(S.step===1){S.step=2;render();}else{S.flow=null;S.ready=true;S.tab="setmana";render();toast("Llista compartida ✓");}break;
@@ -677,6 +707,8 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){
   case"algmes":S.addk="";sheet(algMesH());{const sh=document.querySelector(".dim .sheet");if(sh)sh.classList.add("algmes");}SHCB=()=>{S.addk="";render();};break;
   case"botiga":sheet(`<h3 style="display:flex;align-items:center;gap:10px"><img src="img/hud_botiga_37.png" alt="" style="width:44px;height:44px">Botiga d'El Sortidor</h3><div class="card">Plats cuinats a El Sortidor que encaixen amb el vostre menú, portats a casa. Es poden pagar amb espigues.</div>`);break;
   case"fesmenu":genMenu();break;
+  case"batch":sheet(`<h3 style="display:flex;align-items:center;gap:10px"><img src="img/batch_cooking.png" alt="" style="width:52px;height:52px">El cuinat de la setmana</h3><div class="card">El Capità agruparà els plats que es poden cuinar junts i et proposarà quan fer-los per aprofitar les hores de cuina.</div>`);break;
+  case"fesllista":S.flow=1;S.step=2;render();break;
   case"cfgo":CFG=+t.dataset.n;cfgOpen();break;
   case"pwchg":toast("T'enviarem un correu per canviar-la");break;
   case"reset":window._noSave=true;try{localStorage.removeItem("mf_nova");localStorage.removeItem("mf_accts");}catch(e){}location.reload();break;
