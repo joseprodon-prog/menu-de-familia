@@ -194,7 +194,7 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .asc{display:flex;flex-direction:column;align-items:center;gap:3px}
 .asb{width:34px;height:30px;min-height:0;border:0;border-radius:10px;background:#efeadc;color:var(--blue2);font-size:14px;padding:0;box-shadow:none;touch-action:none;user-select:none;-webkit-user-select:none}
 .vb{display:flex;flex-direction:column;gap:3px}.vb i{display:block;width:22px;height:8px;border-radius:3px;background:#e3dfd3}.vb.i i.f{background:#f08a1c}.vb.a i.f{background:#d63428}
-.at2.n1::after{opacity:.45}.at2.n2::after{opacity:.75}
+
 .bars.ti.l1 i:nth-child(1),.bars.ti.l2 i:nth-child(-n+2),.bars.ti.l3 i{background:#f08a1c}
 .bars.ta.l1 i:nth-child(1),.bars.ta.l2 i:nth-child(-n+2),.bars.ta.l3 i{background:#d63428}
 .lvd{width:38px;height:38px;min-height:0;border-radius:50%;border:5px solid #e3dfd3;background:#fff;padding:0;box-shadow:none;box-sizing:border-box}
@@ -563,7 +563,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){
  if(t.dataset.sub){const[k,v]=t.dataset.sub.split(":");S.sub[k]=v;render();return;}
  if(t.dataset.alt||t.dataset.aln){if(Date.now()-(window._alHold||0)>500)alAct(t);return;}
  if(t.dataset.alv){const k=+t.dataset.alv,A=ALP;ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());if(A){if(A.p>=0){const c=lvP(A.p,A.x);setP(A.p,A.x,c===k?0:k);palgRef();saveS();}else{const c=lvF(A.x);setF(A.x,c===k?0:k);if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}}return;}
- if(ALP){ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());}
+ if(ALP&&!t.closest(".alpop")){ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());return;}
  if(t.dataset.pav&&PAI>=0){const k=+t.dataset.pav,y=t.dataset.pa2,c=lvP(PAI,y);setP(PAI,y,c===k?0:k);palgRef();saveS();return;}
  if(t.dataset.pa!=null&&PAI>=0){const y=t.dataset.pa;{ALP={x:y,p:PAI};popShow();return;}setP(PAI,y,nextLv(lvP(PAI,y)));palgRef();saveS();return;}
  if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{{ALP={x,p:-1};popShow();return;}setF(x,nextLv(lvF(x)));}if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();return;}render();return;}
