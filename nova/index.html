@@ -219,6 +219,24 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .sws button.on{outline:3px solid var(--ink);outline-offset:2px}
 .sheet .lnk{align-self:center;flex-basis:auto}
 .cta .pi{width:30px;height:30px;margin:-4px 8px -4px 0;vertical-align:middle}
+.agr{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 6px;max-height:350px;overflow-y:auto;margin-top:12px;-webkit-overflow-scrolling:touch}
+.at2{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;font:600 14.5px var(--body);color:var(--ink);padding:4px 0;height:102px;justify-content:center}
+.at2 .pi{width:66px;height:66px;margin:0}
+.at2.on{color:#c8352b}
+.at2.on .pi{opacity:.55}
+.at2.on::after{content:"✕";position:absolute;top:4px;left:calc(50% + 18px);width:22px;height:22px;border-radius:50%;background:#e2533d;color:#fff;font-size:12px;display:grid;place-items:center;font-weight:700}
+.at2.add{color:#2f6b1f}
+.at2.fam{color:var(--mut)}
+.at2.fam .pi{opacity:.35}
+.at2.fam::after{content:"família";position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:10px;background:#efeadc;color:var(--mut);border-radius:99px;padding:1px 6px}
+.permb{flex-basis:100%;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.permb p{margin:0;font-size:14.5px;color:var(--mut);font-weight:600}
+.prow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.prow .q{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 13.5px var(--body);color:var(--ink);padding:0;max-width:70px}
+.prow .q i{font-style:normal;font-size:11px;color:#c8352b;font-weight:700;min-height:13px;text-align:center;line-height:1.15}
+.who{display:flex;flex-direction:column;align-items:center;gap:4px}
+.who b{font:700 22px var(--disp)}
+.famn{font-size:13.5px;color:var(--mut);text-align:center;margin:-4px 0 0}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -267,8 +285,10 @@ function onb(){const st=[
    <div class="famt"><input class="famin" id="fn" value="${esc(S.fam)}" placeholder="Nom de la família" autocomplete="off" aria-label="Nom de la família"></div>
    <div class="avg">${S.mem.map((m,i)=>`<button class="pp" data-a="pers" data-i="${i}">${avt(mx(i),78,i)}<b>${esc(m)}</b></button>`).join("")}<button class="pp" data-a="pers" data-i="-1"><span class="avt add">${PI("afegeix")}</span><b>Afegeix</b></button></div>
    <div class="calx"><span>Al calendari</span>${S.mem.map((m,i)=>`<i style="background:${mcol(i)}">${esc((m||"?")[0])}</i>`).join("")}</div>`,
- ()=>`<h2>Hi ha alguna cosa que no podeu menjar?</h2><p class="mut">Al·lèrgies o intoleràncies de qualsevol de vosaltres. Ho podreu detallar per a cada persona més endavant a <svg class="ingear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>.</p>
-   <div class="stack">${ALG.map(x=>`<button class="opt" data-alg="${x}" aria-pressed="${S.alg.includes(x)}">${PI("alg_"+x.toLowerCase().replace(" ","_"))}${x}<span class="ck">✓</span></button>`).join("")}${S.algx.map(x=>`<button class="opt" data-alg="${esc(x)}" aria-pressed="${S.alg.includes(x)}">${PI("alg_afegit")}${esc(x)}<span class="ck">✓</span></button>`).join("")}<button class="opt tot" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button>${addBox("alg")}</div>`,
+ ()=>`<h2 class="acch" style="font-size:30px;margin-top:2px">Què no podeu menjar?</h2>
+   <button class="opt tot" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button>
+   <div class="agr">${algItems().map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>
+   ${S.addk==="alg"?addBox("alg"):""}`,
  ()=>{loadMU();if(!MU)return `<h2>On viviu?</h2><p class="mut">Carregant els municipis…</p>`;const pv=provs();
   return `<h2>On viviu?</h2><p class="mut">Per adaptar el menú al temps que farà i trobar el vostre veïnat.</p>
   <label class="lb">País</label><select class="tx" id="pa">${MU.c.map(c=>`<option${c[0]===S.pais?" selected":""}>${c[0]}</option>`).join("")}</select>
@@ -293,7 +313,7 @@ function onb(){const st=[
  const PR=S.cfg?[1,2,3,4,7,8,9]:[1,2,3,4,9],pi=PR.indexOf(n);
  return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n?`<div class="fh">${n<11?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span>${n===5?`<button class="skip" data-a="infskip">Salta</button>`:"<span></span>"}</div>`:""}
  ${pi>=0?`<div class="prog">${PR.map((s,k)=>`<i class="${k<=pi?"on":""}"></i>`).join("")}</div>`:""}
- <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}</div>`:""}</div></div>`;}
+ <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}${n===3?permRow():""}</div>`:""}</div></div>`;}
 const ICT=[["Capità","capita_enciam"],["rebost","rebost"],["estris","eq_robot"],["menú","nav_menu"],["llista de la compra","icona_compra"],["La llista","icona_compra"],["Graner","nav_graner"],["tiquet","nav_puja_documents"],["despesa","nav_despesa"],["nevera","nav_que_cuino"],["configuració","GEAR"],["El Sortidor","sortidor_casa"],["espigues","espigues_regals"]];
 const GEARI=`<svg class="inic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>`;
 function ICX(s){const used=new Set();return ICT.reduce((t,[w,f])=>{if(used.has(f))return t;const i=t.indexOf(w);if(i<0)return t;used.add(f);return t.slice(0,i)+`<span class="icw">${f==="GEAR"?GEARI:`<img class="inic" src="img/${f}.png" alt="">`}${w}</span>`+t.slice(i+w.length);},s);}
@@ -324,6 +344,11 @@ function persUpd(){const sh=document.querySelector(".dim .sheet");if(!sh)return;
 function persOpen(i){if(!S.memx)S.memx=S.mem.map((m,k)=>mx(k));PNEW=i<0;if(i<0){const u=S.memx.map(x=>x.c);let c=S.mem.length%8;for(let k=0;k<8;k++)if(!u.includes(k)){c=k;break;}S.mem.push("");S.memx.push({b:"",g:"n",c});i=S.mem.length-1;}TI=i;TMP=S.memx[i];SHCB=null;sheet(persH());SHCB=persClose;setTimeout(()=>{if(PNEW){const f=$("#pn");if(f)f.focus();}},300);}
 function persClose(){if(TI>=0&&!(S.mem[TI]||"").trim()){S.mem.splice(TI,1);S.memx.splice(TI,1);}TI=-1;TMP=null;PNEW=false;render();}
 function persAv(){const e=$("#pav");if(e)e.innerHTML=avt(TMP,110,TI);}
+function algItems(){return [...ALG.map(x=>[x,"alg_"+x.toLowerCase().replace(" ","_")]),...S.algx.map(x=>[x,"alg_afegit"])];}
+function permRow(){return `<div class="permb"><p>Només algú de vosaltres?</p><div class="prow">${S.mem.map((m,i)=>{const a=(mx(i).alg||[]);return `<button class="q" data-a="palg" data-i="${i}">${avt(mx(i),48,i)}<b>${esc(m)}</b><i>${esc(a.join(", "))}</i></button>`;}).join("")}</div></div>`;}
+function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div><p class="famn">${S.alg.length?"El de tota la família ja hi és":"Marca el que no pot menjar"}</p>
+ <div class="agr">${algItems().map(([y,f])=>{const fam=S.alg.includes(y);return `<button class="at2${fam?" fam":a.includes(y)?" on":""}" ${fam?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}<span>${esc(y)}</span></button>`;}).join("")}</div>`;}
+let PAI=-1;
 function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
@@ -413,6 +438,7 @@ document.addEventListener("input",e=>{const t=e.target;if(t.id==="pb"&&TMP)retur
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;const a=t.dataset.a;
  if(t.dataset.tab){S.tab=t.dataset.tab;render();return;}
  if(t.dataset.sub){const[k,v]=t.dataset.sub.split(":");S.sub[k]=v;render();return;}
+ if(t.dataset.pa!=null&&PAI>=0){const x=S.memx[PAI];x.alg=x.alg||[];const y=t.dataset.pa;x.alg=x.alg.includes(y)?x.alg.filter(z=>z!==y):[...x.alg,y];const sh=document.querySelector(".dim .sheet");if(sh){const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",palgH(PAI));}saveS();return;}
  if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{S.res=false;S.alg=S.alg.includes(x)?S.alg.filter(y=>y!==x):[...S.alg,x];}render();return;}
  if(t.dataset.muni){S.muni=t.dataset.muni;render();return;}
  if(t.dataset.eq){const x=t.dataset.eq;S.equip=S.equip.includes(x)?S.equip.filter(y=>y!==x):[...S.equip,x];render();return;}
@@ -452,6 +478,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"codi":sheet(`<h3>Uneix-te a una família</h3><input class="tx" placeholder="Codi de 16 lletres"><button class="cta" data-a="sclose">Entra</button>`);break;
   case"addmem":S.mem.push("");render();break;
   case"pers":persOpen(+t.dataset.i);break;
+  case"palg":{if(!S.memx)S.memx=S.mem.map((m,k)=>mx(k));PAI=+t.dataset.i;SHCB=null;sheet(palgH(PAI));SHCB=()=>{PAI=-1;render();};break;}
   case"age":{TMP.e=Math.max(0,Math.min(110,(+TMP.e||0)+(+t.dataset.d)));const v=$("#agev");if(v)v.textContent=TMP.e;const pv=document.querySelector(".dim .prev");if(pv)pv.innerHTML=avt(TMP,110);break;}
   case"pg":TMP.g=t.dataset.g;TMP.f=null;persUpd();saveS();break;
   case"pv":{const L=avl(TMP),i0=Math.max(0,L.indexOf(avf(TMP,TI)));TMP.f=L[(i0+(+t.dataset.d)+L.length)%L.length];persAv();saveS();break;}
