@@ -306,21 +306,23 @@ function age(b){if(!b)return 35;const d=new Date(b),n=new Date();let a=n.getFull
 function mcol(k){return PAL[mx(k).c%8];}
 const AVC={nado:{d:["nado2"],h:["nado"],n:["nado","nado2"]},infant:{d:["infant","infant2"],h:["infant3"],n:["infant","infant3","infant2"]},adolescent:{d:["adolescent2"],h:["adolescent","adolescent3"],n:["adolescent3","adolescent2","adolescent"]},jove:{d:["jove_d"],h:["jove_h"],n:["jove_n"]},adult:{d:["dona","dona2","dona3"],h:["home","home2","home3"],n:["persona","persona2"]},gran:{d:["avia","avia2"],h:["avi","avi2","avi3"],n:["avia2","avi3"]}};
 function avl(x){const e=age(x.b),b=e<3?"nado":e<11?"infant":e<18?"adolescent":e<30?"jove":e<65?"adult":"gran";return AVC[b][x.g||"n"]||AVC[b].n;}
-function avf(x,k){const L=avl(x);if(k==null)k=S.mem.length;const used=[];for(let i=0;i<k&&i<S.mem.length;i++)used.push(avf(mx(i),i));const free=L.filter(f=>!used.includes(f));const P=free.length?free:L;return P[(x.v||0)%P.length];}
+function avf(x,k){const L=avl(x);if(x.f&&L.includes(x.f))return x.f;if(k==null)k=S.mem.length;const used=[];S.mem.forEach((m,i)=>{if(i!==k){const y=mx(i);if(y.f)used.push(y.f);}});const free=L.filter(f=>!used.includes(f));const f=(free.length?free:L)[0];x.f=f;return f;}
 function avt(x,sz,k){return `<span class="avt" style="width:${sz}px;height:${sz}px;background:${PAL[x.c%8]}"><img src="img/av_${avf(x,k)}.png" alt=""></span>`;}
-let TMP=null,TI=-1;
+let TMP=null,TI=-1,PNEW=false,SHCB=null;
 let HOLD=null;document.addEventListener("pointerdown",e=>{const b=e.target.closest(".pill button");if(!b)return;clearTimeout(HOLD);HOLD=setTimeout(function rep(){b.click();HOLD=setTimeout(rep,90);},450);});["pointerup","pointercancel","pointerleave"].forEach(ev=>document.addEventListener(ev,()=>clearTimeout(HOLD)));
 
-function persH(){const x=TMP,ex=TI>=0;return `<div class="prev"><button class="vbtn" data-a="pv" data-d="-1" aria-label="Un altre dibuix">‹</button>${avt(x,110,TI>=0?TI:null)}<button class="vbtn" data-a="pv" data-d="1" aria-label="Un altre dibuix">›</button></div>
- <input class="tx" id="pn" placeholder="Nom" value="${esc(x.n||"")}" autocomplete="off">
+function persH(){const x=TMP;return `<div class="prev"><button class="vbtn" data-a="pv" data-d="-1" aria-label="Un altre dibuix">‹</button><span id="pav">${avt(x,110,TI)}</span><button class="vbtn" data-a="pv" data-d="1" aria-label="Un altre dibuix">›</button></div>
+ <input class="tx" id="pn" placeholder="Nom" value="${esc(S.mem[TI]||"")}" autocomplete="off">
  <div class="agep"><b>Data de naixement</b><input class="tx dob" id="pb" type="date" value="${x.b||""}" max="${new Date().toISOString().slice(0,10)}"></div>
  <p class="flab">Com et dibuixem?</p>
  <div class="chipsel">${[["d","Dona"],["h","Home"],["n","Neutre"]].map(([g,l])=>`<button data-a="pg" data-g="${g}" class="${x.g===g?"on":""}">${l}</button>`).join("")}</div>
  <p class="flab">El teu color</p>
  <div class="sws">${PAL.map((c,i)=>`<button data-a="pc" data-c="${i}" class="${x.c===i?"on":""}" style="background:${c}" aria-label="Color ${i+1}"></button>`).join("")}</div>
- <button class="cta" data-a="pok" ${x.n&&x.n.trim()?"":"disabled"}>Fet</button>${ex&&S.mem.length>1?`<button class="lnk" data-a="pdel">Treu de la família</button>`:""}`;}
+ ${S.mem.length>1?`<button class="lnk" data-a="pdel">Treu de la família</button>`:""}`;}
 function persUpd(){const sh=document.querySelector(".dim .sheet");if(!sh)return;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",persH());}
-function persOpen(i){TI=i;TMP=i>=0?Object.assign({n:S.mem[i]},mx(i)):{n:"",b:"",g:"n",c:(()=>{const u=S.mem.map((m,k)=>mx(k).c);for(let i=0;i<8;i++)if(!u.includes(i))return i;return S.mem.length%8;})()};sheet(persH());}
+function persOpen(i){if(!S.memx)S.memx=S.mem.map((m,k)=>mx(k));PNEW=i<0;if(i<0){const u=S.memx.map(x=>x.c);let c=S.mem.length%8;for(let k=0;k<8;k++)if(!u.includes(k)){c=k;break;}S.mem.push("");S.memx.push({b:"",g:"n",c});i=S.mem.length-1;}TI=i;TMP=S.memx[i];SHCB=null;sheet(persH());SHCB=persClose;setTimeout(()=>{if(PNEW){const f=$("#pn");if(f)f.focus();}},300);}
+function persClose(){if(TI>=0&&!(S.mem[TI]||"").trim()){S.mem.splice(TI,1);S.memx.splice(TI,1);}TI=-1;TMP=null;PNEW=false;render();}
+function persAv(){const e=$("#pav");if(e)e.innerHTML=avt(TMP,110,TI);}
 function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
@@ -389,20 +391,20 @@ function flowB(){const st=S.step,t=["Qui hi serà?","El menú","La llista"][st];
 
 /* ---------- Fulls inferiors ---------- */
 function sheet(h){close();const d=document.createElement("div");d.className="dim";d.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grabz" aria-label="Llisca avall per tancar"><div class="grab"></div></div>${h}</div>`;d.addEventListener("click",e=>{if(e.target===d)shut(d);});$("#app").appendChild(d);dragSheet(d);}
-function shut(d){const sh=d.querySelector(".sheet");sh.style.transition="transform .22s ease-in";sh.style.transform="translateY(110%)";d.style.transition="background .22s";d.style.background="transparent";setTimeout(()=>d.remove(),220);}
+function shut(d){if(SHCB){const cb=SHCB;SHCB=null;setTimeout(cb,230);}const sh=d.querySelector(".sheet");sh.style.transition="transform .22s ease-in";sh.style.transform="translateY(110%)";d.style.transition="background .22s";d.style.background="transparent";setTimeout(()=>d.remove(),220);}
 function dragSheet(d){const sh=d.querySelector(".sheet");let y0=null,dy=0,t0=0;
  const start=e=>{const top=e.target.closest(".grabz");if(!top&&sh.scrollTop>0)return;y0=e.touches?e.touches[0].clientY:e.clientY;t0=Date.now();dy=0;sh.style.transition="none";};
  const move=e=>{if(y0===null)return;const y=e.touches?e.touches[0].clientY:e.clientY;dy=Math.max(0,y-y0);if(dy>0){sh.style.transform=`translateY(${dy}px)`;if(e.cancelable)e.preventDefault();}};
  const end=()=>{if(y0===null)return;const v=dy/Math.max(1,Date.now()-t0);y0=null;if(dy>90||v>.6){shut(d);}else{sh.style.transition="transform .2s ease-out";sh.style.transform="";}};
  sh.addEventListener("touchstart",start,{passive:true});sh.addEventListener("touchmove",move,{passive:false});sh.addEventListener("touchend",end);
  const gz=sh.querySelector(".grabz");gz.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")return;start(e);const mv=ev=>move(ev),up=()=>{end();removeEventListener("pointermove",mv);removeEventListener("pointerup",up);};addEventListener("pointermove",mv);addEventListener("pointerup",up);});}
-function close(){document.querySelectorAll(".dim").forEach(x=>x.remove());}
+function close(){document.querySelectorAll(".dim").forEach(x=>x.remove());if(SHCB){const cb=SHCB;SHCB=null;cb();}}
 function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;$("#app").appendChild(d);setTimeout(()=>d.remove(),2200);}
 const rows=L=>`<div class="card" style="padding:4px 12px">${L.map(([i,t,r])=>`<button class="row" data-a="nop"><span style="width:30px;display:grid;place-items:center">${i}</span><b>${t}</b><span class="r">${r||""} <span class="chev">›</span></span></button>`).join("")}</div>`;
 
 /* ---------- Esdeveniments ---------- */
-document.addEventListener("input",()=>setTimeout(saveS,0));document.addEventListener("change",e=>{if(e.target.id==="rbfoto"){FOTOS=[...FOTOS,...[...e.target.files].map(f=>URL.createObjectURL(f))].slice(0,6);render();}});addEventListener("pagehide",saveS);document.addEventListener("keydown",e=>{if(e.target.id==="addin"&&e.key==="Enter"){e.preventDefault();const b=document.querySelector("[data-a=addok]");if(b)b.click();}});
-document.addEventListener("input",e=>{const t=e.target;if(t.id==="pb"&&TMP){TMP.b=t.value;const pv=document.querySelector(".dim .prev");persUpd();return;}if(t.id==="pn"&&TMP){TMP.n=t.value;const b=document.querySelector(".dim [data-a=pok]");if(b)b.disabled=!t.value.trim();return;}if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
+document.addEventListener("input",()=>setTimeout(saveS,0));document.addEventListener("change",e=>{if(e.target.id==="pb"&&TMP){TMP.b=e.target.value;TMP.f=null;persAv();saveS();return;}if(e.target.id==="rbfoto"){FOTOS=[...FOTOS,...[...e.target.files].map(f=>URL.createObjectURL(f))].slice(0,6);render();}});addEventListener("pagehide",saveS);document.addEventListener("keydown",e=>{if(e.target.id==="addin"&&e.key==="Enter"){e.preventDefault();const b=document.querySelector("[data-a=addok]");if(b)b.click();}});
+document.addEventListener("input",e=>{const t=e.target;if(t.id==="pb"&&TMP)return;if(t.id==="pn"&&TMP){S.mem[TI]=t.value;saveS();return;}if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
  if(t.id==="pa"){S.pais=t.value;const pv=provs();S.prov=pv.length===1?pv[0][0]:"";S.muni="";render();return;}
  if(t.id==="pr"){S.prov=t.value;S.muni="";render();setTimeout(()=>{const m=$("#mu");if(m)m.focus();},50);return;}
  if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
@@ -450,11 +452,10 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"addmem":S.mem.push("");render();break;
   case"pers":persOpen(+t.dataset.i);break;
   case"age":{TMP.e=Math.max(0,Math.min(110,(+TMP.e||0)+(+t.dataset.d)));const v=$("#agev");if(v)v.textContent=TMP.e;const pv=document.querySelector(".dim .prev");if(pv)pv.innerHTML=avt(TMP,110);break;}
-  case"pg":TMP.g=t.dataset.g;TMP.v=0;persUpd();break;
-  case"pv":TMP.v=((TMP.v||0)+(+t.dataset.d)+12)%12;persUpd();break;
-  case"pc":TMP.c=+t.dataset.c;persUpd();break;
-  case"pok":{const n=(TMP.n||"").trim();if(!n)break;if(!S.memx)S.memx=S.mem.map((m,i)=>mx(i));const x={b:TMP.b||"",g:TMP.g,c:TMP.c,v:TMP.v||0};if(TI>=0){S.mem[TI]=n;S.memx[TI]=x;}else{S.mem.push(n);S.memx.push(x);}shut(document.querySelector(".dim"));render();break;}
-  case"pdel":{S.mem.splice(TI,1);if(S.memx)S.memx.splice(TI,1);shut(document.querySelector(".dim"));render();break;}
+  case"pg":TMP.g=t.dataset.g;TMP.f=null;persUpd();saveS();break;
+  case"pv":{const L=avl(TMP),i0=Math.max(0,L.indexOf(avf(TMP,TI)));TMP.f=L[(i0+(+t.dataset.d)+L.length)%L.length];persAv();saveS();break;}
+  case"pc":TMP.c=+t.dataset.c;persUpd();saveS();break;
+  case"pdel":{S.mem.splice(TI,1);S.memx.splice(TI,1);TI=-1;shut(document.querySelector(".dim"));break;}
   case"famed":sheet(`<h3>El nom de la família</h3><input class="tx" id="fn" value="${esc(S.fam)}"><button class="cta" data-a="famok">Fet</button>`);break;
   case"famok":shut(document.querySelector(".dim"));render();break;
   case"delmem":S.mem.splice(+t.dataset.i,1);render();break;
