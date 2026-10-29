@@ -150,6 +150,19 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .opt.tot[aria-pressed=true]{border-color:#4f7a2a;border-width:2px}
 .opt.tot[aria-pressed=true] .ck{background:var(--green);border-color:var(--green)}
 .opt.add{border-style:dashed;color:#2f6b1f;background:#fbfaf6}.addbx{display:flex;gap:8px;align-items:stretch}.addbx .tx{flex:1 1 auto;min-width:0;width:auto}.addbx .cta{flex:0 0 auto;width:auto;min-width:0;padding:0 20px}
+.welsky{position:relative;margin-top:env(safe-area-inset-top,0px);height:300px;max-width:100%;overflow:hidden}
+.welsky::after{content:"";position:absolute;inset:auto 0 0;height:80px;background:linear-gradient(transparent,var(--crema))}
+.welart img{object-position:50% 30%}
+.welbody{padding:0 16px 4px;margin-top:-30px;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.welbody h1{font-size:38px;margin:0}
+.welbody>p{font-size:19px;margin:0}
+.welgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;width:100%;margin-top:16px}
+.welg{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px}
+.welg .pi{width:89px;height:89px;margin:0}
+.welg b{font-size:18px}
+.lnk{background:none;border:0;color:var(--blue2);font:600 16px var(--body);text-decoration:underline;text-underline-offset:3px;padding:6px;flex-basis:100%;text-align:center}
+.ff{flex-wrap:wrap}
+.ff .lnk{flex:0 0 100%;text-align:center;justify-content:center;display:flex}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -180,9 +193,9 @@ function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
 
 /* ---------- A · Primer inici ---------- */
 function onb(){const st=[
- ()=>`<div class="wel"><div class="welsky"><div class="welart"><img src="img/benvinguda_veinat.jpg" alt="" aria-hidden="true"></div></div>
-   <div class="welbody"><h1>Menú de Família</h1><p class="mut">Tot el que passa a la cuina de casa, en un sol lloc.</p>
-   <div class="welist">${[[PI("nav_menu"),"El menú de cada setmana","Pensat per a qui menja a casa i la temporada"],[PI("icona_compra"),"La compra feta","La llista surt sola, amb el que ja teniu al rebost"],[PI("icona_receptes"),"Les vostres receptes","Les de la família i les del Graner de totes les famílies"],[PI("icona_despesa"),"La despesa sota control","Què gasteu cada mes i a quines botigues podeu comprar"]].map(([i,t,d])=>`<div class="welit"><span class="welic">${i}</span><div><b>${t}</b><small>${ICX(d)}</small></div></div>`).join("")}</div></div></div>`,
+ ()=>`<div class="wel"><div class="welsky"><div class="welart"><img src="img/benvinguda_ovella.jpg" alt="" aria-hidden="true"></div></div>
+   <div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p>
+   <div class="welgrid">${[["nav_menu","Menús"],["icona_compra","Compra"],["nav_receptari","Receptes"],["nav_despesa","Despesa"]].map(([f,t])=>`<div class="welg">${PI(f)}<b>${t}</b></div>`).join("")}</div></div></div>`,
  ()=>`<h2>Crea el compte</h2><p class="mut">T'enviarem un enllaç per entrar, sense contrasenya.</p><input class="tx" id="em" type="email" inputmode="email" autocomplete="email" placeholder="el-teu@correu.cat" value="${esc(S.email)}">`,
  ()=>`<h2>Qui sou a casa?</h2><p class="mut">El nom de la família i les persones que hi mengen.</p><input class="tx" id="fn" value="${esc(S.fam)}" aria-label="Nom de la família">
    <div class="stack">${S.mem.map((m,i)=>`<div class="mem"><input class="tx" data-mem="${i}" value="${esc(m)}" aria-label="Membre ${i+1}">${i?`<button data-a="delmem" data-i="${i}" aria-label="Treu">✕</button>`:""}</div>`).join("")}</div><button class="sec" data-a="addmem">＋ Afegeix una persona</button>`,
@@ -212,7 +225,7 @@ function onb(){const st=[
  const PR=S.cfg?[1,2,3,4,7,8,9]:[1,2,3,4,9],pi=PR.indexOf(n);
  return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n?`<div class="fh">${n<11?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span>${n===5?`<button class="skip" data-a="infskip">Salta</button>`:"<span></span>"}</div>`:""}
  ${pi>=0?`<div class="prog">${PR.map((s,k)=>`<i class="${k<=pi?"on":""}"></i>`).join("")}</div>`:""}
- <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===0?`<button class="sec" data-a="codi">Tinc un codi</button>`:""}${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button></div>`:""}</div></div>`;}
+ <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}</div>`:""}</div></div>`;}
 const ICT=[["Capità","capita_enciam"],["rebost","rebost"],["estris","eq_robot"],["menú","nav_menu"],["llista de la compra","icona_compra"],["La llista","icona_compra"],["Graner","nav_graner"],["tiquet","nav_puja_documents"],["despesa","nav_despesa"],["nevera","nav_que_cuino"],["configuració","GEAR"],["El Sortidor","sortidor_casa"],["espigues","espigues_regals"]];
 const GEARI=`<svg class="inic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>`;
 function ICX(s){const used=new Set();return ICT.reduce((t,[w,f])=>{if(used.has(f))return t;const i=t.indexOf(w);if(i<0)return t;used.add(f);return t.slice(0,i)+`<span class="icw">${f==="GEAR"?GEARI:`<img class="inic" src="img/${f}.png" alt="">`}${w}</span>`+t.slice(i+w.length);},s);}
