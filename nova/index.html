@@ -189,9 +189,13 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 @keyframes dropIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.drop{animation:none}}
 .famt{display:flex;justify-content:center;margin:-4px 0 16px}
-.famin{width:100%;max-width:300px;box-sizing:border-box;text-align:center;font:700 21px var(--disp);color:var(--ink);background:#fff;border:1.5px dashed #cdbf98;border-radius:99px;padding:10px 16px}
-.famin::placeholder{color:#b9b3a4;font-weight:600}
-.famin:focus{outline:none;border-style:solid;border-color:var(--blue)}
+.famin{display:flex;align-items:baseline;justify-content:center;gap:8px;width:100%;max-width:300px;box-sizing:border-box;background:#fff;border:1.5px dashed #cdbf98;border-radius:99px;padding:10px 16px;cursor:text}
+.famin span{order:-1;font:600 15px var(--body);color:#aaa392;flex:none}
+.famin input{flex:1 1 auto;min-width:0;width:100%;border:0;background:none;padding:0;text-align:center;font:700 21px var(--disp);color:var(--ink);outline:none}
+.famin input:not(:placeholder-shown){text-align:left;flex:0 1 auto}
+.famin input:placeholder-shown+span{display:none}
+.famin input::placeholder{color:#b9b3a4;font-weight:600}
+.famin:focus-within{border-style:solid;border-color:var(--blue)}
 .dob{width:auto;max-width:190px;height:48px;font-size:17px}
 .avg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 6px;justify-items:center}
 .pp{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;font:600 16px var(--body);color:var(--ink)}
@@ -266,7 +270,7 @@ let S={onb:0,email:"",fam:"Rodon Aymar",mem:["Josep","Lídia","Josep","Marina"],
 try{const sv=JSON.parse(localStorage.getItem("mf_nova")||"null");if(sv){if(!sv.memx&&sv.mem)sv.memx=sv.mem.map((m,i)=>({b:"",g:"n",c:i%8}));if(sv.memx)sv.memx.forEach(x=>{if(x.b===undefined)x.b="";delete x.e;});Object.assign(S,sv);if(S.onb>=10)S.onb=99;S.algx=(S.algx||[]).filter(x=>!["Gluten","Lactosa","Fruits secs","Marisc","Ou","Peix","Soja","Porc"].some(a=>a.toLowerCase()===x.toLowerCase()));S.equipx=(S.equipx||[]).filter(x=>x.toLowerCase()!=="torradora");S.flow=null;}}catch(e){}
 function saveS(){if(window._noSave)return;try{localStorage.setItem("mf_nova",JSON.stringify(S));}catch(e){}}
 
-function render(){const _k=S.onb<99?"o"+S.onb:"t"+S.tab+(S.flow?"f"+S.step:""),_e=document.querySelector(".fb")||document.querySelector(".scr"),_t=_e&&_e.scrollTop;render0();saveS();if(_e&&_k===render._k){const e=document.querySelector(".fb")||document.querySelector(".scr");if(e)e.scrollTop=_t;}render._k=_k;}
+function render(){setTimeout(fitFam,0);const _k=S.onb<99?"o"+S.onb:"t"+S.tab+(S.flow?"f"+S.step:""),_e=document.querySelector(".fb")||document.querySelector(".scr"),_t=_e&&_e.scrollTop;render0();saveS();if(_e&&_k===render._k){const e=document.querySelector(".fb")||document.querySelector(".scr");if(e)e.scrollTop=_t;}render._k=_k;}
 function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
  a.innerHTML=`<div class="top"><b>${esc(S.fam)}<small style="display:block;font:600 11px var(--body);opacity:.8">Versió de prova · dades d'exemple</small></b><button class="pillb" data-a="joc" aria-label="Joc, botiga i veïnat: 175 espigues">${IC.hudsilo}175 🌾</button><button class="gear" data-a="conf" aria-label="Configuració"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg></button></div>
  <div class="scr">${({setmana:tSet,compra:tCompra,receptes:tRec,despesa:tDesp})[S.tab]()}</div>
@@ -291,7 +295,7 @@ function onb(){const st=[
      <div class="pwf"><input class="tx" id="pw1" type="password" autocomplete="current-password" placeholder="Contrasenya">${eye("pw1")}</div>
      <button class="lnk" data-a="pwforgot">He oblidat la contrasenya</button></div>`;},
  ()=>`<div class="accbig">${PI("familia_taula")}</div><h2 class="acch">Qui seu a taula?</h2>
-   <div class="famt"><input class="famin" id="fn" value="${esc(S.fam)}" placeholder="Nom de la família" autocomplete="off" aria-label="Nom de la família"></div>
+   <div class="famt"><label class="famin"><input id="fn" value="${esc(S.fam)}" placeholder="Nom de la família" autocomplete="off" aria-label="Nom de la família"><span>Família</span></label></div>
    <div class="avg">${S.mem.map((m,i)=>`<button class="pp" data-a="pers" data-i="${i}">${avt(mx(i),78,i)}<b>${esc(m)}</b></button>`).join("")}<button class="pp" data-a="pers" data-i="-1"><span class="avt add">${PI("afegeix")}</span><b>Afegeix</b></button></div>
    <div class="calx"><span>Al calendari</span>${S.mem.map((m,i)=>`<i style="background:${mcol(i)}">${esc((m||"?")[0])}</i>`).join("")}</div>`,
  ()=>`<h2 class="acch" style="font-size:30px;margin-top:2px">Què no podeu menjar?</h2>
@@ -358,6 +362,8 @@ function permRow(){return `<div class="permb"><div class="prow">${S.mem.map((m,i
 function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div>
  <div class="agr">${algItems().map(([y,f])=>{const fam=S.alg.includes(y);return `<button class="at2${fam?" fam":a.includes(y)?" on":""}" ${fam?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}<span>${esc(y)}</span></button>`;}).join("")}</div>`;}
 let PAI=-1;
+function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
+try{document.fonts.ready.then(()=>fitFam());}catch(e){}
 function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
@@ -439,7 +445,7 @@ const rows=L=>`<div class="card" style="padding:4px 12px">${L.map(([i,t,r])=>`<b
 
 /* ---------- Esdeveniments ---------- */
 document.addEventListener("input",()=>setTimeout(saveS,0));document.addEventListener("change",e=>{if(e.target.id==="tqfoto"&&e.target.files[0]){const u=URL.createObjectURL(e.target.files[0]);sheet(`<h3>Tiquet rebut</h3><img src="${u}" alt="Tiquet" style="width:100%;max-height:52vh;object-fit:contain;border-radius:14px;background:#fff"><p class="mut">El Capità el llegirà i el sumarà a la despesa del mes.</p><button class="lnk" data-a="tiquet">Fes-ne un altre</button>`);return;}if(e.target.id==="pb"&&TMP){TMP.b=e.target.value;TMP.f=null;persAv();saveS();return;}if(e.target.id==="rbfoto"){FOTOS=[...FOTOS,...[...e.target.files].map(f=>URL.createObjectURL(f))].slice(0,6);render();}});addEventListener("pagehide",saveS);document.addEventListener("keydown",e=>{if(e.target.id==="addin"&&e.key==="Enter"){e.preventDefault();const b=document.querySelector("[data-a=addok]");if(b)b.click();}});
-document.addEventListener("input",e=>{const t=e.target;if(t.id==="pb"&&TMP)return;if(t.id==="pn"&&TMP){S.mem[TI]=t.value;saveS();return;}if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
+document.addEventListener("input",e=>{const t=e.target;if(t.id==="fn")setTimeout(fitFam,0);if(t.id==="pb"&&TMP)return;if(t.id==="pn"&&TMP){S.mem[TI]=t.value;saveS();return;}if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
  if(t.id==="pa"){S.pais=t.value;const pv=provs();S.prov=pv.length===1?pv[0][0]:"";S.muni="";render();return;}
  if(t.id==="pr"){S.prov=t.value;S.muni="";render();setTimeout(()=>{const m=$("#mu");if(m)m.focus();},50);return;}
  if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
