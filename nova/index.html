@@ -167,7 +167,7 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .welmu{width:100%;text-align:left}
 .algh{font-size:28px!important;margin:-6px 0 0!important}
 .agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
-.at2.mes{color:var(--blue2)}
+.at2.mes{color:#2f6b1f}
 .avs{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;-webkit-mask-image:linear-gradient(#000 88%,transparent);mask-image:linear-gradient(#000 88%,transparent);padding-bottom:14px}
 @media (max-height:720px){.welsky{height:240px!important}}
 .ovc{position:absolute;right:-70px;bottom:-60px;width:310px;height:auto;transform:scaleX(-1);pointer-events:none;z-index:0}
@@ -334,7 +334,7 @@ function stepH(n){const st=[
    <div class="avg">${S.mem.map((m,i)=>`<button class="pp" data-a="pers" data-i="${i}">${avt(mx(i),78,i)}<b>${esc(m)}</b></button>`).join("")}<button class="pp" data-a="pers" data-i="-1"><span class="avt add">${PI("afegeix")}</span><b>Afegeix</b></button></div>
 `,
  ()=>`<h2 class="acch algh">Què no podeu menjar?</h2>
-   <div class="agr agm">${algItems().filter(([x])=>ALGM.includes(x)||S.alg.includes(x)).map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 mes" data-a="algmes">${PI("alg_altres")}<span>Més</span></button></div>`,
+   <div class="agr agm">${algItems().filter(([x])=>ALGM.includes(x)||S.alg.includes(x)).map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 mes" data-a="algmes">${PI("afegeix")}<span>Més</span></button></div>`,
  ()=>`<div class="wel">${welSky()}<div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p><h2 class="welq">On viviu?</h2><div class="welmu">${muniB()}</div></div></div>`,
  ()=>infoS(),
  ()=>`<div class="tria"><img class="trimg big" src="img/cuina_afinar.png" alt=""><h2>Voleu afinar-ho ara?</h2><p class="mut">Si ens dieu què hi teniu al rebost i quins estris a la cuina, els menús i la llista de la compra seran més encertats. Són un parell de minuts.</p><div class="icrow">${["rebost","eq_robot","nav_menu","icona_compra"].map(f=>`<img src="img/${f}.png" alt="">`).join("")}</div>
