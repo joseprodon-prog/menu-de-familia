@@ -163,6 +163,8 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .welg{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px}
 .welg .pi{width:89px;height:89px;margin:0}
 .welg b{font-size:18px}
+.welq{font:700 28px var(--disp);margin:22px 0 10px}
+.welmu{width:100%;text-align:left}
 .lnk{background:none;border:0;color:var(--blue2);font:600 16px var(--body);text-decoration:underline;text-underline-offset:3px;padding:6px;flex-basis:100%;text-align:center}
 .ff{flex-wrap:wrap}
 .ff .lnk{flex:0 0 100%;text-align:center;justify-content:center;display:flex}
@@ -297,7 +299,7 @@ function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
 
 /* ---------- A · Primer inici ---------- */
 function onb(){const st=[
- ()=>`<div class="wel"><div class="welsky"><div class="welart"><img src="img/benvinguda_ovella.jpg" alt="" aria-hidden="true"></div></div>
+ ()=>`<div class="wel">${welSky()}
    <div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p>
    <div class="welgrid">${[["nav_menu","Menús"],["icona_compra","Compra"],["nav_receptari","Receptes"],["nav_despesa","Despesa"]].map(([f,t])=>`<div class="welg">${PI(f)}<b>${t}</b></div>`).join("")}</div></div></div>`,
  ()=>{const eye=id=>`<button class="eye" data-a="eye" data-t="${id}">Mostra</button>`;
@@ -319,10 +321,7 @@ function onb(){const st=[
    <button class="opt tot" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button>
    <div class="agr">${algItems().map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>
    ${S.addk==="alg"?addBox("alg"):""}`,
- ()=>{loadMU();const top=`<div class="accbig">${PI("hud_veinat")}</div><h2 class="acch">On viviu?</h2>`;
-  if(!MU)return top+`<p class="mut" style="text-align:center">Carregant els pobles…</p>`;
-  if(muniOk())return top+`<button class="found" data-a="muchg" aria-label="Canvia el poble: ${esc(S.muni)}"><div><b>${esc(S.muni)}</b><small>${S.prov==="ma"?"Escrit a mà":esc(provName())+" · "+esc(S.pais)}</small></div><span class="ok">✓</span></button>`;
-  return top+`<button class="geo" data-a="geo"><b></b>Fes servir la meva ubicació</button><div class="or2">o escriu el poble</div><input class="tx srchi" id="mq" placeholder="Poble o ciutat" value="${esc(MQ)}" autocomplete="off" autocapitalize="words"><div class="sug" id="mql">${mqL()}</div>`;},
+ ()=>`<div class="wel">${welSky()}<div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p><h2 class="welq">On viviu?</h2><div class="welmu">${muniB()}</div></div></div>`,
  ()=>infoS(),
  ()=>`<div class="tria"><img class="trimg big" src="img/cuina_afinar.png" alt=""><h2>Voleu afinar-ho ara?</h2><p class="mut">Si ens dieu què hi teniu al rebost i quins estris a la cuina, els menús i la llista de la compra seran més encertats. Són un parell de minuts.</p><div class="icrow">${["rebost","eq_robot","nav_menu","icona_compra"].map(f=>`<img src="img/${f}.png" alt="">`).join("")}</div>
    <button class="tcard" data-a="cfgnow"><img src="img/nav_feina.png" alt=""><span><b>Sí, ara</b><small>Equipament de cuina i el menjar que teniu</small></span></button>
@@ -339,9 +338,9 @@ function onb(){const st=[
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
  const n=S.onb,ok=okStep(n);
  const lab=["Comencem",!S.acc?"Continua":S.acc==="nou"?"Crea el compte":"Entra","Següent","Següent","Següent",S.inf<INFO.length-1?"Següent":"Som-hi","","Següent","Següent","Ja està","",""][n];
- const SEQ=[1,4,2,3,5,6,7,8,9,10],PR=S.cfg?[1,4,2,3,7,8,9]:[1,4,2,3,9];if(SEQ.indexOf(n)>(S.vis??-1))S.vis=SEQ.indexOf(n);let pi=-1;if(n>0&&n<11)PR.forEach((s2,k)=>{if(SEQ.indexOf(s2)<=SEQ.indexOf(n))pi=k;});
- return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n===5?`<div class="fh"><span></span><span></span><button class="skip" data-a="infskip">Salta</button></div>`:""}
- ${pi>=0?`<div class="prog${n===5?"":" top"}">${PR.map((s2,k)=>{const back=k<pi||(k===pi&&s2!==n),fw=k>pi&&SEQ.indexOf(s2)<=S.vis&&PR.slice(pi,k).every(stDone)&&(PR[pi]===n||okStep(n));return back||fw?`<button class="on" data-a="pgo" data-n="${s2}" aria-label="Ves al pas ${k+1}"><i></i></button>`:`<span class="${k<=pi?"on":""}"><i></i></span>`;}).join("")}</div>`:""}
+ const SEQ=[4,1,2,3,5,6,7,8,9,10],PR=S.cfg?[4,1,2,3,7,8,9]:[4,1,2,3,9];if(SEQ.indexOf(n)>(S.vis??-1))S.vis=SEQ.indexOf(n);let pi=-1;if(n>0&&n<11)PR.forEach((s2,k)=>{if(SEQ.indexOf(s2)<=SEQ.indexOf(n))pi=k;});
+ return `<div class="flow" style="position:relative;flex:1;${n===0||n===4?"background:var(--crema)":""}">${n===5?`<div class="fh"><span></span><span></span><button class="skip" data-a="infskip">Salta</button></div>`:""}
+ ${pi>=0&&n!==4?`<div class="prog${n===5?"":" top"}">${PR.map((s2,k)=>{const back=k<pi||(k===pi&&s2!==n),fw=k>pi&&SEQ.indexOf(s2)<=S.vis&&PR.slice(pi,k).every(stDone)&&(PR[pi]===n||okStep(n));return back||fw?`<button class="on" data-a="pgo" data-n="${s2}" aria-label="Ves al pas ${k+1}"><i></i></button>`:`<span class="${k<=pi?"on":""}"><i></i></span>`;}).join("")}</div>`:""}
  <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}${n===3?permRow():""}</div>`:""}</div></div>`;}
 const ICT=[["Capità","capita_enciam"],["rebost","rebost"],["estris","eq_robot"],["menú","nav_menu"],["llista de la compra","icona_compra"],["La llista","icona_compra"],["Graner","nav_graner"],["tiquet","nav_puja_documents"],["despesa","nav_despesa"],["nevera","nav_que_cuino"],["configuració","GEAR"],["El Sortidor","sortidor_casa"],["espigues","espigues_regals"]];
 const GEARI=`<svg class="inic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>`;
@@ -380,6 +379,11 @@ function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,
  ${PADD?`<div class="addbx"><input class="tx" id="paddin" placeholder="Per exemple: api" autocomplete="off"><button class="cta" data-a="paaddok">Afegeix</button></div>`:""}`;}
 let PADD=false;
 function palgRef(){const sh=document.querySelector(".dim .sheet");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",palgH(PAI));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;}
+function muniB(){loadMU();const top="";
+  if(!MU)return top+`<p class="mut" style="text-align:center">Carregant els pobles…</p>`;
+  if(muniOk())return top+`<button class="found" data-a="muchg" aria-label="Canvia el poble: ${esc(S.muni)}"><div><b>${esc(S.muni)}</b><small>${S.prov==="ma"?"Escrit a mà":esc(provName())+" · "+esc(S.pais)}</small></div><span class="ok">✓</span></button>`;
+  return top+`<button class="geo" data-a="geo"><b></b>Fes servir la meva ubicació</button><div class="or2">o escriu el poble</div><input class="tx srchi" id="mq" placeholder="Poble o ciutat" value="${esc(MQ)}" autocomplete="off" autocapitalize="words"><div class="sug" id="mql">${mqL()}</div>`;}
+function welSky(){return `<div class="welsky"><div class="welart"><img src="img/benvinguda_ovella.jpg" alt="" aria-hidden="true"></div></div>`;}
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
@@ -500,7 +504,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
      PW1=PW2="";}
    if(S.onb===5&&S.inf<INFO.length-1){infGo(1);return;}
    if(S.onb===8&&MIC)MIC.stop();
-   goTo(S.onb===5?6:S.onb===8?9:S.onb===1?4:S.onb===4?2:S.onb===3?5:S.onb+1);break;
+   goTo(S.onb===5?6:S.onb===8?9:S.onb===0?4:S.onb===4?1:S.onb===3?5:S.onb+1);break;
   case"emchg":S.acc=null;PW1=PW2="";render();break;
   case"pwforgot":toast("T'hem enviat un correu per canviar-la");break;
   case"eye":{const f=$("#"+t.dataset.t);if(f){f.type=f.type==="password"?"text":"password";t.textContent=f.type==="password"?"Mostra":"Amaga";}break;}
