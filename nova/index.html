@@ -35,7 +35,7 @@ p{margin:0}.mut{color:var(--mut)}
 .tabs button[aria-selected=true] .ti{background:var(--bluesoft)}
 .ti{width:44px;height:32px;border-radius:99px;display:grid;place-items:center}
 /* Capità */
-.cap{position:absolute;right:16px;bottom:84px;width:58px;height:58px;border-radius:50%;border:0;background:var(--head);color:#fff;font-size:26px;box-shadow:0 6px 16px rgba(0,0,0,.25);z-index:6;display:grid;place-items:center}
+.cap{position:absolute;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;border:0;background:var(--head);color:#fff;font-size:26px;box-shadow:0 6px 16px rgba(0,0,0,.25);z-index:6;display:grid;place-items:center}
 /* targetes */
 .card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .stack{display:flex;flex-direction:column;gap:12px}
