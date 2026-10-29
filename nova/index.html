@@ -117,6 +117,8 @@ input.tx{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius
 .welic{flex:none;width:46px;height:46px;border-radius:12px;background:#fbf3e0;display:grid;place-items:center}.welic svg{width:32px;height:32px}
 .ingear{width:26px;height:26px;vertical-align:-7px;margin:0 2px}
 .pi{width:28px;height:28px;object-fit:contain;display:block}.tabs .pi{width:30px;height:30px}.pillb .pi{width:24px;height:24px}.welic .pi{width:42px;height:42px}.row .pi{width:32px;height:32px}
+.lnk{display:flex;align-items:center;gap:8px;background:#f6f3ea;border-radius:12px;padding:6px 6px 6px 12px}.lnk span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:var(--ink)}.lnk .sec{flex:none;padding:8px 14px;min-height:0}
+.stp{display:flex;gap:10px;align-items:flex-start}.stp>b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--bluesoft);color:#17599a;display:grid;place-items:center;font-size:13px}.stp>span{flex:1;line-height:1.4}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -155,14 +157,23 @@ function onb(){const st=[
  ()=>`<h2>Hi ha alguna cosa que no podeu menjar?</h2><p class="mut">Al·lèrgies o intoleràncies de qualsevol de vosaltres. Ho podreu detallar per a cada persona més endavant a <svg class="ingear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>.</p>
    <div class="stack">${ALG.map(x=>`<button class="opt" data-alg="${x}" aria-pressed="${S.alg.includes(x)}">${PI("alg_"+x.toLowerCase().replace(" ","_"))}${x}<span class="ck">✓</span></button>`).join("")}<button class="opt" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button></div>`,
  ()=>`<h2>On viviu?</h2><p class="mut">Per adaptar el menú al temps que farà i trobar el vostre veïnat.</p><input class="tx" id="mu" placeholder="Escriu el municipi" value="${esc(S.muni)}" autocomplete="off"><div class="stack" id="mul">${muniL()}</div>`,
- ()=>`<h2>Tingues l'app a mà</h2><p class="mut">Afegeix-la a la pantalla d'inici: s'obrirà com una app i us podrem avisar el diumenge per preparar la setmana.</p>
-   <div class="card stack"><div style="display:flex;gap:10px"><b>1</b>Toca <b>Comparteix</b> (el quadrat amb la fletxa) a Safari.</div><div style="display:flex;gap:10px"><b>2</b>Tria <b>Afegeix a la pantalla d'inici</b>.</div><div style="display:flex;gap:10px"><b>3</b>Obre-la des de la icona nova.</div></div>`,
+ ()=>`<h2>Tingues l'app a mà</h2><p class="mut">Posa-la a la pantalla d'inici del mòbil: s'obrirà com una app i us podrem avisar el diumenge per preparar la setmana.</p>${a2hs()}`,
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
  const n=S.onb,ok=[1,!!/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,!!MUNIS.includes(S.muni),1,0][n];
  const lab=["Comencem","Envia l'enllaç","Següent","Següent","Següent","Ja està","" ][n];
  return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n?`<div class="fh">${n<6?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span><span></span></div>`:""}
  ${n&&n<6?`<div class="prog">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div>`:""}
  <div class="fb">${st[n]()}${lab?`<div class="ff ffin">${n===0?`<button class="sec" data-a="codi">Tinc un codi</button>`:""}${n===5?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button></div>`:""}</div></div>`;}
+const UA=navigator.userAgent,IOS=/iPhone|iPad|iPod/.test(UA),AND=/Android/.test(UA),INAPP=/FBAN|FBAV|Instagram|WhatsApp|Line\/|GSA\/|Gmail|LinkedInApp|Twitter|Snapchat|Telegram|; wv\)/.test(UA)||(IOS&&!/Safari\//.test(UA)),STANDALONE=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+let BIP=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();BIP=e;if(S.onb===5)render();});
+const APPURL=location.origin+location.pathname;
+const SHARE_SVG=`<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="vertical-align:-4px"><path d="M12 3v12M8 7l4-4 4 4" fill="none" stroke="#2a78c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1" fill="none" stroke="#2a78c2" stroke-width="2" stroke-linecap="round"/></svg>`;
+function a2hs(){
+ const link=`<div class="card stack"><b>L'enllaç de l'app</b><div class="lnk"><span>${esc(APPURL.replace(/^https?:\/\//,""))}</span><button class="sec" data-a="copylink">Copia</button></div><p class="mut" style="margin:0">Enganxa'l a ${IOS?"Safari":"Chrome"} si ho vols fer més tard o en un altre mòbil.</p></div>`;
+ if(INAPP)return `<div class="card stack"><p style="margin:0">Ara l'estàs veient dins d'una altra app. Per posar-la a la pantalla d'inici l'has d'obrir a ${IOS?"Safari":"Chrome"}.</p><button class="cta" data-a="openbrowser">Obre-la a ${IOS?"Safari":"Chrome"}</button></div>${link}`;
+ if(AND&&BIP)return `<div class="card stack"><button class="cta" data-a="install">Posa-la a la pantalla d'inici</button></div>${link}`;
+ if(IOS)return `<div class="card stack"><div class="stp"><b>1</b><span>Toca el botó ${SHARE_SVG} <b>Comparteix</b> de Safari (a baix o a dalt de tot).</span></div><div class="stp"><b>2</b><span>Baixa i tria <b>Afegeix a la pantalla d'inici</b>.</span></div><div class="stp"><b>3</b><span>Toca <b>Afegeix</b> i obre l'app des de la icona nova.</span></div></div>${link}`;
+ return `<div class="card stack"><div class="stp"><b>1</b><span>Toca el menú <b>⋮</b> del navegador.</span></div><div class="stp"><b>2</b><span>Tria <b>Afegeix a la pantalla d'inici</b> o <b>Instal·la l'app</b>.</span></div></div>${link}`;}
 function muniL(){const q=(S.muni||"").toLowerCase();if(!q||MUNIS.includes(S.muni))return S.muni&&MUNIS.includes(S.muni)?`<div class="chip g">✓ ${esc(S.muni)}</div>`:"";return MUNIS.filter(m=>m.toLowerCase().startsWith(q)).slice(0,5).map(m=>`<button class="opt" data-muni="${m}">${m}</button>`).join("")||`<p class="mut">Cap municipi amb aquest nom.</p>`;}
 
 /* ---------- Pestanyes ---------- */
@@ -217,8 +228,11 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   sheet(`<h3>${esc(cur)}</h3><p class="mut">Canvia'l per un d'aquests, pensats per a la temporada:</p>${ALTS.slice(0,3).map(x=>`<button class="opt" data-alt="${i}:${j}:${esc(x)}">${esc(x)}</button>`).join("")}<button class="sec" data-a="nop">Veure la recepta</button><button class="sec" data-alt="${i}:${j}:—">Aquest àpat no cuinem</button>`);return;}
  if(t.dataset.alt){const[i,j,...x]=t.dataset.alt.split(":");S.menu[+i][+j]=x.join(":");close();render();return;}
  switch(a){
-  case"onext":if(S.onb===6)return;S.onb++;if(S.onb===6){render();setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.onb=99;S.tab="setmana";startB();},1900);return;}render();break;
+  case"onext":if(S.onb===6)return;S.onb++;if(S.onb===5&&STANDALONE)S.onb++;if(S.onb===6){render();setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.onb=99;S.tab="setmana";startB();},1900);return;}render();break;
   case"oback":S.onb=Math.max(0,S.onb-1);render();break;
+  case"copylink":(navigator.clipboard?navigator.clipboard.writeText(APPURL):Promise.reject()).then(()=>toast("Enllaç copiat ✓")).catch(()=>{prompt("Copia l'enllaç:",APPURL);});break;
+  case"openbrowser":if(IOS)location.href="x-safari-"+APPURL;else location.href="intent://"+APPURL.replace(/^https?:\/\//,"")+"#Intent;scheme=https;package=com.android.chrome;end";setTimeout(()=>toast("Si no s'obre, copia l'enllaç i enganxa'l al navegador"),1200);break;
+  case"install":if(BIP){BIP.prompt();BIP.userChoice.then(r=>{BIP=null;if(r.outcome==="accepted"){S.onb++;render();}});}break;
   case"codi":sheet(`<h3>Uneix-te a una família</h3><input class="tx" placeholder="Codi de 16 lletres"><button class="cta" data-a="sclose">Entra</button>`);break;
   case"addmem":S.mem.push("");render();break;
   case"delmem":S.mem.splice(+t.dataset.i,1);render();break;
