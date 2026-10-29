@@ -169,17 +169,18 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
 .at2.mes{color:#2f6b1f}
 .celx{position:absolute;inset:0;overflow:hidden;background:#5b62d6;z-index:2}.celimg{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);aspect-ratio:899/1600;height:100%}.celimg>img{width:100%;height:100%;display:block}
-.celhot{position:absolute;background:none;border:0;padding:0;min-height:0;height:auto;box-shadow:none;border-radius:28px;animation:hotp 2.2s ease-in-out infinite}.celhot+.celhot{animation-delay:1.1s}@keyframes hotp{0%,100%{box-shadow:0 0 0 0 rgba(255,226,120,0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.75),0 0 22px 6px rgba(255,214,90,.7)}}
+.celhot{position:absolute;background:none;border:0;padding:0;min-height:0;height:auto;box-shadow:none;border-radius:28px}@keyframes hotp{0%,100%{box-shadow:0 0 0 0 rgba(255,226,120,0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.75),0 0 22px 6px rgba(255,214,90,.7)}}
 .celtt{position:absolute;left:0;right:0;top:calc(46px + env(safe-area-inset-top,0px));text-align:center;color:#fff;pointer-events:none}.celtt h1{font:700 46px var(--disp);margin:0;text-shadow:0 3px 12px rgba(0,0,0,.45)}.celtt p{margin:2px 0 0;font-size:19px;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.5)}
-@media (prefers-reduced-motion:reduce){.celhot{animation:none;box-shadow:0 0 0 3px rgba(255,255,255,.75)}}
 .cel .welsky{position:relative}.cel .welsky{height:min(380px,46vh)!important}.cel .welart img{object-position:20% 50%}.cel .welsky::after{height:28px}.cel .welbody{margin-top:6px}.cel .welbody h1{font-size:40px}
 .celc{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:14px;align-items:end;justify-items:center}
 .celb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:6px 4px;box-shadow:none;height:auto;min-height:0}
 .celb img{height:min(230px,30vh);width:auto;max-width:100%;display:block;filter:drop-shadow(0 6px 8px rgba(80,60,20,.18))}.celb b{font:700 21px var(--disp)}.celb small{color:var(--mut);font-size:14.5px;font-weight:600}
 
-.fw{position:absolute;width:6px;height:6px;border-radius:50%;z-index:2;pointer-events:none;opacity:0;animation:fw 2.4s ease-out infinite}
-.fw.f0{left:22%;top:26%;color:#ffd34d}.fw.f1{left:72%;top:18%;color:#ff6b6b;animation-delay:.5s}.fw.f2{left:50%;top:12%;color:#7ee0ff;animation-delay:1s}.fw.f3{left:86%;top:38%;color:#9cff7a;animation-delay:1.5s}.fw.f4{left:10%;top:12%;color:#ff9be0;animation-delay:1.9s}
-@keyframes fw{0%{opacity:1;box-shadow:0 0 0 0 currentColor}60%{opacity:1}100%{opacity:0;box-shadow:0 -34px 0 -1px currentColor,24px -24px 0 -1px currentColor,34px 0 0 -1px currentColor,24px 24px 0 -1px currentColor,0 34px 0 -1px currentColor,-24px 24px 0 -1px currentColor,-34px 0 0 -1px currentColor,-24px -24px 0 -1px currentColor}}
+.fw{position:absolute;width:6px;height:6px;border-radius:50%;z-index:2;pointer-events:none;opacity:0;background:currentColor;animation:fwr 3s ease-out infinite}
+.fw::before{content:"";position:absolute;left:2px;top:6px;width:2px;height:70px;border-radius:2px;background:linear-gradient(currentColor,rgba(255,240,200,.35) 40%,transparent);opacity:0;animation:fwt 3s ease-out infinite;animation-delay:inherit}
+.fw.f0{left:22%;top:16%;color:#ffd34d}.fw.f1{left:74%;top:12%;color:#ff8a8a;animation-delay:.6s}.fw.f2{left:50%;top:24%;color:#7ee0ff;animation-delay:1.2s}.fw.f3{left:86%;top:28%;color:#9cff7a;animation-delay:1.8s}.fw.f4{left:10%;top:30%;color:#ff9be0;animation-delay:2.4s}
+@keyframes fwr{0%{opacity:1;transform:translateY(240px);box-shadow:none}38%{opacity:1;transform:translateY(0);box-shadow:0 0 0 0 currentColor}40%{background:transparent}100%{opacity:0;transform:translateY(0);background:transparent;box-shadow:0 -40px 0 -1px currentColor,28px -28px 0 -1px currentColor,40px 0 0 -1px currentColor,28px 28px 0 -1px currentColor,0 40px 0 -1px currentColor,-28px 28px 0 -1px currentColor,-40px 0 0 -1px currentColor,-28px -28px 0 -1px currentColor}}
+@keyframes fwt{0%{opacity:.9}36%{opacity:.9}42%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.fw{display:none}}
 .at2.lv2{color:#c46a06}.at2.lv1{color:#9a7600}
 .at2.lv2::after,.at2.lv1::after{content:"";position:absolute;top:50%;left:50%;width:74px;height:74px;margin:-48px 0 0 -37px;border-radius:50%;border:6px solid rgba(240,138,28,.95);box-sizing:border-box}
