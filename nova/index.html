@@ -76,7 +76,7 @@ p{margin:0}.mut{color:var(--mut)}
 .opt .pi{width:40px;height:40px;margin:-4px 0}
 .opt .ck{margin-left:auto;width:24px;height:24px;border-radius:7px;border:1.5px solid #c9c1ad;display:grid;place-items:center;color:#fff;font-size:15px}
 .opt[aria-pressed=true] .ck{background:var(--green);border-color:var(--green)}
-input.tx{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius:14px;padding:0 14px;font:inherit;font-size:17px;background:#fff}
+input.tx,select.tx{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius:14px;padding:0 14px;font:inherit;font-size:17px;background:#fff}
 .mem{display:flex;gap:8px;align-items:center}
 .mem input{flex:1}
 .mem button{width:44px;height:44px;border-radius:50%;border:0;background:#efebe1}
@@ -119,6 +119,7 @@ input.tx{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius
 .pi{width:28px;height:28px;object-fit:contain;display:block}.tabs .pi{width:30px;height:30px}.pillb .pi{width:24px;height:24px}.welic .pi{width:42px;height:42px}.row .pi{width:32px;height:32px}
 .lnk{display:flex;align-items:center;gap:8px;background:#f6f3ea;border-radius:12px;padding:6px 6px 6px 12px}.lnk span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:var(--ink)}.lnk .sec{flex:none;padding:8px 14px;min-height:0}
 .stp{display:flex;gap:10px;align-items:flex-start}.stp>b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--bluesoft);color:#17599a;display:grid;place-items:center;font-size:13px}.stp>span{flex:1;line-height:1.4}
+label.lb{font-weight:700;font-size:14px;margin:4px 2px -6px}select.tx{appearance:none;-webkit-appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2714%27 height=%2714%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27M6 9l6 6 6-6%27 fill=%27none%27 stroke=%27%236b7480%27 stroke-width=%272.5%27 stroke-linecap=%27round%27/%3E%3C/svg%3E") no-repeat right 14px center;padding-right:40px;color:var(--ink)}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -130,13 +131,12 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const COL=["#2a78c2","#c8352b","#3f9a2e","#cf8714","#7a52b3","#2b8a8a"];
 const DIES=["Dl","Dt","Dc","Dj","Dv","Ds","Dg"];
-const MUNIS=["Teià","Badalona","Barcelona","Mataró","Alella","Masnou","Premià de Mar","Vilassar de Mar","Montgat","Tiana","Cabrera de Mar","Argentona","Granollers","Girona","Lleida","Tarragona","Reus","Sabadell","Terrassa","Vic"];
 const ALG=["Gluten","Lactosa","Fruits secs","Marisc","Ou","Peix","Soja","Porc"];
 const MENU0=[["Llenties estofades","Truita de carbassó"],["Arròs de verdures","Crema de carbassa"],["—","Escudella"],["Pollastre al forn","Amanida de cigrons"],["Macarrons","Sopa de peix"],["Fideuà","—"],["Canelons","—"]];
 const ALTS=["Cigrons amb espinacs","Bacallà amb samfaina","Risotto de bolets","Mongetes amb botifarra","Lluç al forn"];
 const LLISTA=[["Verdura i fruita",[["Carbassa","1 kg","Mercat"],["Carbassó","3 u",""],["Espinacs","400 g","Bonpreu"],["Pomes","1,5 kg",""]]],["Carn i peix",[["Pit de pollastre","600 g","Bonpreu"],["Peix de sopa","800 g","Mercat"],["Carn d'olla","1 kg",""]]],["Rebost",[["Fideus de fideuà","500 g",""],["Canelons","1 capsa","Mercadona"]]]];
 const RECS=[["Llenties estofades","🥘","#f8e1dd",5],["Truita de carbassó","🥚","#fbeccb",4],["Crema de carbassa","🎃","#fdf0e3",5],["Escudella","🍲","#eaf4e3",5],["Fideuà","🦐","#dbe9f7",4],["Canelons","🫕","#f8e1dd",5]];
-let S={onb:0,email:"",fam:"Rodon Aymar",mem:["Josep","Lídia","Josep","Marina"],alg:[],res:false,muni:"",tab:"setmana",flow:null,step:0,disp:null,menu:null,done:{},ready:false,sub:{compra:"llista",rec:"fam"}};
+let S={onb:0,email:"",fam:"Rodon Aymar",mem:["Josep","Lídia","Josep","Marina"],alg:[],res:false,muni:"",pais:"Catalunya",prov:"",tab:"setmana",flow:null,step:0,disp:null,menu:null,done:{},ready:false,sub:{compra:"llista",rec:"fam"}};
 
 function render(){const _k=S.onb<99?"o"+S.onb:"t"+S.tab+(S.flow?"f"+S.step:""),_e=document.querySelector(".fb")||document.querySelector(".scr"),_t=_e&&_e.scrollTop;render0();if(_e&&_k===render._k){const e=document.querySelector(".fb")||document.querySelector(".scr");if(e)e.scrollTop=_t;}render._k=_k;}
 function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
@@ -156,10 +156,14 @@ function onb(){const st=[
    <div class="stack">${S.mem.map((m,i)=>`<div class="mem"><input class="tx" data-mem="${i}" value="${esc(m)}" aria-label="Membre ${i+1}">${i?`<button data-a="delmem" data-i="${i}" aria-label="Treu">✕</button>`:""}</div>`).join("")}</div><button class="sec" data-a="addmem">＋ Afegeix una persona</button>`,
  ()=>`<h2>Hi ha alguna cosa que no podeu menjar?</h2><p class="mut">Al·lèrgies o intoleràncies de qualsevol de vosaltres. Ho podreu detallar per a cada persona més endavant a <svg class="ingear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1f3a5f"/><g transform="translate(4.2 4.2) scale(.65)"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="1.8"/></g></svg>.</p>
    <div class="stack">${ALG.map(x=>`<button class="opt" data-alg="${x}" aria-pressed="${S.alg.includes(x)}">${PI("alg_"+x.toLowerCase().replace(" ","_"))}${x}<span class="ck">✓</span></button>`).join("")}<button class="opt" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button></div>`,
- ()=>`<h2>On viviu?</h2><p class="mut">Per adaptar el menú al temps que farà i trobar el vostre veïnat.</p><input class="tx" id="mu" placeholder="Escriu el municipi" value="${esc(S.muni)}" autocomplete="off"><div class="stack" id="mul">${muniL()}</div>`,
+ ()=>{loadMU();if(!MU)return `<h2>On viviu?</h2><p class="mut">Carregant els municipis…</p>`;const pv=provs();
+  return `<h2>On viviu?</h2><p class="mut">Per adaptar el menú al temps que farà i trobar el vostre veïnat.</p>
+  <label class="lb">País</label><select class="tx" id="pa">${MU.c.map(c=>`<option${c[0]===S.pais?" selected":""}>${c[0]}</option>`).join("")}</select>
+  ${pv.length>1?`<label class="lb">Província</label><select class="tx" id="pr"><option value="">Tria la província</option>${pv.map(([k,n])=>`<option value="${k}"${k===S.prov?" selected":""}>${n}</option>`).join("")}</select>`:""}
+  ${S.prov?`<label class="lb">Municipi</label><input class="tx" id="mu" placeholder="Escriu el municipi" value="${esc(S.muni)}" autocomplete="off"><div class="stack" id="mul">${muniL()}</div>`:""}`;},
  ()=>`<h2>Tingues l'app a mà</h2><p class="mut">Posa-la a la pantalla d'inici del mòbil: s'obrirà com una app i us podrem avisar el diumenge per preparar la setmana.</p>${a2hs()}`,
  ()=>`<div class="load"><h2>Preparem la primera setmana…</h2><p class="mut">Temporada de tardor · ${esc(S.muni||"el vostre municipi")}</p><div class="bar"><i id="lb"></i></div></div>`];
- const n=S.onb,ok=[1,!!/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,!!MUNIS.includes(S.muni),1,0][n];
+ const n=S.onb,ok=[1,!!/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,0][n];
  const lab=["Comencem","Envia l'enllaç","Següent","Següent","Següent","Ja està","" ][n];
  return `<div class="flow" style="position:relative;flex:1;${n===0?"background:var(--crema)":""}">${n?`<div class="fh">${n<6?`<button class="rb" data-a="oback" aria-label="Enrere">‹</button>`:"<span></span>"}<span></span><span></span></div>`:""}
  ${n&&n<6?`<div class="prog">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div>`:""}
@@ -174,7 +178,13 @@ function a2hs(){
  if(AND&&BIP)return `<div class="card stack"><button class="cta" data-a="install">Posa-la a la pantalla d'inici</button></div>${link}`;
  if(IOS)return `<div class="card stack"><div class="stp"><b>1</b><span>Toca el botó ${SHARE_SVG} <b>Comparteix</b> de Safari (a baix o a dalt de tot).</span></div><div class="stp"><b>2</b><span>Baixa i tria <b>Afegeix a la pantalla d'inici</b>.</span></div><div class="stp"><b>3</b><span>Toca <b>Afegeix</b> i obre l'app des de la icona nova.</span></div></div>${link}`;
  return `<div class="card stack"><div class="stp"><b>1</b><span>Toca el menú <b>⋮</b> del navegador.</span></div><div class="stp"><b>2</b><span>Tria <b>Afegeix a la pantalla d'inici</b> o <b>Instal·la l'app</b>.</span></div></div>${link}`;}
-function muniL(){const q=(S.muni||"").toLowerCase();if(!q||MUNIS.includes(S.muni))return S.muni&&MUNIS.includes(S.muni)?`<div class="chip g">✓ ${esc(S.muni)}</div>`:"";return MUNIS.filter(m=>m.toLowerCase().startsWith(q)).slice(0,5).map(m=>`<button class="opt" data-muni="${m}">${m}</button>`).join("")||`<p class="mut">Cap municipi amb aquest nom.</p>`;}
+const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g," ").trim();
+let MU=null;function loadMU(){if(MU||loadMU.p)return;loadMU.p=fetch("municipis.json").then(r=>r.json()).then(j=>{MU=j;if(!S.prov){const pv=provs();if(pv.length===1)S.prov=pv[0][0];}if(S.onb===4)render();}).catch(()=>{loadMU.p=null;});}
+function provs(){return MU?(MU.c.find(c=>c[0]===S.pais)||MU.c[0])[1]:[];}
+function muniOk(){return !!(MU&&S.prov&&(MU.m[S.prov]||[]).includes(S.muni));}
+function muniL(){if(muniOk())return `<div class="chip g">✓ ${esc(S.muni)}</div>`;const q=norm(S.muni);if(!q)return "";const L=MU.m[S.prov]||[];
+ const a=L.filter(m=>norm(m).startsWith(q)),b=L.filter(m=>!norm(m).startsWith(q)&&norm(m).includes(q));
+ return [...a,...b].slice(0,6).map(m=>`<button class="opt" data-muni="${esc(m)}">${esc(m)}</button>`).join("")||`<p class="mut">No trobem cap municipi amb aquest nom en aquesta província.</p>`;}
 
 /* ---------- Pestanyes ---------- */
 function tSet(){const m=S.menu||MENU0;
@@ -213,8 +223,10 @@ const rows=L=>`<div class="card" style="padding:4px 12px">${L.map(([i,t,r])=>`<b
 
 /* ---------- Esdeveniments ---------- */
 document.addEventListener("input",e=>{const t=e.target;if(t.id==="em")S.email=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
- if(t.id==="mu"){S.muni=t.value;$("#mul").innerHTML=muniL();}
- const b=document.querySelector('.ff .cta');if(b&&S.onb<99){const ok=[1,/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,MUNIS.includes(S.muni),1][S.onb];b.disabled=!ok;}});
+ if(t.id==="pa"){S.pais=t.value;const pv=provs();S.prov=pv.length===1?pv[0][0]:"";S.muni="";render();return;}
+ if(t.id==="pr"){S.prov=t.value;S.muni="";render();setTimeout(()=>{const m=$("#mu");if(m)m.focus();},50);return;}
+ if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
+ const b=document.querySelector('.ff .cta');if(b&&S.onb<99){const ok=[1,/.+@.+\..+/.test(S.email),S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1][S.onb];b.disabled=!ok;}});
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;const a=t.dataset.a;
  if(t.dataset.tab){S.tab=t.dataset.tab;render();return;}
  if(t.dataset.sub){const[k,v]=t.dataset.sub.split(":");S.sub[k]=v;render();return;}
