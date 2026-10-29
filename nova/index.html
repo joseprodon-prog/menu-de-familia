@@ -248,9 +248,7 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .at2.on .pi{opacity:.8}
 .at2.on::after{content:"";position:absolute;top:50%;left:50%;width:74px;height:74px;margin:-48px 0 0 -37px;border-radius:50%;border:6px solid rgba(214,52,40,.92);box-sizing:border-box;background:linear-gradient(135deg,transparent calc(50% - 3px),rgba(214,52,40,.92) calc(50% - 3px),rgba(214,52,40,.92) calc(50% + 3px),transparent calc(50% + 3px));pointer-events:none}
 .at2.add{color:#2f6b1f}
-.at2.fam{color:var(--mut)}
-.at2.fam .pi{opacity:.35}
-.at2.fam::after{content:"família";position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:10px;background:#efeadc;color:var(--mut);border-radius:99px;padding:1px 6px}
+.at2.fam{opacity:.45}
 .permb{flex-basis:100%;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .permb p{margin:0;font-size:14.5px;color:var(--mut);font-weight:600}
 .prow{display:flex;gap:12px;flex-wrap:nowrap;justify-content:safe center;overflow-x:auto;max-width:100%;padding:2px 4px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.prow::-webkit-scrollbar{display:none}.prow .q{flex:none}
@@ -390,7 +388,7 @@ function persAv(){const e=$("#pav");if(e)e.innerHTML=avt(TMP,110,TI);}
 function algItems(){return [...ALG.map(x=>[x,"alg_"+x.toLowerCase().replace(" ","_")]),...S.algx.map(x=>[x,"alg_afegit"])];}
 function permRow(){return `<div class="permb"><div class="prow">${S.mem.map((m,i)=>{const a=(mx(i).alg||[]);return `<button class="q" data-a="palg" data-i="${i}" aria-label="${esc(m)}${a.length?": "+esc(a.join(", ")):""}"><span class="qav">${avt(mx(i),48,i)}${a.length?`<em>${a.length}</em>`:""}</span><b>${esc(m)}</b></button>`;}).join("")}</div></div>`;}
 function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div>
- <div class="agr">${algItems().map(([y,f])=>{const fam=S.alg.includes(y);return `<button class="at2${fam?" fam":a.includes(y)?" on":""}" ${fam?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}<span>${esc(y)}</span></button>`;}).join("")}<button class="at2 add" data-a="paadd">${PI("afegeix")}<span>Afegeix</span></button></div>
+ <div class="agr">${algItems().map(([y,f])=>{const fam=S.alg.includes(y);return `<button class="at2${fam?" on fam":a.includes(y)?" on":""}" ${fam?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}<span>${esc(y)}</span></button>`;}).join("")}<button class="at2 add" data-a="paadd">${PI("afegeix")}<span>Afegeix</span></button></div>
  ${PADD?`<div class="addbx"><input class="tx" id="paddin" placeholder="Per exemple: api" autocomplete="off"><button class="cta" data-a="paaddok">Afegeix</button></div>`:""}`;}
 let PADD=false;
 function palgRef(){const sh=document.querySelector(".dim .sheet");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",palgH(PAI));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;}
