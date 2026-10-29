@@ -250,6 +250,20 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
  .fb::-webkit-scrollbar,.scr::-webkit-scrollbar,.agr::-webkit-scrollbar{width:0;height:0}
  .fb,.scr,.agr{scrollbar-width:none}
 }
+.geo{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;height:58px;border-radius:29px;background:#eef4fb;border:1.5px solid #b9d3ee;color:var(--blue2);font:700 17px var(--body)}
+.geo b{width:22px;height:22px;border-radius:50%;border:3px solid var(--blue2);display:grid;place-items:center;box-sizing:border-box}
+.geo b::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue2)}
+.or2{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:14.5px;margin:12px 0}
+.or2::before,.or2::after{content:"";flex:1;height:1px;background:var(--line)}
+.sug{margin-top:8px;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden}
+.sug:empty{display:none}
+.sug button{background:none;border:0;border-bottom:1px solid #f0ebde;text-align:left;padding:11px 14px;font:600 17px var(--body);color:var(--ink)}
+.sug button:last-child{border-bottom:0}
+.sug button small{display:block;color:var(--mut);font-size:13.5px;font-weight:400}
+.found{display:flex;align-items:center;gap:12px;background:var(--greensoft);border:1.5px solid #8fb874;border-radius:18px;padding:12px 14px}
+.found b{font:700 22px var(--disp);display:block}
+.found small{color:#2f6b1f;font-weight:600;font-size:14px}
+.found .ok{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:700}
 </style></head><body>
 
 <div id="app" aria-live="polite"></div>
@@ -302,11 +316,10 @@ function onb(){const st=[
    <button class="opt tot" data-alg="cap" aria-pressed="${S.res}">${PI("alg_tot")}Ho mengem tot<span class="ck">✓</span></button>
    <div class="agr">${algItems().map(([x,f])=>`<button class="at2${S.alg.includes(x)?" on":""}" data-alg="${esc(x)}">${PI(f)}<span>${esc(x)}</span></button>`).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>
    ${S.addk==="alg"?addBox("alg"):""}`,
- ()=>{loadMU();if(!MU)return `<h2>On viviu?</h2><p class="mut">Carregant els municipis…</p>`;const pv=provs();
-  return `<h2>On viviu?</h2><p class="mut">Per adaptar el menú al temps que farà i trobar el vostre veïnat.</p>
-  <label class="lb">País</label><select class="tx" id="pa">${MU.c.map(c=>`<option${c[0]===S.pais?" selected":""}>${c[0]}</option>`).join("")}</select>
-  ${pv.length>1?`<label class="lb">Província</label><select class="tx" id="pr"><option value="">Tria la província</option>${pv.map(([k,n])=>`<option value="${k}"${k===S.prov?" selected":""}>${n}</option>`).join("")}</select>`:""}
-  ${S.prov?`<label class="lb">Municipi</label><input class="tx" id="mu" placeholder="Escriu el municipi" value="${esc(S.muni)}" autocomplete="off"><div class="stack" id="mul">${muniL()}</div>`:""}`;},
+ ()=>{loadMU();const top=`<div class="accbig">${PI("lloc_poble")}</div><h2 class="acch">On viviu?</h2>`;
+  if(!MU)return top+`<p class="mut" style="text-align:center">Carregant els pobles…</p>`;
+  if(muniOk())return top+`<div class="found"><div><b>${esc(S.muni)}</b><small>${esc(provName())} · ${esc(S.pais)}</small></div><span class="ok">✓</span></div><button class="lnk" data-a="muchg" style="display:block;flex:none;margin:10px auto 0">Canvia</button>`;
+  return top+`<button class="geo" data-a="geo"><b></b>Fes servir la meva ubicació</button><div class="or2">o escriu el poble</div><input class="tx srchi" id="mq" placeholder="Poble o ciutat" value="${esc(MQ)}" autocomplete="off" autocapitalize="words"><div class="sug" id="mql">${mqL()}</div>`;},
  ()=>infoS(),
  ()=>`<div class="tria"><img class="trimg big" src="img/cuina_afinar.png" alt=""><h2>Voleu afinar-ho ara?</h2><p class="mut">Si ens dieu què hi teniu al rebost i quins estris a la cuina, els menús i la llista de la compra seran més encertats. Són un parell de minuts.</p><div class="icrow">${["rebost","eq_robot","nav_menu","icona_compra"].map(f=>`<img src="img/${f}.png" alt="">`).join("")}</div>
    <button class="tcard" data-a="cfgnow"><img src="img/nav_feina.png" alt=""><span><b>Sí, ara</b><small>Equipament de cuina i el menjar que teniu</small></span></button>
@@ -364,6 +377,12 @@ function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
+let MQ="",ALLM=null;
+function allM(){if(ALLM||!MU)return ALLM;ALLM=[];MU.c.forEach(([c,pv])=>pv.forEach(([k,pn])=>(MU.m[k]||[]).forEach(n=>ALLM.push({n,k,pn,c,q:norm(n)}))));return ALLM;}
+function provName(){const pv=provs().find(p=>p[0]===S.prov);return pv?pv[1]:"";}
+function mqL(){const q=norm(MQ);if(!q||!allM())return "";const a=ALLM.filter(m=>m.q.startsWith(q)),b=q.length>2?ALLM.filter(m=>!m.q.startsWith(q)&&m.q.includes(q)):[];const L=[...a,...b].slice(0,6);
+ return L.map(m=>`<button data-mpick="${ALLM.indexOf(m)}">${esc(m.n)}<small>${esc(m.pn)} · ${esc(m.c)}</small></button>`).join("")||`<p class="mut" style="padding:10px 14px;margin:0">No el trobem. Prova-ho amb un altre nom.</p>`;}
+function mPick(m){S.pais=m.c;S.prov=m.k;S.muni=m.n;MQ="";render();}
 function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),S.alg.length||S.res,muniOk(),1,1,1,1,1,1,0][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
@@ -445,7 +464,7 @@ const rows=L=>`<div class="card" style="padding:4px 12px">${L.map(([i,t,r])=>`<b
 
 /* ---------- Esdeveniments ---------- */
 document.addEventListener("input",()=>setTimeout(saveS,0));document.addEventListener("change",e=>{if(e.target.id==="tqfoto"&&e.target.files[0]){const u=URL.createObjectURL(e.target.files[0]);sheet(`<h3>Tiquet rebut</h3><img src="${u}" alt="Tiquet" style="width:100%;max-height:52vh;object-fit:contain;border-radius:14px;background:#fff"><p class="mut">El Capità el llegirà i el sumarà a la despesa del mes.</p><button class="lnk" data-a="tiquet">Fes-ne un altre</button>`);return;}if(e.target.id==="pb"&&TMP){TMP.b=e.target.value;TMP.f=null;persAv();saveS();return;}if(e.target.id==="rbfoto"){FOTOS=[...FOTOS,...[...e.target.files].map(f=>URL.createObjectURL(f))].slice(0,6);render();}});addEventListener("pagehide",saveS);document.addEventListener("keydown",e=>{if(e.target.id==="addin"&&e.key==="Enter"){e.preventDefault();const b=document.querySelector("[data-a=addok]");if(b)b.click();}});
-document.addEventListener("input",e=>{const t=e.target;if(t.id==="fn")setTimeout(fitFam,0);if(t.id==="pb"&&TMP)return;if(t.id==="pn"&&TMP){S.mem[TI]=t.value;saveS();return;}if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
+document.addEventListener("input",e=>{const t=e.target;if(t.id==="mq"){MQ=t.value;const l=$("#mql");if(l)l.innerHTML=mqL();return;}if(t.id==="fn")setTimeout(fitFam,0);if(t.id==="pb"&&TMP)return;if(t.id==="pn"&&TMP){S.mem[TI]=t.value;saveS();return;}if(t.id==="pw1"||t.id==="pw2"){if(t.id==="pw1")PW1=t.value;else PW2=t.value;updPw();return;}if(t.id==="em")S.email=t.value;if(t.id==="rbta")S.rebost=t.value;if(t.id==="fn")S.fam=t.value;if(t.dataset.mem!=null)S.mem[+t.dataset.mem]=t.value;
  if(t.id==="pa"){S.pais=t.value;const pv=provs();S.prov=pv.length===1?pv[0][0]:"";S.muni="";render();return;}
  if(t.id==="pr"){S.prov=t.value;S.muni="";render();setTimeout(()=>{const m=$("#mu");if(m)m.focus();},50);return;}
  if(t.id==="mu"){S.muni=t.value;const hit=(MU.m[S.prov]||[]).find(m=>norm(m)===norm(t.value));if(hit){S.muni=hit;}$("#mul").innerHTML=muniL();}
@@ -456,6 +475,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
  if(t.dataset.pa!=null&&PAI>=0){const x=S.memx[PAI];x.alg=x.alg||[];const y=t.dataset.pa;x.alg=x.alg.includes(y)?x.alg.filter(z=>z!==y):[...x.alg,y];const sh=document.querySelector(".dim .sheet");if(sh){const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",palgH(PAI));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;}saveS();return;}
  if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{S.res=false;S.alg=S.alg.includes(x)?S.alg.filter(y=>y!==x):[...S.alg,x];}render();return;}
  if(t.dataset.muni){S.muni=t.dataset.muni;render();return;}
+ if(t.dataset.mpick!=null&&ALLM){mPick(ALLM[+t.dataset.mpick]);return;}
  if(t.dataset.eq){const x=t.dataset.eq;S.equip=S.equip.includes(x)?S.equip.filter(y=>y!==x):[...S.equip,x];render();return;}
  if(t.dataset.chk){S.done[t.dataset.chk]=!S.done[t.dataset.chk];render();return;}
  if(t.dataset.cell){const[i,j]=t.dataset.cell.split(":").map(Number);const p=S.disp[i][j];
@@ -493,6 +513,9 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
   case"codi":sheet(`<h3>Uneix-te a una família</h3><input class="tx" placeholder="Codi de 16 lletres"><button class="cta" data-a="sclose">Entra</button>`);break;
   case"addmem":S.mem.push("");render();break;
   case"pers":persOpen(+t.dataset.i);break;
+  case"muchg":S.muni="";render();setTimeout(()=>{const m=$("#mq");if(m)m.focus();},60);break;
+  case"geo":{if(!navigator.geolocation){toast("Aquest mòbil no dona la ubicació");break;}t.disabled=true;t.lastChild.textContent="Buscant on sou…";
+   navigator.geolocation.getCurrentPosition(async pos=>{try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=ca&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);const j=await r.json();const a=j.address||{};const nm=a.village||a.town||a.city||a.municipality||a.hamlet||"";allM();const q=norm(nm);const hit=ALLM&&(ALLM.find(m=>m.q===q)||ALLM.find(m=>q&&m.q.startsWith(q)));if(hit){mPick(hit);}else{MQ=nm;render();toast("No l'hem trobat: escriu el poble");}}catch(e){render();toast("No s'ha pogut saber on sou");}},()=>{render();toast("Sense permís d'ubicació: escriu el poble");},{timeout:10000,maximumAge:600000});break;}
   case"palg":{if(!S.memx)S.memx=S.mem.map((m,k)=>mx(k));PAI=+t.dataset.i;SHCB=null;sheet(palgH(PAI));SHCB=()=>{PAI=-1;render();};break;}
   case"age":{TMP.e=Math.max(0,Math.min(110,(+TMP.e||0)+(+t.dataset.d)));const v=$("#agev");if(v)v.textContent=TMP.e;const pv=document.querySelector(".dim .prev");if(pv)pv.innerHTML=avt(TMP,110);break;}
   case"pg":TMP.g=t.dataset.g;TMP.f=null;persUpd();saveS();break;
