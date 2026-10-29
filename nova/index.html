@@ -169,9 +169,9 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
 .at2.mes{color:#2f6b1f}
 .cel .welsky{position:relative}.cel .welsky{height:min(380px,46vh)!important}.cel .welart img{object-position:20% 50%}.cel .welsky::after{height:28px}.cel .welbody{margin-top:6px}.cel .welbody h1{font-size:40px}
-.celc{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:22px}
+.celc{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:14px;align-items:end;justify-items:center}
 .celb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:6px 4px;box-shadow:none;height:auto;min-height:0}
-.celb .pi{width:120px;height:120px;margin:0}.celb b{font:700 21px var(--disp)}.celb small{color:var(--mut);font-size:14.5px;font-weight:600}
+.celb img{height:min(230px,30vh);width:auto;max-width:100%;display:block;filter:drop-shadow(0 6px 8px rgba(80,60,20,.18))}.celb b{font:700 21px var(--disp)}.celb small{color:var(--mut);font-size:14.5px;font-weight:600}
 
 .fw{position:absolute;width:6px;height:6px;border-radius:50%;z-index:2;pointer-events:none;opacity:0;animation:fw 2.4s ease-out infinite}
 .fw.f0{left:22%;top:26%;color:#ffd34d}.fw.f1{left:72%;top:18%;color:#ff6b6b;animation-delay:.5s}.fw.f2{left:50%;top:12%;color:#7ee0ff;animation-delay:1s}.fw.f3{left:86%;top:38%;color:#9cff7a;animation-delay:1.5s}.fw.f4{left:10%;top:12%;color:#ff9be0;animation-delay:1.9s}
@@ -458,7 +458,7 @@ const ALGM=["Gluten","Lactosa","Fruits secs","Marisc","Ou"];
 function algMesH(){return `<h3>Més coses</h3><div class="agr">${algItems().filter(([x])=>!ALGM.includes(x)).map(([x,f])=>tileF(x,f)).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>${S.addk==="alg"?addBox("alg"):""}`;}
 function algMesRef(){const sh=document.querySelector(".dim .sheet.algmes");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",algMesH());const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;}
 function celH(){return `<div class="wel cel"><div class="welsky"><div class="welart"><img src="img/${CELIMG}" alt="" aria-hidden="true"></div>${[0,1,2,3,4].map(k=>`<i class="fw f${k}"></i>`).join("")}</div><div class="welbody"><h1>Tot a punt!</h1><p class="mut">Família ${esc(S.fam||"")}</p>
- <div class="celc"><button class="celb" data-a="gocuina">${PI("cuina_afinar")}<b>A la cuina</b><small>Comencem</small></button><button class="celb" data-a="goescola">${PI(CELESC)}<b>A l'escola</b><small>Com funciona</small></button></div></div></div>`;}
+ <div class="celc"><button class="celb" data-a="gocuina" aria-label="A la cuina"><img src="img/porta_cuina.png" alt=""></button><button class="celb" data-a="goescola" aria-label="A l'escola"><img src="img/porta_escola.png" alt=""></button></div></div></div>`;}
 document.addEventListener("pointerdown",e=>{const t=e.target.closest("[data-aln]");if(!t)return;const k=t.dataset.alt2,dir=t.dataset.aln;let cnt=0;clearInterval(window._alT);window._alT=setInterval(()=>{cnt++;if(cnt<2)return;window._alHold=Date.now();alAct({dataset:{alt2:k,aln:dir}});},280);});
 ["pointerup","pointercancel"].forEach(ev=>document.addEventListener(ev,()=>clearInterval(window._alT)));
 let CELIMG="poble_focs.jpg",CELESC="escola";
