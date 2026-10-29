@@ -168,16 +168,35 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .algh{font-size:28px!important;margin:-6px 0 0!important}
 .agm{max-height:none;overflow:visible;margin-top:4px;gap:0 6px}.agm .at2{height:88px}.agm .at2 .pi{width:58px;height:58px}
 .at2.mes{color:#2f6b1f}
+.cel .welsky{position:relative}.cel .welsky{height:min(380px,46vh)!important}.cel .welart img{object-position:20% 50%}.cel .welsky::after{height:28px}.cel .welbody{margin-top:6px}.cel .welbody h1{font-size:40px}
+.celc{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:22px}
+.celb{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border:0;border-radius:24px;padding:16px 8px 14px;box-shadow:0 4px 14px rgba(80,60,20,.14);height:auto;min-height:0}
+.celb .pi{width:104px;height:104px;margin:0}.celb b{font:700 21px var(--disp)}.celb small{color:var(--mut);font-size:14.5px;font-weight:600}
+.celb:first-child{box-shadow:0 0 0 3px var(--blue2),0 4px 14px rgba(80,60,20,.14)}
+.fw{position:absolute;width:6px;height:6px;border-radius:50%;z-index:2;pointer-events:none;opacity:0;animation:fw 2.4s ease-out infinite}
+.fw.f0{left:22%;top:26%;color:#ffd34d}.fw.f1{left:72%;top:18%;color:#ff6b6b;animation-delay:.5s}.fw.f2{left:50%;top:12%;color:#7ee0ff;animation-delay:1s}.fw.f3{left:86%;top:38%;color:#9cff7a;animation-delay:1.5s}.fw.f4{left:10%;top:12%;color:#ff9be0;animation-delay:1.9s}
+@keyframes fw{0%{opacity:1;box-shadow:0 0 0 0 currentColor}60%{opacity:1}100%{opacity:0;box-shadow:0 -34px 0 -1px currentColor,24px -24px 0 -1px currentColor,34px 0 0 -1px currentColor,24px 24px 0 -1px currentColor,0 34px 0 -1px currentColor,-24px 24px 0 -1px currentColor,-34px 0 0 -1px currentColor,-24px -24px 0 -1px currentColor}}
+@media (prefers-reduced-motion:reduce){.fw{display:none}}
 .at2.lv2{color:#c46a06}.at2.lv1{color:#9a7600}
 .at2.lv2::after,.at2.lv1::after{content:"";position:absolute;top:50%;left:50%;width:74px;height:74px;margin:-48px 0 0 -37px;border-radius:50%;border:6px solid rgba(240,138,28,.95);box-sizing:border-box}
 .at2.lv1::after{border-color:rgba(240,196,28,.95)}
 .agm .at2.on::after,.agm .at2.lv2::after,.agm .at2.lv1::after{width:66px;height:66px;margin:-42px 0 0 -33px}
-.bars{position:absolute;right:calc(50% - 40px);top:44px;display:flex;align-items:flex-end;gap:2px;background:#fff;border-radius:6px;padding:3px 4px;box-shadow:0 1px 4px rgba(0,0,0,.2);z-index:2}
+.bars{position:absolute;right:calc(50% - 46px);top:2px;display:flex;align-items:flex-end;gap:2px;background:#fff;border-radius:6px;padding:3px 4px;box-shadow:0 1px 4px rgba(0,0,0,.2);z-index:2}
 .bars i{width:5px;border-radius:2px;background:#e3dfd3;display:block}.bars i:nth-child(1){height:6px}.bars i:nth-child(2){height:10px}.bars i:nth-child(3){height:14px}
-.bars.l1 i:nth-child(1){background:#f0c41c}.bars.l2 i:nth-child(-n+2){background:#f08a1c}.bars.l3 i{background:#d63428}
+
+.provab{position:absolute;top:calc(64px + env(safe-area-inset-top,0px));right:12px;z-index:4;background:#e2533d;color:#fff;font-weight:700;font-size:13px;border-radius:99px;padding:3px 10px}
 .alleg{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:14px;color:var(--mut);margin:6px 0 2px}.alleg .sp{width:10px}
 .alleg i{display:block;width:20px;height:20px;border-radius:50%;border:4px solid;box-sizing:border-box}.alleg i.lgY{border-color:#f0c41c}.alleg i.lgI{border-color:#f08a1c}.alleg i.lgA{border-color:#d63428;background:linear-gradient(135deg,transparent 40%,#d63428 40%,#d63428 60%,transparent 60%)}
-.alpop{position:absolute;transform:translateX(-50%);background:#fff;border-radius:99px;padding:7px 9px;display:flex;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:60}
+.alpop{position:absolute;background:#fff;border-radius:22px;padding:10px;display:flex;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:60}
+.apc{display:flex;align-items:center;gap:6px;border-radius:16px;padding:4px 6px 4px 4px;border:2px solid transparent}.apc.sel{border-color:var(--blue2);background:#f2f7fd}
+.aps{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:4px;min-height:0;height:auto;box-shadow:none;font:700 13px var(--body);color:var(--ink)}
+.sym{display:block;width:46px;height:46px;border-radius:50%;box-sizing:border-box;border:6px solid}.sym.i{border-color:#f08a1c}.sym.a{border-color:#d63428;background:linear-gradient(135deg,transparent calc(50% - 3px),#d63428 calc(50% - 3px),#d63428 calc(50% + 3px),transparent calc(50% + 3px))}
+.asc{display:flex;flex-direction:column;align-items:center;gap:3px}
+.asb{width:34px;height:30px;min-height:0;border:0;border-radius:10px;background:#efeadc;color:var(--blue2);font-size:14px;padding:0;box-shadow:none;touch-action:none;user-select:none;-webkit-user-select:none}
+.vb{display:flex;flex-direction:column;gap:3px}.vb i{display:block;width:22px;height:8px;border-radius:3px;background:#e3dfd3}.vb.i i.f{background:#f08a1c}.vb.a i.f{background:#d63428}
+.at2.n1::after{opacity:.45}.at2.n2::after{opacity:.75}
+.bars.ti.l1 i:nth-child(1),.bars.ti.l2 i:nth-child(-n+2),.bars.ti.l3 i{background:#f08a1c}
+.bars.ta.l1 i:nth-child(1),.bars.ta.l2 i:nth-child(-n+2),.bars.ta.l3 i{background:#d63428}
 .lvd{width:38px;height:38px;min-height:0;border-radius:50%;border:5px solid #e3dfd3;background:#fff;padding:0;box-shadow:none;box-sizing:border-box}
 .lvd.l1{border-color:#f0c41c}.lvd.l2{border-color:#f08a1c}.lvd.l3{border-color:#d63428;background:linear-gradient(135deg,#fff 40%,#d63428 40%,#d63428 60%,#fff 60%)}
 .lvd.on{outline:3px solid var(--blue2);outline-offset:2px}.lvd.l1.on{background:#fdf3c4}.lvd.l2.on{background:#fde2c4}
@@ -326,7 +345,7 @@ function render0(){const a=$("#app");if(S.onb<99){a.innerHTML=onb();return;}
  ${S.flow?flowB():""}`;}
 
 /* ---------- A · Primer inici ---------- */
-function stepH(n){const st=[
+function stepH(n){if(n===12)return celH();const st=[
  ()=>`<div class="wel">${welSky()}
    <div class="welbody"><h1>Menú de Família</h1><p class="mut">La cuina de casa</p>
    <div class="welgrid">${[["nav_menu","Menús"],["icona_compra","Compra"],["nav_receptari","Receptes"],["nav_despesa","Despesa"]].map(([f,t])=>`<div class="welg">${PI(f)}<b>${t}</b></div>`).join("")}</div></div></div>`,
@@ -365,8 +384,8 @@ function stepH(n){const st=[
  return st[n]();}
 function onb(){const n=S.onb,ok=okStep(n);
  const lab=["Comencem",!S.acc?"Continua":S.acc==="nou"?"Crea el compte":"Entra","Següent","Següent","Següent",S.inf<INFO.length-1?"Següent":"Som-hi","","Següent","Següent","Ja està","",""][n];
- const SEQ=[4,1,2,3,5,6,7,8,9,10],PR=S.cfg?[4,1,2,3,7,8,9]:[4,1,2,3,9];if(SEQ.indexOf(n)>(S.vis??-1))S.vis=SEQ.indexOf(n);let pi=-1;if(n>0&&n<11)PR.forEach((s2,k)=>{if(SEQ.indexOf(s2)<=SEQ.indexOf(n))pi=k;});
- return `<div class="flow" style="position:relative;flex:1;${n===0||n===4||(HV&&[1,2,3].includes(n))?"background:var(--crema)":""}">${n===5?`<div class="fh"><span></span><span></span><button class="skip" data-a="infskip">Salta</button></div>`:""}
+ const SEQ=[4,1,2,3,12,5,6,7,8,9,10],PR=[4,1,2,3,12];if(SEQ.indexOf(n)>(S.vis??-1))S.vis=SEQ.indexOf(n);let pi=-1;if(n>0&&n<11)PR.forEach((s2,k)=>{if(SEQ.indexOf(s2)<=SEQ.indexOf(n))pi=k;});
+ return `<div class="flow" style="position:relative;flex:1;${n===0||n===4||n===12||(HV&&[1,2,3].includes(n))?"background:var(--crema)":""}">${n===5?`<div class="fh"><span></span><span></span><button class="skip" data-a="infskip">Salta</button></div>`:""}
  ${pi>=0&&n!==4?`<div class="prog${n===5?"":" top"}${HV&&[1,2,3].includes(n)?" hov":""}">${PR.map((s2,k)=>{const back=k<pi||(k===pi&&s2!==n),fw=k>pi&&SEQ.indexOf(s2)<=S.vis&&PR.slice(pi,k).every(stDone)&&(PR[pi]===n||okStep(n));return back||fw?`<button class="on" data-a="pgo" data-n="${s2}" aria-label="Ves al pas ${k+1}"><i></i></button>`:`<span class="${k<=pi?"on":""}"><i></i></span>`;}).join("")}</div>`:""}
  <div class="fb">${HV&&[1,2,3].includes(n)?`<div class="wel hv${HV}">${welSky()}<div class="welbody hb">${stepH(n)}</div></div>`:stepH(n)}${lab?`<div class="ff ffin">${n===9||n===8?`<button class="sec" data-a="onext">Més tard</button>`:""}<button class="cta" data-a="onext" ${ok?"":"disabled"}>${lab}</button>${n===0?`<button class="lnk" data-a="codi">Tinc un codi de família</button>`:""}${n===3?permRow():""}</div>`:""}</div>${n===1?`<img class="ovc" src="img/compte_ovella.png" alt="" aria-hidden="true">`:""}</div>`;}
 const ICT=[["Capità","capita_enciam"],["rebost","rebost"],["estris","eq_robot"],["menú","nav_menu"],["llista de la compra","icona_compra"],["La llista","icona_compra"],["Graner","nav_graner"],["tiquet","nav_puja_documents"],["despesa","nav_despesa"],["nevera","nav_que_cuino"],["configuració","GEAR"],["El Sortidor","sortidor_casa"],["espigues","espigues_regals"]];
@@ -402,7 +421,7 @@ function persAv(){const e=$("#pav");if(e)e.innerHTML=avt(TMP,110,TI);}
 function algItems(){return [...ALG.map(x=>[x,"alg_"+x.toLowerCase().replace(" ","_")]),...S.algx.map(x=>[x,"alg_afegit"])];}
 function permRow(){return `<div class="permb"><div class="prow">${S.mem.map((m,i)=>{const a=(mx(i).alg||[]);return `<button class="q" data-a="palg" data-i="${i}" aria-label="${esc(m)}${a.length?": "+esc(a.join(", ")):""}"><span class="qav">${avt(mx(i),48,i)}${a.length?`<em>${a.length}</em>`:""}</span><b>${esc(m)}</b></button>`;}).join("")}</div></div>`;}
 function palgH(i){const x=mx(i),a=x.alg||[];return `<div class="who">${avt(x,84,i)}<b>${esc(S.mem[i])}</b></div>
- ${ALV==="c"?`<div class="lvl">${algItems().map(([y,f])=>{const fl=lvF(y),n=lvP(i,y);return `<div class="lvr${fl?" fam":""}">${PI(f)}<b>${esc(y)}</b><span class="lvc">${[1,2,3].map(k=>`<button class="lvd l${k}${(fl||n)===k?" on":""}" ${fl?"disabled":`data-pav="${k}" data-pa2="${esc(y)}"`} aria-label="Grau ${k}"></button>`).join("")}</span></div>`;}).join("")}</div><div class="agr" style="max-height:none">`:`<div class="agr">${algItems().map(([y,f])=>{const fl=lvF(y),n=fl||lvP(i,y);return `<button class="at2${lvc(n)}${fl?" fam":""}${bars(n)?" hb":""}" ${fl?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}${bars(n)}<span>${esc(y)}</span></button>`;}).join("")}`}<button class="at2 add" data-a="paadd">${PI("afegeix")}<span>Afegeix</span></button></div>
+ ${false?`<div class="lvl">${algItems().map(([y,f])=>{const fl=lvF(y),n=lvP(i,y);return `<div class="lvr${fl?" fam":""}">${PI(f)}<b>${esc(y)}</b><span class="lvc">${[1,2,3].map(k=>`<button class="lvd l${k}${(fl||n)===k?" on":""}" ${fl?"disabled":`data-pav="${k}" data-pa2="${esc(y)}"`} aria-label="Grau ${k}"></button>`).join("")}</span></div>`;}).join("")}</div><div class="agr" style="max-height:none">`:`<div class="agr">${algItems().map(([y,f])=>{const fl=lvF(y),n=fl||lvP(i,y);return `<button class="at2${lvc(n)}${fl?" fam":""}${bars(n)?" hb":""}" ${fl?"disabled":`data-pa="${esc(y)}"`}>${PI(f)}${bars(n)}<span>${esc(y)}</span></button>`;}).join("")}`}<button class="at2 add" data-a="paadd">${PI("afegeix")}<span>Afegeix</span></button></div>
  ${PADD?`<div class="addbx"><input class="tx" id="paddin" placeholder="Per exemple: api" autocomplete="off"><button class="cta" data-a="paaddok">Afegeix</button></div>`:""}`;}
 let PADD=false;
 function palgRef(){const sh=document.querySelector(".dim .sheet");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",palgH(PAI));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;}
@@ -419,20 +438,30 @@ function cfgH(n){if(n===4)return `<div class="accbig">${PI("hud_veinat")}</div><
 function cfgRef(){const sh=document.querySelector(".dim .sheet.cfgsh");if(!sh)return false;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0,ss=sh.scrollTop;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",cfgH(CFG));const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;sh.scrollTop=ss;setTimeout(fitFam,0);return true;}
 function cfgOpen(){const k=CFG;sheet(cfgH(k));CFG=k;const sh=document.querySelector(".dim .sheet");if(sh)sh.classList.add("cfgsh");SHCB=()=>{CFG=-1;};setTimeout(fitFam,0);}
 let HV="a";
-const ALV=(new URLSearchParams(location.search).get("alg")||"").replace(/[^abc]/g,"").slice(0,1);let ALP=null;
-function lvF(x){if(!S.alg.includes(x))return 0;return (S.algl||{})[x]||3;}
-function setF(x,n){S.algl=S.algl||{};if(n){S.algl[x]=n;if(!S.alg.includes(x))S.alg.push(x);}else{delete S.algl[x];S.alg=S.alg.filter(y=>y!==x);}S.res=false;}
-function lvP(i,x){const p=S.memx[i];if(!(p.alg||[]).includes(x))return 0;return (p.algl||{})[x]||3;}
-function setP(i,x,n){const p=S.memx[i];p.alg=p.alg||[];p.algl=p.algl||{};if(n){p.algl[x]=n;if(!p.alg.includes(x))p.alg.push(x);}else{delete p.algl[x];p.alg=p.alg.filter(y=>y!==x);}}
-function lvc(n){return n===3?" on":n===2?" lv2":n===1?" lv1":"";}
-function bars(n){return ALV==="c"&&n?`<span class="bars l${n}"><i></i><i></i><i></i></span>`:"";}
-function nextLv(n){return ALV==="a"?({0:2,1:2,2:3,3:0})[n]:(n?0:3);}
+const ALV="";let ALP=null;
+function cv(v){if(!v)return null;if(typeof v==="object")return v;return v===3?{t:"a",n:3}:{t:"i",n:v};}
+function lvF(x){if(!S.alg.includes(x))return null;return cv((S.algl||{})[x]||3);}
+function setF(x,v){S.algl=S.algl||{};if(v){S.algl[x]=v;if(!S.alg.includes(x))S.alg.push(x);}else{delete S.algl[x];S.alg=S.alg.filter(y=>y!==x);}S.res=false;}
+function lvP(i,x){const p=S.memx[i];if(!(p.alg||[]).includes(x))return null;return cv((p.algl||{})[x]||3);}
+function setP(i,x,v){const p=S.memx[i];p.alg=p.alg||[];p.algl=p.algl||{};if(v){p.algl[x]=v;if(!p.alg.includes(x))p.alg.push(x);}else{delete p.algl[x];p.alg=p.alg.filter(y=>y!==x);}}
+function lvc(v){return !v?"":(v.t==="a"?" on":" lv2")+" n"+v.n;}
+function bars(v){return v?`<span class="bars t${v.t} l${v.n}"><i></i><i></i><i></i></span>`:"";}
+function alGet(A){return A.p>=0?lvP(A.p,A.x):lvF(A.x);}
+function alSet(A,v){if(A.p>=0){setP(A.p,A.x,v);palgRef();saveS();}else{setF(A.x,v);if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}popShow();}
+function alAct(t){const A=ALP;if(!A)return;const c=alGet(A);if(t.dataset.alt){const k=t.dataset.alt;alSet(A,c&&c.t===k?null:{t:k,n:2});}else{const k=t.dataset.alt2,d=t.dataset.aln==="+"?1:-1;const n=(c&&c.t===k?c.n:0)+d;alSet(A,n<=0?null:{t:k,n:Math.min(3,n)});}}
 function tileF(x,f){const n=lvF(x);return `<button class="at2${lvc(n)}${bars(n)?" hb":""}" data-alg="${esc(x)}">${PI(f)}${bars(n)}<span>${esc(x)}</span></button>`;}
-function legH(){return ALV==="a"?`<div class="alleg"><span><i class="lgI"></i></span><span>1 toc</span><span class="sp"></span><span><i class="lgA"></i></span><span>2 tocs</span></div>`:ALV==="b"?`<div class="alleg"><span><i class="lgY"></i></span><span>poc</span><span class="sp"></span><span><i class="lgI"></i></span><span>força</span><span class="sp"></span><span><i class="lgA"></i></span><span>gens</span></div>`:"";}
-function popShow(){document.querySelectorAll(".alpop").forEach(e=>e.remove());if(!ALP)return;const sel=ALP.p>=0?`.dim [data-pa="${CSS.escape(ALP.x)}"]`:`[data-alg="${CSS.escape(ALP.x)}"]`;const els=[...document.querySelectorAll(sel)];const el=els[els.length-1];if(!el){ALP=null;return;}const r=el.getBoundingClientRect(),ap=$("#app"),ar=ap.getBoundingClientRect();const cur=ALP.p>=0?lvP(ALP.p,ALP.x):lvF(ALP.x);const d=document.createElement("div");d.className="alpop";d.innerHTML=[1,2,3].map(k=>`<button class="lvd l${k}${cur===k?" on":""}" data-alv="${k}" aria-label="Grau ${k}"></button>`).join("");d.style.left=(r.left-ar.left-ap.clientLeft+r.width/2)+"px";d.style.top=(r.top-ar.top-ap.clientTop+r.height-6)+"px";$("#app").appendChild(d);}
+function legH(){return "";}
+function popShow(){document.querySelectorAll(".alpop").forEach(e=>e.remove());if(!ALP)return;const sel=ALP.p>=0?`.dim [data-pa="${CSS.escape(ALP.x)}"]`:`[data-alg="${CSS.escape(ALP.x)}"]`;const els=[...document.querySelectorAll(sel)];const el=els[els.length-1];if(!el){ALP=null;return;}const r=el.getBoundingClientRect(),ap=$("#app"),ar=ap.getBoundingClientRect();const c=alGet(ALP);
+ const col=(k,lab)=>{const on=c&&c.t===k,n=on?c.n:0;return `<div class="apc${on?" sel":""}"><button class="aps" data-alt="${k}" aria-label="${lab}"><i class="sym ${k}"></i><b>${lab}</b></button><span class="asc"><button class="asb" data-aln="+" data-alt2="${k}" aria-label="Més">▲</button><span class="vb ${k}">${[3,2,1].map(j=>`<i class="${j<=n?"f":""}"></i>`).join("")}</span><button class="asb" data-aln="-" data-alt2="${k}" aria-label="Menys">▼</button></span></div>`;};
+ const d=document.createElement("div");d.className="alpop";d.innerHTML=col("i","Intolerància")+col("a","Al·lèrgia");ap.appendChild(d);const W=ap.clientWidth,w=d.offsetWidth,h=d.offsetHeight;let x=r.left-ar.left-ap.clientLeft+r.width/2-w/2;x=Math.max(8,Math.min(W-w-8,x));let y=r.top-ar.top-ap.clientTop-h+4;if(y<8)y=r.bottom-ar.top-ap.clientTop-6;d.style.left=x+"px";d.style.top=y+"px";}
 const ALGM=["Gluten","Lactosa","Fruits secs","Marisc","Ou"];
 function algMesH(){return `<h3>Més coses</h3><div class="agr">${algItems().filter(([x])=>!ALGM.includes(x)).map(([x,f])=>tileF(x,f)).join("")}<button class="at2 add" data-a="addopen" data-k="alg">${PI("afegeix")}<span>Afegeix</span></button></div>${S.addk==="alg"?addBox("alg"):""}`;}
 function algMesRef(){const sh=document.querySelector(".dim .sheet.algmes");if(!sh)return;const ag=sh.querySelector(".agr"),st=ag?ag.scrollTop:0;const g=sh.querySelector(".grabz");sh.innerHTML="";sh.appendChild(g);sh.insertAdjacentHTML("beforeend",algMesH());const a2=sh.querySelector(".agr");if(a2)a2.scrollTop=st;}
+function celH(){return `<div class="wel cel"><div class="welsky"><div class="welart"><img src="img/${CELIMG}" alt="" aria-hidden="true"></div>${[0,1,2,3,4].map(k=>`<i class="fw f${k}"></i>`).join("")}</div><div class="welbody"><h1>Tot a punt!</h1><p class="mut">Família ${esc(S.fam||"")}</p>
+ <div class="celc"><button class="celb" data-a="gocuina">${PI("cuina_afinar")}<b>A la cuina</b><small>Comencem</small></button><button class="celb" data-a="goescola">${PI(CELESC)}<b>A l'escola</b><small>Com funciona</small></button></div></div></div>`;}
+document.addEventListener("pointerdown",e=>{const t=e.target.closest("[data-aln]");if(!t)return;const k=t.dataset.alt2,dir=t.dataset.aln;let cnt=0;clearInterval(window._alT);window._alT=setInterval(()=>{cnt++;if(cnt<2)return;window._alHold=Date.now();alAct({dataset:{alt2:k,aln:dir}});},280);});
+["pointerup","pointercancel"].forEach(ev=>document.addEventListener(ev,()=>clearInterval(window._alT)));
+let CELIMG="poble_focs.jpg",CELESC="escola";
 let PAI=-1;
 function fitFam(){const i=$("#fn");if(!i||!i.closest(".famin"))return;if(!i.value){i.style.width="";return;}const c=fitFam.c||(fitFam.c=document.createElement("canvas").getContext("2d"));c.font=getComputedStyle(i).font;i.style.width=Math.ceil(c.measureText(i.value).width*1.04)+12+"px";}
 try{document.fonts.ready.then(()=>fitFam());}catch(e){}
@@ -443,12 +472,12 @@ function mqL(){const q=norm(MQ);if(!q||!allM())return "";const a=ALLM.filter(m=>
  return L.map(m=>`<button data-mpick="${ALLM.indexOf(m)}">${esc(m.n)}<small>${esc(m.pn)} · ${esc(m.c)}</small></button>`).join("")+(MQ.trim().length>1?`<button data-a="muman"><span style="color:var(--blue2)">Fes servir «${esc(MQ.trim())}»</span><small>Escrit a mà</small></button>`:"");}
 function mPick(m){S.pais=m.c;S.prov=m.k;S.muni=m.n;MQ="";render();}
 function stDone(n){return n===1?(!!S.acc&&S.vis>0)||okStep(1):!!okStep(n);}
-function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),1,muniOk(),1,1,1,1,1,1,0][n];}
+function okStep(n){return [1,!S.acc?/.+@.+\..+/.test(S.email):S.acc==="nou"?(PW1.length>=8&&PW1===PW2):PW1.length>=1,S.mem.some(m=>m.trim()),1,muniOk(),1,1,1,1,1,1,0,1][n];}
 const INFO=[["nav_menu","Cada setmana, el menú","Digueu qui hi serà a cada àpat i el Capità us proposa el menú: de temporada, segons el temps que farà i sense repetir plats."],["icona_compra","La compra, feta","La llista surt sola, descomptant el que ja teniu al rebost. La podeu compartir amb qui va a comprar."],["nav_receptari","Les vostres receptes","Les de la família i les que comparteixen les altres famílies al Graner. També en podeu crear de noves."],["nav_puja_documents","Una foto al tiquet","La despesa del mes es compta sola: què gasteu i on us surt més a compte comprar."],["sortidor_casa","Plats d'El Sortidor a casa","Podeu demanar plats cuinats a El Sortidor i us els porten a casa. El Capità us els proposa quan encaixen amb el menú de la setmana."],["espigues_regals","Espigues, regals i ofertes","Tot el que feu a l'app us dona espigues. Les podeu bescanviar per regals, descomptes i ofertes, també a El Sortidor."],["capita_enciam","El Capità Enciam, sempre a mà","Pregunta-li el que vulguis: canviar un plat, què fer amb el que teniu a la nevera o com es fa una recepta."]];
 function infoS(){const k=Math.min(S.inf,INFO.length-1),[im,t,d]=INFO[k];return `<div class="info" id="info"><div class="infimg"><img src="img/${im}.png" alt=""></div><h2>${t}</h2><p>${ICX(d)}</p><div class="dots">${INFO.map((x,i)=>`<i class="${i===k?"on":""}"></i>`).join("")}</div></div>`;}
 const EQUIP=[["Forn","eq_forn"],["Microones","eq_microones"],["Vitroceràmica","eq_vitro"],["Inducció","eq_induccio"],["Foc de gas","eq_gas"],["Thermomix o robot de cuina","eq_robot"],["Fregidora d'aire","eq_fregidora"],["Olla exprés","eq_olla"],["Batedora","eq_batedora"],["Sandvitxera","eq_sandvitxera"],["Torradora","eq_torradora"],["Barbacoa","eq_barbacoa"]];
 let FOTOS=[],MIC=null;
-function goTo(n){if(n===9&&STANDALONE)n=10;S.onb=n;render();if(n===11){setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.onb=99;S.tab="setmana";startB();},1900);}}
+function goTo(n){if(n===99&&S.onb<99){S.onb=99;S.tab="setmana";render();return;}if(n===9&&STANDALONE)n=10;S.onb=n;render();if(n===11){setTimeout(()=>{const l=$("#lb");if(l)l.style.width="100%";},50);setTimeout(()=>{S.onb=99;S.tab="setmana";startB();},1900);}}
 function infGo(d){S.inf=Math.max(0,Math.min(INFO.length-1,S.inf+d));render();}
 let _tx=null;document.addEventListener("touchstart",e=>{if(e.target.closest("#info"))_tx=e.touches[0].clientX;},{passive:true});
 document.addEventListener("touchend",e=>{if(_tx==null)return;const dx=e.changedTouches[0].clientX-_tx;_tx=null;if(Math.abs(dx)>50){if(dx<0){if(S.inf<INFO.length-1)infGo(1);}else if(S.inf>0)infGo(-1);}},{passive:true});
@@ -532,11 +561,12 @@ document.addEventListener("input",e=>{const t=e.target;if(t.id==="mq"){MQ=t.valu
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){if(ALP&&!e.target.closest(".alpop")){ALP=null;document.querySelectorAll(".alpop").forEach(x=>x.remove());}return;}const a=t.dataset.a;
  if(t.dataset.tab){S.tab=t.dataset.tab;render();return;}
  if(t.dataset.sub){const[k,v]=t.dataset.sub.split(":");S.sub[k]=v;render();return;}
+ if(t.dataset.alt||t.dataset.aln){if(Date.now()-(window._alHold||0)>500)alAct(t);return;}
  if(t.dataset.alv){const k=+t.dataset.alv,A=ALP;ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());if(A){if(A.p>=0){const c=lvP(A.p,A.x);setP(A.p,A.x,c===k?0:k);palgRef();saveS();}else{const c=lvF(A.x);setF(A.x,c===k?0:k);if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}}return;}
  if(ALP){ALP=null;document.querySelectorAll(".alpop").forEach(e=>e.remove());}
  if(t.dataset.pav&&PAI>=0){const k=+t.dataset.pav,y=t.dataset.pa2,c=lvP(PAI,y);setP(PAI,y,c===k?0:k);palgRef();saveS();return;}
- if(t.dataset.pa!=null&&PAI>=0){const y=t.dataset.pa;if(ALV==="b"){ALP={x:y,p:PAI};popShow();return;}setP(PAI,y,nextLv(lvP(PAI,y)));palgRef();saveS();return;}
- if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{if(ALV==="b"){ALP={x,p:-1};popShow();return;}setF(x,nextLv(lvF(x)));}if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();return;}render();return;}
+ if(t.dataset.pa!=null&&PAI>=0){const y=t.dataset.pa;{ALP={x:y,p:PAI};popShow();return;}setP(PAI,y,nextLv(lvP(PAI,y)));palgRef();saveS();return;}
+ if(t.dataset.alg){const x=t.dataset.alg;if(x==="cap"){S.res=!S.res;if(S.res)S.alg=[];}else{{ALP={x,p:-1};popShow();return;}setF(x,nextLv(lvF(x)));}if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();return;}render();return;}
  if(t.dataset.muni){S.muni=t.dataset.muni;render();return;}
  if(t.dataset.mpick!=null&&ALLM){mPick(ALLM[+t.dataset.mpick]);return;}
  if(t.dataset.eq){const x=t.dataset.eq;S.equip=S.equip.includes(x)?S.equip.filter(y=>y!==x):[...S.equip,x];render();return;}
@@ -556,14 +586,16 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){
      PW1=PW2="";}
    if(S.onb===5&&S.inf<INFO.length-1){infGo(1);return;}
    if(S.onb===8&&MIC)MIC.stop();
-   goTo(S.onb===5?6:S.onb===8?9:S.onb===0?4:S.onb===4?1:S.onb===3?5:S.onb+1);break;
+   goTo(S.onb===5?99:S.onb===8?9:S.onb===0?4:S.onb===4?1:S.onb===3?12:S.onb+1);break;
   case"emchg":S.acc=null;PW1=PW2="";render();break;
   case"pwforgot":toast("T'hem enviat un correu per canviar-la");break;
   case"eye":{const f=$("#"+t.dataset.t);if(f){f.type=f.type==="password"?"text":"password";t.textContent=f.type==="password"?"Mostra":"Amaga";}break;}
   case"oback":if(S.onb===5&&S.inf>0){infGo(-1);return;}if(S.onb===8&&MIC)MIC.stop();S.onb=S.onb===10?(STANDALONE?(S.cfg?8:6):9):S.onb===9?(S.cfg?8:6):S.onb===7?6:S.onb===6?5:Math.max(0,S.onb-1);render();break;
   case"addopen":S.addk=t.dataset.k;if(document.querySelector(".dim .sheet.algmes"))algMesRef();else render();setTimeout(()=>{const i=$("#addin");if(i)i.focus();},50);break;
   case"addok":{const v=($("#addin")||{}).value;const x=(v||"").trim();if(x){x.charAt(0);const y=x.charAt(0).toUpperCase()+x.slice(1);const base=t.dataset.k==="eq"?EQUIP.map(e=>e[0]):ALG;const ex=base.find(e=>norm(e)===norm(y));if(ex){if(t.dataset.k==="eq"){if(!S.equip.includes(ex))S.equip.push(ex);}else{if(!S.alg.includes(ex))S.alg.push(ex);S.res=false;}S.addk="";render();break;}if(t.dataset.k==="eq"){if(!S.equipx.includes(y))S.equipx.push(y);if(!S.equip.includes(y))S.equip.push(y);}else{if(!S.algx.includes(y))S.algx.push(y);if(!S.alg.includes(y))S.alg.push(y);S.res=false;}}S.addk="";if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}break;
-  case"infskip":S.inf=INFO.length-1;S.onb=6;render();break;
+  case"infskip":S.inf=INFO.length-1;goTo(99);break;
+  case"gocuina":goTo(99);break;
+  case"goescola":S.inf=0;S.onb=5;render();break;
   case"cfgnow":S.cfg=true;goTo(7);break;
   case"cfglater":S.cfg=false;goTo(9);break;
   case"m1si":goTo(11);break;
