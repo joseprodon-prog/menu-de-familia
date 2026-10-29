@@ -170,9 +170,9 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .at2.mes{color:#2f6b1f}
 .cel .welsky{position:relative}.cel .welsky{height:min(380px,46vh)!important}.cel .welart img{object-position:20% 50%}.cel .welsky::after{height:28px}.cel .welbody{margin-top:6px}.cel .welbody h1{font-size:40px}
 .celc{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:22px}
-.celb{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border:0;border-radius:24px;padding:16px 8px 14px;box-shadow:0 4px 14px rgba(80,60,20,.14);height:auto;min-height:0}
-.celb .pi{width:104px;height:104px;margin:0}.celb b{font:700 21px var(--disp)}.celb small{color:var(--mut);font-size:14.5px;font-weight:600}
-.celb:first-child{box-shadow:0 0 0 3px var(--blue2),0 4px 14px rgba(80,60,20,.14)}
+.celb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:6px 4px;box-shadow:none;height:auto;min-height:0}
+.celb .pi{width:120px;height:120px;margin:0}.celb b{font:700 21px var(--disp)}.celb small{color:var(--mut);font-size:14.5px;font-weight:600}
+
 .fw{position:absolute;width:6px;height:6px;border-radius:50%;z-index:2;pointer-events:none;opacity:0;animation:fw 2.4s ease-out infinite}
 .fw.f0{left:22%;top:26%;color:#ffd34d}.fw.f1{left:72%;top:18%;color:#ff6b6b;animation-delay:.5s}.fw.f2{left:50%;top:12%;color:#7ee0ff;animation-delay:1s}.fw.f3{left:86%;top:38%;color:#9cff7a;animation-delay:1.5s}.fw.f4{left:10%;top:12%;color:#ff9be0;animation-delay:1.9s}
 @keyframes fw{0%{opacity:1;box-shadow:0 0 0 0 currentColor}60%{opacity:1}100%{opacity:0;box-shadow:0 -34px 0 -1px currentColor,24px -24px 0 -1px currentColor,34px 0 0 -1px currentColor,24px 24px 0 -1px currentColor,0 34px 0 -1px currentColor,-24px 24px 0 -1px currentColor,-34px 0 0 -1px currentColor,-24px -24px 0 -1px currentColor}}
@@ -195,8 +195,8 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .asb{width:34px;height:30px;min-height:0;border:0;border-radius:10px;background:#efeadc;color:var(--blue2);font-size:14px;padding:0;box-shadow:none;touch-action:none;user-select:none;-webkit-user-select:none}
 .vb{display:flex;flex-direction:column;gap:3px}.vb i{display:block;width:22px;height:8px;border-radius:3px;background:#e3dfd3}.vb.i i.f{background:#f08a1c}.vb.a i.f{background:#d63428}
 
-.bars.ti.l1 i:nth-child(1),.bars.ti.l2 i:nth-child(-n+2),.bars.ti.l3 i{background:#f08a1c}
-.bars.ta.l1 i:nth-child(1),.bars.ta.l2 i:nth-child(-n+2),.bars.ta.l3 i{background:#d63428}
+.bars.ki.l1 i:nth-child(1),.bars.ki.l2 i:nth-child(-n+2),.bars.ki.l3 i{background:#f08a1c}
+.bars.ka.l1 i:nth-child(1),.bars.ka.l2 i:nth-child(-n+2),.bars.ka.l3 i{background:#d63428}
 .lvd{width:38px;height:38px;min-height:0;border-radius:50%;border:5px solid #e3dfd3;background:#fff;padding:0;box-shadow:none;box-sizing:border-box}
 .lvd.l1{border-color:#f0c41c}.lvd.l2{border-color:#f08a1c}.lvd.l3{border-color:#d63428;background:linear-gradient(135deg,#fff 40%,#d63428 40%,#d63428 60%,#fff 60%)}
 .lvd.on{outline:3px solid var(--blue2);outline-offset:2px}.lvd.l1.on{background:#fdf3c4}.lvd.l2.on{background:#fde2c4}
@@ -445,7 +445,7 @@ function setF(x,v){S.algl=S.algl||{};if(v){S.algl[x]=v;if(!S.alg.includes(x))S.a
 function lvP(i,x){const p=S.memx[i];if(!(p.alg||[]).includes(x))return null;return cv((p.algl||{})[x]||3);}
 function setP(i,x,v){const p=S.memx[i];p.alg=p.alg||[];p.algl=p.algl||{};if(v){p.algl[x]=v;if(!p.alg.includes(x))p.alg.push(x);}else{delete p.algl[x];p.alg=p.alg.filter(y=>y!==x);}}
 function lvc(v){return !v?"":(v.t==="a"?" on":" lv2")+" n"+v.n;}
-function bars(v){return v?`<span class="bars t${v.t} l${v.n}"><i></i><i></i><i></i></span>`:"";}
+function bars(v){return v?`<span class="bars k${v.t} l${v.n}"><i></i><i></i><i></i></span>`:"";}
 function alGet(A){return A.p>=0?lvP(A.p,A.x):lvF(A.x);}
 function alSet(A,v){if(A.p>=0){setP(A.p,A.x,v);palgRef();saveS();}else{setF(A.x,v);if(document.querySelector(".dim .sheet.algmes")){saveS();algMesRef();}else render();}popShow();}
 function alAct(t){const A=ALP;if(!A)return;const c=alGet(A);if(t.dataset.alt){const k=t.dataset.alt;alSet(A,c&&c.t===k?null:{t:k,n:2});}else{const k=t.dataset.alt2,d=t.dataset.aln==="+"?1:-1;const n=(c&&c.t===k?c.n:0)+d;alSet(A,n<=0?null:{t:k,n:Math.min(3,n)});}}
