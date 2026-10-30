@@ -181,6 +181,11 @@ textarea.rbta{font:inherit;font-size:16px;min-height:110px;padding:12px 14px;res
 .rgp.d3 b{font-size:12.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.rgp.d3 small{display:none}.rgp.d3 .rph{border-radius:10px}.rgp.d3 .rnf{font-size:20px}
 .fxh{flex:none;width:100%;margin:0 0 4px;aspect-ratio:16/10;border-radius:18px;overflow:hidden;background:#f3e6c6}.fxh img{width:100%;height:100%;object-fit:cover;display:block}.fxh .rnf{font-size:48px}
 .fxi b i{font-weight:500;color:var(--mut);font-size:13px}.fxp li i{font-style:normal;font-weight:700;color:var(--blue2);font-size:13px}
+.lbts{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:none;padding:2px}.lbts::-webkit-scrollbar{display:none}
+.lbts button{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:0;background:#fff8e8;border:2px solid transparent;border-radius:14px;padding:5px 11px;min-height:0;height:auto;box-shadow:none;color:var(--ink);font:inherit}
+.lbts button b{display:flex;align-items:center;gap:5px;font-size:14.5px}.lbts button small{font-size:12.5px;font-weight:700;color:var(--mut)}
+.lbts button[aria-pressed="true"]{border-color:var(--blue2);background:#fff}.lbts u,.lit em u{display:inline-block;width:10px;height:10px;border-radius:50%;text-decoration:none;flex:none}
+.lit em{display:flex;align-items:center;gap:5px;color:var(--mut)!important;font-weight:700}
 .cfh{text-align:center}.eqg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 6px}
 .eqb{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;box-shadow:none;padding:2px;min-height:0;height:auto;font:700 13.5px var(--body);color:var(--mut);text-align:center;line-height:1.15}
 .eqb img{width:68px;height:68px;object-fit:contain;filter:grayscale(.85) opacity(.45);transition:filter .15s}
@@ -590,9 +595,16 @@ function pg(hero,title,body,acts){return `<div class="kc qv"><div class="khdr"><
  <div class="qbd">${body}<div class="qft mft">${(acts||[]).map(([a,f,l])=>`<button class="mib" data-a="${a}" aria-label="${l}"><img src="img/${f}.png" alt=""></button>`).join("")}</div></div>
  <button class="cap" data-a="capita" aria-label="Pregunta al Capità Enciam"><img src="img/capita_enciam.png" alt=""></button></div>`;}
 function itabs(key,arr){return `<div class="itabs">${arr.map(([k,f,l])=>`<button class="${S.sub[key]===k?"on":""}" data-sub="${key}:${k}"><img src="img/${f}.png" alt=""><b>${l}</b></button>`).join("")}</div>`;}
+const BTS=[["Mercat","#7cb83a"],["Bonpreu","#e4572e"],["Mercadona","#2e8b57"]];
+const GRL=[["Verdura i fruita","g_verdura"],["Carn","g_carn"],["Peix","g_peix"],["Ous i làctics","g_ou"],["Rebost","rebost"]];
+const LL2=[["Verdura i fruita","Carbassa","1 kg","Mercat",2.40],["Verdura i fruita","Carbassó","3 u","Mercat",2.10],["Verdura i fruita","Espinacs","400 g","Bonpreu",2.35],["Verdura i fruita","Pomes","1,5 kg","Mercat",3.30],["Verdura i fruita","Ceba","1 kg","Mercadona",1.29],
+["Carn","Pit de pollastre","600 g","Bonpreu",5.94],["Carn","Carn d'olla","1 kg","Mercat",9.80],["Peix","Peix de sopa","800 g","Mercat",7.20],["Ous i làctics","Ous","12 u","Mercadona",2.95],["Ous i làctics","Llet","6 l","Mercadona",5.34],
+["Rebost","Fideus de fideuà","500 g","Mercadona",1.15],["Rebost","Canelons","1 capsa","Mercadona",1.85],["Rebost","Tomàquet triturat","2 pots","Bonpreu",1.98]];
 const GIC={"Verdura i fruita":"g_verdura","Carn i peix":"g_carn","Rebost":"rebost"};
 function cistH(){const s=S.sub.compra;let b=itabs("compra",[["llista","icona_compra","Llista"],["rebost","rebost","Rebost"],["targetes","hud_botiga_37","Botigues"]]);
- if(s==="llista"){b+=S.m2||S.ready?`<div class="scl">${LLISTA.map(([g,it])=>`<div class="lgr"><img src="img/${GIC[g]||"icona_compra"}.png" alt="${esc(g)}"><div class="lgi">${it.map(([n,q,bt])=>{const k=g+n;return `<button class="lit${S.done[k]?" done":""}" data-chk="${esc(k)}"><i></i><b>${n}</b><span>${q}</span>${bt?`<em>${bt}</em>`:""}</button>`;}).join("")}</div></div>`).join("")}</div>`:`<div class="emp"><img src="img/nav_menu.png" alt=""><button class="cta" data-tab="setmana">Fes el menú</button></div>`;}
+ if(s==="llista"){if(!(S.m2||S.ready))b+=`<div class="emp"><img src="img/nav_menu.png" alt=""><button class="cta" data-tab="setmana">Fes el menú</button></div>`;else{const f=S.lbt||"",L=LL2.filter(x=>!f||x[3]===f),eu=v=>v.toFixed(2).replace(".",",")+" €",tot=a=>a.reduce((t,x)=>t+x[4],0);
+  b+=`<div class="lbts"><button data-a="lbt" data-b="" aria-pressed="${!f}"><b>Totes</b><small>≈ ${eu(tot(LL2))}</small></button>${BTS.map(([n,c])=>`<button data-a="lbt" data-b="${n}" aria-pressed="${f===n}"><b><u style="background:${c}"></u>${n}</b><small>≈ ${eu(tot(LL2.filter(x=>x[3]===n)))}</small></button>`).join("")}</div>`;
+  b+=`<div class="scl">${GRL.filter(([g])=>L.some(x=>x[0]===g)).map(([g,ic])=>`<div class="lgr"><img src="img/${ic}.png" alt="${esc(g)}"><div class="lgi">${L.filter(x=>x[0]===g).map(([_,n,q,bt,pr])=>{const k=g+n;return `<button class="lit${S.done[k]?" done":""}" data-chk="${esc(k)}"><i></i><b>${n}</b><span>${q}</span><em>${f?"":`<u style="background:${(BTS.find(x=>x[0]===bt)||[])[1]}"></u>`}≈ ${eu(pr)}</em></button>`;}).join("")}</div></div>`).join("")}</div>`;}}
  else if(s==="rebost"){b+=`<div class="scl rbg">${[["Llenties","400 g","g_llegums"],["Arròs","1 kg","g_cereals"],["Oli d'oliva","2 l","rebost"],["Ous","6","g_ou"],["Tomàquet triturat","2 pots","g_verdura"],["Pasta","500 g","g_cereals"]].map(([n,q,f])=>`<span class="rbi"><img src="img/${f}.png" alt=""><b>${n}</b><i>${q}</i></span>`).join("")}</div>`;}
  else{b+=`<div class="scl">${[["Bonpreu","#e4572e"],["Mercadona","#2e8b57"],["Caprabo","#c8352b"]].map(([n,c])=>`<button class="tgc"><span style="background:${c}"></span><b>${n}</b></button>`).join("")}</div>`;}
  return pg("h_cistella","La cistella",b,s==="rebost"?[["rbfoto2","rb_foto","Foto del rebost"]]:[]);}
@@ -823,6 +835,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t){
   case"fesmenu":genMenu();break;
   case"equil":sheet(eqH());SHCB=()=>{render();toast("El Capità ha ajustat el menú");};break;
   case"rdens":S.rdens=t.dataset.d;saveS();render();break;
+  case"lbt":S.lbt=t.dataset.b;saveS();render();break;
   case"batch":sheet(batchH());break;
   case"fesllista":S.sub.compra="llista";S.tab="compra";render();break;
   case"sadd":toast("Afegit al menú");break;
