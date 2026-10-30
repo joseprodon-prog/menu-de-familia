@@ -1,5 +1,5 @@
 /* Menú de Família (nova) · service worker: l'app només s'actualitza des del botó «Busca actualitzacions» de Configuració */
-const C = "mfn-app-3";
+const C = "mfn-app-4";
 const clean = (r) => r.redirected ? r.blob().then((b) => new Response(b, { status: 200, headers: r.headers })) : Promise.resolve(r);
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(C).then((c) => fetch("./", { cache: "no-store" }).then(clean).then((r) => r.ok && c.put("./", r))).catch(() => {})); });
 self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith("mfn") && k !== C).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
