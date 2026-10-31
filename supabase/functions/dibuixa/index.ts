@@ -1,6 +1,7 @@
 // Menú de Família · l'Enciam dibuixa les imatges de les receptes amb l'estil de la casa
 // Rep: { mode: "foto" | "inventa" | "edita", urls?: [enllaços públics de Storage, màx. 3], n, ing?, steps?, nota? }  → { image: base64, mime }
 //      edita: urls[0] és la imatge actual i nota són els canvis que demana l'Hortolà o la família
+//      { mode: "icona", nom, v: 1|2|3 }  → { image: base64, mime }  (icona d'un estri nou, fons blanc)
 //      { mode: "escolta", audio: base64, mime }  → { text }  (nota de veu passada a text, en català)
 // Requereix el secret GEMINI_API_KEY (Supabase → Edge Functions → Secrets). Opcional: GEMINI_IMAGE_MODEL.
 // Referències d'estil (opcionals): Storage assets/estil-1.jpg, estil-2.jpg, estil-3.jpg
@@ -67,6 +68,29 @@ Deno.serve(async (req) => {
         } catch (e) { last = `${tm}: ${String((e as Error)?.message || e)}`; }
       }
       return out({ error: last }, 502);
+    }
+    if (body.mode === "icona") {
+      // Icona d'un estri de cuina nou, amb l'estil de les icones de l'app (fons blanc; l'app el treu)
+      const nom = String(body.nom || "").trim().slice(0, 80);
+      if (!nom) return out({ error: "Petició no vàlida" }, 400);
+      const app = "https://menu-de-familia.pages.dev/nova/img/";
+      const ri = async (f: string) => { try { const r = await fetch(app + f, { signal: AbortSignal.timeout(15000) }); if (!r.ok) return null; return { inline_data: { mime_type: "image/png", data: b64(await r.arrayBuffer()) } }; } catch (_) { return null; } };
+      const refs = (await Promise.all(["eq_pastadora.png", "eq_liquadora.png", "eq_olla_lenta.png"].map(ri))).filter(Boolean);
+      const vari = ["a classic, typical model", "a slightly different typical model and angle", "another common home model"][Math.max(0, Math.min(2, (+body.v || 1) - 1))];
+      const parts: unknown[] = [];
+      if (refs.length) { parts.push({ text: "STYLE REFERENCES — copy exactly this icon style (soft realistic 3D illustration, gentle shading, warm palette); do not copy the objects:" }); parts.push(...refs); }
+      parts.push({ text: `Draw ONE kitchen equipment icon of: «${nom}» (Catalan name of a home kitchen appliance or utensil). Show ${vari} of it, alone, three-quarter view, centered, filling most of the frame. Plain pure white background, no shadow box, no frame, no text, no logos, no people.` });
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST", signal: AbortSignal.timeout(120000),
+        headers: { "x-goog-api-key": key, "content-type": "application/json" },
+        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "1:1" } } }),
+      });
+      const j = await r.json();
+      if (!r.ok) return out({ error: (j && j.error && j.error.message) || "El servei d'imatges no ha respost" }, 502);
+      const p = ((j.candidates || [])[0]?.content?.parts || []).find((x: any) => x.inlineData || x.inline_data);
+      const d = p && (p.inlineData || p.inline_data);
+      if (!d) return out({ error: "No s'ha pogut fer la icona" }, 502);
+      return out({ image: d.data, mime: d.mimeType || d.mime_type || "image/png" });
     }
     const { mode = "inventa", urls = [], n = "", ing = "", steps = "", nota = "" } = body;
     const qi = await quota(su!, sk, auth, "imatge", 10);
