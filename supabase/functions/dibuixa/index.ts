@@ -1,4 +1,4 @@
-// Menú de Família · el Capità Enciam dibuixa les imatges de les receptes amb l'estil de la casa
+// Menú de Família · l'Enciam dibuixa les imatges de les receptes amb l'estil de la casa
 // Rep: { mode: "foto" | "inventa" | "edita", urls?: [enllaços públics de Storage, màx. 3], n, ing?, steps?, nota? }  → { image: base64, mime }
 //      edita: urls[0] és la imatge actual i nota són els canvis que demana l'Hortolà o la família
 //      { mode: "escolta", audio: base64, mime }  → { text }  (nota de veu passada a text, en català)
@@ -31,7 +31,7 @@ async function quota(su: string, sk: string, auth: string, fn: string, lim: numb
     const j = await r.json(); return { ok: !!j.ok, h: !!j.h, fins: String(j.fins || "") };
   } catch (_) { return { ok: true, h: false, fins: "" }; }
 }
-const PROU = (f: string) => `Has fet servir totes les consultes al Capità Enciam. Es renoven ${f ? "a les " + f : "d'aquí a unes hores"} 🥬`;
+const PROU = (f: string) => `Has fet servir totes les consultes a l'Enciam. Es renoven ${f ? "a les " + f : "d'aquí a unes hores"} 🥬`;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
