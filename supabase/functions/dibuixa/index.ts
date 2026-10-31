@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
       for (const tm of models) {
         try {
           const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${tm}:generateContent`, {
-            method: "POST", signal: AbortSignal.timeout(25000),
+            method: "POST", signal: AbortSignal.timeout(12000),
             headers: { "x-goog-api-key": key, "content-type": "application/json" },
             body: JSON.stringify({ contents: [{ role: "user", parts: [{ inline_data: { mime_type: mime, data: audio } }, { text: PR }] }] }),
           });
