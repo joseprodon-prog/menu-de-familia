@@ -49,20 +49,24 @@ Deno.serve(async (req) => {
       if (!qe.ok) return out({ error: PROU(qe.fins), limit: true }, 429);
       const audio = String(body.audio || ""), mime = String(body.mime || "audio/mp4").split(";")[0];
       if (!audio || audio.length > 12_000_000 || !/^audio\//.test(mime)) return out({ error: "Petició no vàlida" }, 400);
-      const tm = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-3.8-flash";
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${tm}:generateContent`, {
-        method: "POST", signal: AbortSignal.timeout(90000),
-        headers: { "x-goog-api-key": key, "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts: [
-          { inline_data: { mime_type: mime, data: audio } },
-          { text: "Transcriu literalment aquesta nota de veu (normalment en català; si parla en castellà, transcriu-la en castellà). Posa la puntuació correcta i escriu els números amb xifres. Respon només amb la transcripció, sense cap comentari." },
-        ] }] }),
-      });
-      const j = await r.json();
-      console.log("escolta:", r.status, JSON.stringify(j.usageMetadata || j.error || {}));
-      if (!r.ok) return out({ error: (j && j.error && j.error.message) || "El servei no ha respost" }, 502);
-      const text = ((j.candidates || [])[0]?.content?.parts || []).map((x: any) => x.text || "").join("").trim();
-      return out({ text });
+      const models = (Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-3.8-flash").split(",").map((x) => x.trim()).filter(Boolean);
+      const PR = "Transcriu literalment aquesta nota de veu (normalment en català; si parla en castellà, transcriu-la en castellà). Posa la puntuació correcta i escriu els números amb xifres. Respon només amb la transcripció, sense cap comentari.";
+      let last = "El servei no ha respost";
+      for (const tm of models) {
+        try {
+          const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${tm}:generateContent`, {
+            method: "POST", signal: AbortSignal.timeout(25000),
+            headers: { "x-goog-api-key": key, "content-type": "application/json" },
+            body: JSON.stringify({ contents: [{ role: "user", parts: [{ inline_data: { mime_type: mime, data: audio } }, { text: PR }] }] }),
+          });
+          const j = await r.json();
+          console.log("escolta:", tm, r.status, JSON.stringify(j.usageMetadata || j.error || {}));
+          if (!r.ok) { last = `${tm}: ${(j && j.error && j.error.message) || r.status}`; continue; }
+          const text = ((j.candidates || [])[0]?.content?.parts || []).map((x: any) => x.text || "").join("").trim();
+          return out({ text, model: tm });
+        } catch (e) { last = `${tm}: ${String((e as Error)?.message || e)}`; }
+      }
+      return out({ error: last }, 502);
     }
     const { mode = "inventa", urls = [], n = "", ing = "", steps = "", nota = "" } = body;
     const qi = await quota(su!, sk, auth, "imatge", 10);
