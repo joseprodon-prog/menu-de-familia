@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
       if (!qe.ok) return out({ error: PROU(qe.fins), limit: true }, 429);
       const audio = String(body.audio || ""), mime = String(body.mime || "audio/mp4").split(";")[0];
       if (!audio || audio.length > 12_000_000 || !/^audio\//.test(mime)) return out({ error: "Petició no vàlida" }, 400);
-      const tm = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-2.5-flash";
+      const tm = Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-3.8-flash";
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${tm}:generateContent`, {
         method: "POST", signal: AbortSignal.timeout(90000),
         headers: { "x-goog-api-key": key, "content-type": "application/json" },
