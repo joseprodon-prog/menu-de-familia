@@ -3,7 +3,7 @@
 //      edita: urls[0] és la imatge actual i nota són els canvis que demana l'Hortolà o la família
 //      { mode: "icona", nom, v: 1|2|3 }  → { image: base64, mime }  (icona d'un estri nou, fons blanc)
 //      { mode: "escolta", audio: base64, mime }  → { text }  (nota de veu passada a text, en català)
-//      { mode: "article", url, nom }  → { image: base64, mime }  (article del rebost aïllat, fotorealista, fons blanc)
+//      { mode: "article", url, nom, nota? }  → { image: base64, mime }  (article del rebost aïllat, fotorealista, fons blanc)
 // Requereix el secret GEMINI_API_KEY (Supabase → Edge Functions → Secrets). Opcional: GEMINI_IMAGE_MODEL.
 // Referències d'estil (opcionals): Storage assets/estil-1.jpg, estil-2.jpg, estil-3.jpg
 const cors = {
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
       const parts: unknown[] = [];
       if (refs.length) { parts.push({ text: "APP MOOD REFERENCES (only for the warm light and friendly, juicy colour feel; the result must NOT be an illustration):" }); parts.push(...refs); }
       parts.push({ text: "PHOTO taken by the family at home:" }); parts.push(foto);
-      parts.push({ text: `Make a new image of ONLY this pantry item${nom ? ` («${nom}», Catalan name)` : ""}: the very same product and container as in the photo (same container type, shape, colours, label look, lid, how full it is, the food inside). Remove everything else (hands, table, other items, background). Very photorealistic, true-to-life textures, soft warm studio light, slightly vivid appetising colours, three-quarter view, centred, filling most of the frame. Plain pure white background, no shadow, no frame, no added text or logos.` });
+      parts.push({ text: `Make a new image of ONLY this pantry item${nom ? ` («${nom}», Catalan name)` : ""}: the very same product and container as in the photo (same container type, shape, colours, label look, lid, how full it is, the food inside). Remove everything else (hands, table, other items, background). Very photorealistic, true-to-life textures, soft warm studio light, slightly vivid appetising colours, three-quarter view, centred, filling most of the frame. Plain pure white background, no shadow, no frame, no added text or logos.` + (String(body.nota || "").trim() ? `\n\nCHANGES REQUESTED BY THE FAMILY (apply them, but always keep showing only this pantry item): ${String(body.nota).trim().slice(0, 600)}` : "") });
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: "POST", signal: AbortSignal.timeout(120000),
         headers: { "x-goog-api-key": key, "content-type": "application/json" },
