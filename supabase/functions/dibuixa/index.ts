@@ -3,6 +3,7 @@
 //      edita: urls[0] és la imatge actual i nota són els canvis que demana l'Hortolà o la família
 //      { mode: "icona", nom, v: 1|2|3 }  → { image: base64, mime }  (icona d'un estri nou, fons blanc)
 //      { mode: "escolta", audio: base64, mime }  → { text }  (nota de veu passada a text, en català)
+//      { mode: "article", url, nom }  → { image: base64, mime }  (article del rebost aïllat, fotorealista, fons blanc)
 // Requereix el secret GEMINI_API_KEY (Supabase → Edge Functions → Secrets). Opcional: GEMINI_IMAGE_MODEL.
 // Referències d'estil (opcionals): Storage assets/estil-1.jpg, estil-2.jpg, estil-3.jpg
 const cors = {
@@ -90,6 +91,33 @@ Deno.serve(async (req) => {
       const p = ((j.candidates || [])[0]?.content?.parts || []).find((x: any) => x.inlineData || x.inline_data);
       const d = p && (p.inlineData || p.inline_data);
       if (!d) return out({ error: "No s'ha pogut fer la icona" }, 502);
+      return out({ image: d.data, mime: d.mimeType || d.mime_type || "image/png" });
+    }
+    if (body.mode === "article") {
+      // Foto d'un article del rebost: el mateix article, aïllat, fotorealista, fons blanc (l'app treu el blanc)
+      const pub0 = `${su}/storage/v1/object/public/assets/`, u = String(body.url || ""), nom = String(body.nom || "").trim().slice(0, 80);
+      if (!u.startsWith(pub0)) return out({ error: "Petició no vàlida" }, 400);
+      const qa = await quota(su!, sk, auth, "article", 60);
+      if (!qa.ok) return out({ error: PROU(qa.fins), limit: true }, 429);
+      const fr = await fetch(u, { signal: AbortSignal.timeout(20000) }); if (!fr.ok) return out({ error: "No trobo la foto" }, 400);
+      const foto = { inline_data: { mime_type: fr.headers.get("content-type") || "image/jpeg", data: b64(await fr.arrayBuffer()) } };
+      const app = "https://menu-de-familia.pages.dev/nova/img/";
+      const ri = async (f: string) => { try { const r = await fetch(app + f, { signal: AbortSignal.timeout(15000) }); if (!r.ok) return null; return { inline_data: { mime_type: "image/png", data: b64(await r.arrayBuffer()) } }; } catch (_) { return null; } };
+      const refs = (await Promise.all(["rebost.png", "eq_olla_lenta.png"].map(ri))).filter(Boolean);
+      const parts: unknown[] = [];
+      if (refs.length) { parts.push({ text: "APP MOOD REFERENCES (only for the warm light and friendly, juicy colour feel; the result must NOT be an illustration):" }); parts.push(...refs); }
+      parts.push({ text: "PHOTO taken by the family at home:" }); parts.push(foto);
+      parts.push({ text: `Make a new image of ONLY this pantry item${nom ? ` («${nom}», Catalan name)` : ""}: the very same product and container as in the photo (same container type, shape, colours, label look, lid, how full it is, the food inside). Remove everything else (hands, table, other items, background). Very photorealistic, true-to-life textures, soft warm studio light, slightly vivid appetising colours, three-quarter view, centred, filling most of the frame. Plain pure white background, no shadow, no frame, no added text or logos.` });
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST", signal: AbortSignal.timeout(120000),
+        headers: { "x-goog-api-key": key, "content-type": "application/json" },
+        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "1:1" } } }),
+      });
+      const j = await r.json();
+      if (!r.ok) return out({ error: (j && j.error && j.error.message) || "El servei d'imatges no ha respost" }, 502);
+      const p = ((j.candidates || [])[0]?.content?.parts || []).find((x: any) => x.inlineData || x.inline_data);
+      const d = p && (p.inlineData || p.inline_data);
+      if (!d) return out({ error: "No s'ha pogut fer la imatge" }, 502);
       return out({ image: d.data, mime: d.mimeType || d.mime_type || "image/png" });
     }
     const { mode = "inventa", urls = [], n = "", ing = "", steps = "", nota = "" } = body;
