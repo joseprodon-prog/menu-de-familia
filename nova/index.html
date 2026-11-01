@@ -251,7 +251,7 @@ html,body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-
 .rbll{width:24px;height:24px;object-fit:contain;flex:none;margin-left:6px}.rbtot{display:block;margin:0 auto 10px;padding:8px 18px;min-height:0;border:0;border-radius:999px;background:#eef3e8;color:#2f6b1f;font:700 15px var(--body);box-shadow:none}
 .vzico{position:relative;display:inline-block;width:46px;height:24px;flex:none;margin-right:10px;vertical-align:middle}.vzico .vp{position:absolute;inset:0;border-radius:999px;overflow:hidden;border:1.5px solid #e8c56a;background:#fff8e6}.vzico .vp img{width:100%;height:100%;object-fit:cover;display:block}.vzico .ov{position:absolute;right:-9px;bottom:-3px;width:17px;height:auto}
 .vzbk .vzico{width:58px;height:30px}.vzbk .vzico .ov{width:21px;right:-11px}.cc small .vzico{width:34px;height:18px;margin-right:6px}.cc small .vzico .ov{width:13px;right:-7px}
-.vzbub{display:block;width:90px;height:86px;border-radius:50% 50% 50% 12%;overflow:hidden;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}.vzbub img{width:100%!important;height:100%!important;object-fit:cover!important}
+
 .vzoff .vzico .ov{display:none}.vzoff .vzico{margin-right:4px}
 .khdr .hvei,.khdr .hortb{box-shadow:0 0 0 1.2px #1d1d1b,0 2px 6px rgba(0,0,0,.15)}.khdr .kesp{box-shadow:0 0 0 1.2px #1d1d1b}.khdr .gear,#tmpgear{border-radius:50%;box-shadow:0 0 0 1.2px #1d1d1b}
 .vzbk{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;background:none;border:0;box-shadow:none;padding:0 4px;min-height:0;font:800 22px var(--body);color:#2b3036}.vzbk img{width:34px;height:34px;object-fit:contain}
@@ -973,7 +973,7 @@ function veinatH(){const v=S.vv||"";if(!VZ.ok&&!VZ.t){VZ.t=1;vzLoad();}
  if(v==="nova")return vzNovaH();
  if(v==="xat")return vzXatH();
  if(v==="punts")return vzPuntsH();
- return pg("benvinguda_veinat","El teu veïnat",`<span class="vchip">${vzIco()}${esc(S.muni||"")}${VEIT?" · "+esc((VEIT.match(/(\d+) famíl/)||[])[1]||""):""}</span><div class="vt"><button class="bg" data-a="vzgo" data-v="compres"><img src="img/icona_compra.png" alt="">Compres conjuntes</button><button data-a="vzgo" data-v="xat"><span class="vzbub"><img src="img/veinat_pill.png" alt=""></span>Xat</button><button data-a="vzgo" data-v="punts"><img src="img/on_vius.png" alt="">Punts de recollida</button><button data-a="veiobre" data-v="s"><img src="img/nav_despesa.png" alt="">Preus</button><button data-a="vzaviat"><img src="img/hud_botiga_37.png" alt="">Parades i mercats</button></div>`,[]);}
+ return pg("benvinguda_veinat","El teu veïnat",`<span class="vchip">${vzIco()}${esc(S.muni||"")}${VEIT?" · "+esc((VEIT.match(/(\d+) famíl/)||[])[1]||""):""}</span><div class="vt"><button class="bg" data-a="vzgo" data-v="compres"><img src="img/icona_compra.png" alt="">Compres conjuntes</button><button data-a="vzgo" data-v="xat"><img src="img/vz_xat.png" alt="">Xat</button><button data-a="vzgo" data-v="punts"><img src="img/on_vius.png" alt="">Punts de recollida</button><button data-a="veiobre" data-v="s"><img src="img/nav_despesa.png" alt="">Preus</button><button data-a="vzaviat"><img src="img/hud_botiga_37.png" alt="">Parades i mercats</button></div>`,[]);}
 /* una compra */
 function vzStep(u){return u==="kg"||u==="l"?0.5:1;}
 function vzCompraH(){const c=VZ.c[VC];if(!c)return pg("benvinguda_veinat","Compres conjuntes",vzBack()+`<p class="zbuit">Carregant…</p>`,[]);const me=(VZ.f[VC]||{})[S.fc]||{},q=me.q||{},it=c.items||[];
