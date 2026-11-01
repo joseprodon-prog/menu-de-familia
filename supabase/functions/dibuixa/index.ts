@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       const audio = String(body.audio || ""), mime = String(body.mime || "audio/mp4").split(";")[0];
       if (!audio || audio.length > 12_000_000 || !/^audio\//.test(mime)) return out({ error: "Petició no vàlida" }, 400);
       const models = (Deno.env.get("GEMINI_TEXT_MODEL") || "gemini-3.8-flash").split(",").map((x) => x.trim()).filter(Boolean);
-      const PR = "Transcriu literalment aquesta nota de veu (normalment en català; si parla en castellà, transcriu-la en castellà). Posa la puntuació correcta i escriu els números amb xifres. Respon només amb la transcripció, sense cap comentari.";
+      const PR = "Aquesta nota de veu és d'una família catalana i parla en CATALÀ (central/oriental, accent del Maresme). Transcriu-la literalment en català normatiu, paraula per paraula, tal com la diu: no la tradueixis mai al castellà ni la resumeixis. Noms d'aliments i de cuina en català (p. ex. «llenties», «julivert», «sofregit», «galets»). Només si tota la nota és clarament en castellà, transcriu-la en castellà. Posa la puntuació correcta i escriu els números amb xifres. Respon només amb la transcripció, sense cap comentari.";
       let last = "El servei no ha respost";
       for (const tm of models) {
         try {
