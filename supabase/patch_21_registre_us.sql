@@ -38,3 +38,8 @@ create policy mf_ev_ins on public.mf_events for insert with check (
   and exists (select 1 from public.mf_consentiment c where c.usuari = auth.uid())
 );
 -- sense política de select/update/delete: ningú la pot llegir ni tocar des de l'app
+
+-- Es guarda 12 mesos (ho diu l'avís): esborrat diari del que és més antic
+create extension if not exists pg_cron;
+select cron.unschedule('mf-events-12m') where exists (select 1 from cron.job where jobname = 'mf-events-12m');
+select cron.schedule('mf-events-12m', '30 3 * * *', $$ delete from public.mf_events where at < now() - interval '12 months'; $$);
